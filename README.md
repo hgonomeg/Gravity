@@ -6,8 +6,7 @@ Banalny symulator grawitacji i planet, SFML, C++.
 * Stworzenie prostej zabawki pomagającej zrozumieć działanie mechaniki orbitalnej.
 # Możliwości programu
 * Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
-* Dodawanie nowych ciał niebieskich w czasie 
-działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
+* Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
 * Zcalanie ciał niebieskich w razie kolizji.
 * Usuwanie istniejących ciał niebieskich.
 # Opis techniczny
