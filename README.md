@@ -16,9 +16,9 @@ Banalny symulator grawitacji i planet, SFML, C++.
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
 Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę <code>draw</code> (sam obiekt dziedzicy z <code>sf::Drawable</code>). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (<code>std::list</code>) które wszystkie dziedziczą z <code>Celestial_body</code>, która to klasa również jest pochodną klasy <code>sf::Drawable</code>). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda <code>tick</code>, w ramach której prowadzona jest obsługa całej symulacji.
 ## Obecny stan implementacji
-* Podstawowa mechanika klasy `Celestial_body'
+* Podstawowa mechanika klasy `Celestial_body`
 * Podstawowa mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
 ## Do zrobienia
 * Wszystko pozostałe
 ## Jak skompilować?
-Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", którego należey dolinkować do biblioteki SFML (do modułu graficznego tej biblioteki)
+Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
