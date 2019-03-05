@@ -8,6 +8,8 @@ int main(int argc, char** argv)
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"REHN");
 	rehn.setFramerateLimit(60);
 	
+	sim.add_body(new Celestial_body(200));
+	
 	while(rehn.isOpen())
 	{
 		while(rehn.pollEvent(ev))
