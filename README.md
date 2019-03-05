@@ -3,7 +3,7 @@ Banalny symulator grawitacji i planet, SFML, C++.
 ## Cel projektu
 * Ćwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w języku C++, w tym metod wirtualnych, dziedziczenia.
 * Ćwiczenia korzystania z kontenerów biblioteki standardowej języka C++.
-* Upłynnienie posługiwania się inteligentnymi wskaźnikami ('std::unique_ptr<>').
+* Upłynnienie posługiwania się inteligentnymi wskaźnikami (`std::unique_ptr<>`).
 * Ćwiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
 * Stworzenie prostej zabawki pomagającej zrozumieć działanie mechaniki orbitalnej.
 * Bliższe zapoznanie się z mechaniką Git oraz GitHub; ćwiczenia w kooperacji wieloosobowej.
