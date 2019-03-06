@@ -9,7 +9,9 @@ class Simulator :public sf::Drawable
 	public:
 	
 	void tick();
+	
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
+	
 	void add_body(Celestial_body*);
 	
 };

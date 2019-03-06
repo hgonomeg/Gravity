@@ -14,7 +14,7 @@ Banalny symulator grawitacji i planet, SFML, C++.
 * Usuwanie istniejących ciał niebieskich.
 ## Opis techniczny
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
-Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę <code>draw</code> (sam obiekt dziedzicy z <code>sf::Drawable</code>). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (<code>std::list</code>) które wszystkie dziedziczą z <code>Celestial_body</code>, która to klasa również jest pochodną klasy <code>sf::Drawable</code>). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda <code>tick</code>, w ramach której prowadzona jest obsługa całej symulacji.
+Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę <code>draw</code> (sam obiekt dziedzicy z <code>sf::Drawable</code>). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (<code>std::list<std::unique_ptr<Celestial_body>></code>) które wszystkie dziedziczą z <code>Celestial_body</code>, która to klasa również jest pochodną klasy <code>sf::Drawable</code>). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda <code>tick</code>, w ramach której prowadzona jest obsługa całej symulacji.
 ## Obecny stan implementacji
 * Podstawowa mechanika klasy `Celestial_body`
 * Podstawowa mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.

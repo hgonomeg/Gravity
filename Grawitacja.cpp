@@ -27,6 +27,6 @@ int main(int argc, char** argv)
 		rehn.clear();
 		rehn.draw(sim);
 		rehn.display();
-		sim.tick();
+		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
 	}
 }
