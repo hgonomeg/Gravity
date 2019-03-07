@@ -17,7 +17,7 @@ class Planet :public Celestial_body
 
 class Star :public Celestial_body
 {
-	enum stellar_classification
+	enum class stellar_classification :sf::Uint32
 	{
 		O =0x9bb0ff,
 		B =0xaabfff,
@@ -25,8 +25,7 @@ class Star :public Celestial_body
 		F =0xf8f7ff,
 		G =0xfff4ea,
 		K =0xffd2a1,
-		M =0xffcc6f,
-		
+		M =0xffcc6f
 	}; //tak jak w przypadku planety; zgodnie z diagramem Hertzsprung–Russella będzie można  znieniać kolor czy teksture gwiazdy
 
 	public:
