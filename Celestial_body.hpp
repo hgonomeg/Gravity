@@ -5,6 +5,7 @@ class Celestial_body :public sf::Drawable
 	
 	
 	int mass;
+
 	sf::Vector2f loc;
 	sf::Vector2f v;
 	sf::CircleShape wyglond;

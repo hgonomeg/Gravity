@@ -2,12 +2,12 @@
 
 class Planet :public Celestial_body
 {
-	enum planet_type 
+	enum planet_classification 
 	{
 		gas,
 		liquid,
 		solid
-	} state_of_matter; 
+	} planet_type; 
 	//W przyszlosci dodac mechanike teksturowania
 
 	public:
@@ -26,7 +26,7 @@ class Star :public Celestial_body
 		G =0xfff4ea,
 		K =0xffd2a1,
 		M =0xffcc6f
-	}; //tak jak w przypadku planety; zgodnie z diagramem Hertzsprung–Russella będzie można  znieniać kolor czy teksture gwiazdy
+	} star_type; //tak jak w przypadku planety; zgodnie z diagramem Hertzsprung–Russella będzie można  znieniać kolor czy teksture gwiazdy
 
 	public:
 	
