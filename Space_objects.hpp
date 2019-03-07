@@ -2,8 +2,10 @@
 
 class Planet :public Celestial_body
 {
-	std::string state_of_matter; // moja propozycja; w przyszłości w zależności od stanu skupienia będzie mozna wybrać odpowiednią teksturę/kolor
-
+	enum planet_type {
+		
+	}; 
+	//W przyszlosci dodac mechanike teksturowania
 
 	public:
 	
