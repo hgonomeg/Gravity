@@ -1,7 +1,7 @@
 #include "Space_objects.hpp"
 
-Planet::Planet(unsigned int masa_planety, const sf::Color& kolor,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
-:Celestial_body(masa_planety,kolor,lokacja,predkosc)
+Planet::Planet(unsigned int masa_planety,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
+:Celestial_body(masa_planety,sf::Color::Blue,lokacja,predkosc)
 {
 
 
@@ -9,8 +9,8 @@ Planet::Planet(unsigned int masa_planety, const sf::Color& kolor,const sf::Vecto
 
 }
 
-Star::Star(unsigned int masa_gwiazdy, const sf::Color& kolor,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
-:Celestial_body(masa_gwiazdy,kolor,lokacja,predkosc)
+Star::Star(unsigned int masa_gwiazdy,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
+:Celestial_body(masa_gwiazdy,sf::Color::Yellow,lokacja,predkosc)
 {
 
 
