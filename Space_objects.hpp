@@ -4,7 +4,7 @@ class Planet :public Celestial_body
 {
 	enum planet_type {
 		
-	}; 
+	} state_of_matter; 
 	//W przyszlosci dodac mechanike teksturowania
 
 	public:
