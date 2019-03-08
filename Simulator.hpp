@@ -7,7 +7,7 @@
 class Simulator :public sf::Drawable
 {
 	
-	static const double G;
+	static const float G;
 	
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	public:
@@ -22,4 +22,3 @@ class Simulator :public sf::Drawable
 };
 
 
-	Simulator::G = 1;

@@ -1,17 +1,19 @@
 #include "Simulator.hpp"
 
+const float Simulator::G = 1;
+
 void Simulator::tick()
 {
 	auto obrob_graw=[this](Celestial_body* lhs, Celestial_body* rhs){
 		
-		auto &left_loc lhs->get_loc();
-		auto &left_v lhs->get_v();
-		auto &left_mass lhs->get_mass();
+		auto &left_loc=lhs->get_loc();
+		auto &left_v=lhs->get_v();
+		auto &left_mass=lhs->get_mass();
 		
 		
-		auto &right_loc rhs->get_loc();
-		auto &right_v rhs->get_v();
-		auto &right_mass rhs->get_mass();
+		auto &right_loc=rhs->get_loc();
+		auto &right_v=rhs->get_v();
+		auto &right_mass=rhs->get_mass();
 		
 		float diff_x=left_loc.x-right_loc.x;
 		float diff_y=left_loc.y-right_loc.y;
