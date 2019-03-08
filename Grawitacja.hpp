@@ -1,6 +1,9 @@
 #ifndef GRAWITACJA_HPP
 #define GRAWITACJA_HPP
 #include "Simulator.hpp"
+#include "Space_objects.hpp"
+
+class UI_state;
 
 class UI_tool :public sf::Drawable
 {
@@ -10,7 +13,7 @@ class UI_tool :public sf::Drawable
 	virtual void mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
 	virtual void kbp(sf::Event&) = 0;
-	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const;
+	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 };
 
 class UI_state :public sf::Drawable
@@ -30,7 +33,7 @@ class UI_state :public sf::Drawable
 
 class CB_gen :public UI_tool //Celestial_body_gen
 {
-	Planet::planetarey_classification temp_planet;
+	Planet::planetary_classification temp_planet;
 	Star::stellar_classification temp_star; 
 	enum cb_type 
 	{
