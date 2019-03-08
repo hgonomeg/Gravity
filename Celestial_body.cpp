@@ -58,5 +58,5 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 bool Celestial_body::collision_detec(Celestial_body* CB1, Celestial_body* CB2)
 {
 
-	return (distance_from(CB1,CB2)-(CB1->get_radius()+CB2->get_radius()))<=0);
+	return (distance_from(CB1,CB2)-(CB1->get_radius()+CB2->get_radius())<=0);
 }
