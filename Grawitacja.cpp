@@ -1,5 +1,5 @@
 #include "Grawitacja.hpp"
-
+#include "resources/Arimo-Regular.hpp"
 
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -60,6 +60,8 @@ int main(int argc, char** argv)
 	sim.add_body(new Planet(10,{250,250},{-0.6,0.8}));
 	sim.add_body(new Star(100,{200,200},{0,0}));
 	
+	bool pauza=false;
+	
 	while(rehn.isOpen())
 	{
 		while(rehn.pollEvent(ev))
@@ -81,9 +83,15 @@ int main(int argc, char** argv)
 					gui.mbr(ev);
 					break;
 				}
-				case sf::Event::KeyPressed:
+				case sf::Event::KeyPressed: //zdarzenia wcisniecia klawisza
 				{
-					gui.kbp(ev);
+					switch(ev.key.code)
+					{
+					case sf::Keyboard::P:
+						pauza=!pauza;
+						break;
+					default: gui.kbp(ev);
+					}
 					break;
 				}
 
@@ -94,6 +102,8 @@ int main(int argc, char** argv)
 		rehn.draw(sim);
 		rehn.draw(gui);
 		rehn.display();
-		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
+		if(!pauza) sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
 	}
+	
+	delete zasoby;
 }
