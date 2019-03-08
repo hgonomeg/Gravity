@@ -11,8 +11,9 @@ class UI_tool :public sf::Drawable
 	friend class UI_state;
 	protected:
 	UI_state* patris;
-	static const std::string name;
+	
 	public:
+	static const std::string name;
 	virtual void mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
 	virtual void kbp(sf::Event&) = 0;
@@ -44,8 +45,9 @@ class CB_gen :public UI_tool //Celestial_body_gen
 		Star
 	} currently_picked;
 	protected:
-	static const std::string name;
+	
 	public:
+	static const std::string name;
 	CB_gen();
 	unsigned mass_multiplier;
 	virtual void mbp(sf::Event&) override;
@@ -59,8 +61,9 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick;
 	void pop_body();
 	protected:
-	static const std::string name;
+	
 	public:
+	static const std::string name;
 	CB_selector();
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
