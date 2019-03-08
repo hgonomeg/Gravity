@@ -28,7 +28,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	mass = imass;
 	loc = iloc;
 	v = iv;
-	wyglond.setRadius(mass/10.f); //czy zapisz ".f" oznacza że dzielimy przez floata? [TAK]
+	wyglond.setRadius(mass/10.f);
 	wyglond.setPointCount(64);
 	wyglond.setOrigin(mass/20.f,mass/20.f);
 	wyglond.setOutlineThickness(0);

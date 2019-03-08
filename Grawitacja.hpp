@@ -2,7 +2,11 @@
 #define GRAWITACJA_HPP
 #include "Simulator.hpp"
 #include "Space_objects.hpp"
+#define EXTERNPLEASE
+#include "ResourceLoader.hpp"
 #include <string>
+
+
 
 class UI_state;
 
