@@ -23,10 +23,11 @@ void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	if(curr) curr->draw(tgt,st);
 }
 
-UI_state::UI_state()
+UI_state::UI_state(Simulator* sjm)
 {
 	curr = new CB_gen;
 	curr->patris=this;
+	sim = sjm;
 }
 
 Simulator* UI_state::getsim()
@@ -50,7 +51,7 @@ void UI_state::switch_tool(UI_tool* ut)
 int main(int argc, char** argv)
 {
 	Simulator sim;
-	UI_state gui;
+	UI_state gui(&sim);
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"REHN");
 	rehn.setFramerateLimit(60);

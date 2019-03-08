@@ -2,6 +2,7 @@
 #define GRAWITACJA_HPP
 #include "Simulator.hpp"
 #include "Space_objects.hpp"
+#include <string>
 
 class UI_state;
 
@@ -9,6 +10,7 @@ class UI_tool :public sf::Drawable
 {
 	friend class UI_state;
 	UI_state* patris;
+	std::string name;
 	public:
 	virtual void mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
@@ -22,7 +24,7 @@ class UI_state :public sf::Drawable
 	Simulator* sim;
  	public:
 	~UI_state();
-	UI_state();
+	UI_state(Simulator*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);

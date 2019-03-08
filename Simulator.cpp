@@ -33,13 +33,11 @@ void Simulator::tick()
 	for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
 	{
 		
-	
-		for(auto i=j; i!=ciala.end(); i++)
+		auto ekaj=j;
+		ekaj++;
+		for(auto i=ekaj; i!=ciala.end(); i++)
 		{
-			auto iplus = i;
-			iplus++;
-			obrob_graw(i->get(),iplus->get());
-			
+			obrob_graw(j->get(),i->get());	
 		}
 		
 	
