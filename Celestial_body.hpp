@@ -1,3 +1,5 @@
+#ifndef CELESTIAL_BODY_HPP
+#define CELESTIAL_BODY_HPP
 #include <SFML/Graphics.hpp>
 
 class Celestial_body :public sf::Drawable
@@ -25,3 +27,4 @@ class Celestial_body :public sf::Drawable
 	
 	
 };
+#endif

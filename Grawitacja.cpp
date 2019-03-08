@@ -1,5 +1,10 @@
 #include "Grawitacja.hpp"
 
+void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
+{
+	
+}
+
 void UI_state::mbp(sf::Event& ev)
 {
 	if(curr) curr->mbp(ev);
@@ -34,7 +39,7 @@ UI_state::~UI_state()
 	delete curr;
 }
 
-UI_state::switch_tool(UI_tool* ut)
+void UI_state::switch_tool(UI_tool* ut)
 {
 	if(curr) delete curr;
 	curr = ut;
