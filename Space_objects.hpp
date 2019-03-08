@@ -2,7 +2,7 @@
 
 class Planet :public Celestial_body
 {
-	enum planet_classification 
+	enum planetary_classification 
 	{
 		gas,
 		liquid,
