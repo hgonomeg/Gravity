@@ -14,9 +14,6 @@ class Celestial_body :public sf::Drawable
 	sf::CircleShape wyglond;
 	sf::Color thecol;
 	
-	float volume; //o to moja propozycje nie zmieniałem jeszcze konstruktora Celestial_body
-	float density;  // dzięki tym zmiennym będzie można na bierząco liczyć promień naszego obiektu 
-	
 	float radius;
 	
 	public:
@@ -31,7 +28,7 @@ class Celestial_body :public sf::Drawable
 	sf::Vector2f& get_v();
 	
 	
-	/*static?*/float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
+	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	
 	

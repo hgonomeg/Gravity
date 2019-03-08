@@ -35,7 +35,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	radius = mass/10.f;
 	wyglond.setRadius(radius);
 	wyglond.setPointCount(64);
-	wyglond.setOrigin(mass/20.f,mass/20.f);
+	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
 }
@@ -58,9 +58,5 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 bool Celestial_body::collision_detec(Celestial_body* CB1, Celestial_body* CB2)
 {
 
-	if(distance_from(CB1,CB2)-((CB1->get_radius())+(CB2->get_radius()))<=0)
-		return true;
-	else
-		return false;
-
+	return (distance_from(CB1,CB2)-(CB1->get_radius()+CB2->get_radius()))<=0);
 }
