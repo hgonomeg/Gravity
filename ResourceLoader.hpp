@@ -14,9 +14,9 @@ struct ResourceBase
 ResourceBase* LoadResources();
 
 #if defined(EXTERNPLEASE)
-ResourceBase* zasoby;
-#else
 extern ResourceBase* zasoby;
+#else
+ResourceBase* zasoby;
 #endif
 
 #endif
