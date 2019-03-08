@@ -79,6 +79,11 @@ int main(int argc, char** argv)
 					gui.mbr(ev);
 					break;
 				}
+				case sf::Event::KeyPressed:
+				{
+					gui.kbp(ev);
+					break;
+				}
 
 			}
 		}
