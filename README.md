@@ -23,7 +23,28 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Szkielet mechanizmu interfejsów graficznych
 * Podstawowa mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
 * Pierwotna implementacja metody `tick` w Symulatorze
+	* Wykonywanie fukncji obliczającej siłę grawitacji dla każdej pary
+	  obiektów
+	* Poruszenie każdym ciałem zgodnie z jego prędkością
 ## Do zrobienia
-* Wszystko pozostałe
+* Odpowiednie teksturowanie ciał niebieskich
+* Przełączanie narzędzi GUI
+* Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
+* Wyświetlanie tekstu interfejsów graficznych
+* Stworzenie przycisków w GUI
+* Obsługa poprawnego skalowania okna
+* Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
+* Funkcja `Simulator::at_pos`
+* Okodowanie `CB_selector` i `CB_gen`
+	* Generacja ciał niebieskich różnych typów
+	* Usuwanie ciał niebieskich
+	* Modyfikacja parametrów ciał niebieskich
+* Pauzowanie symulacji
+* Detekcja kolizji
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
+Wymagany standard C++11 wraz z RTTI.
+## Do rozważenia
+* Przypisanie pewnym klawiszom zmiany tempa symulacji
+* Śledzenie widokiem danego ciała niebieskiego
+
