@@ -1,5 +1,6 @@
 #include "Grawitacja.hpp"
 
+
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	
@@ -56,7 +57,8 @@ int main(int argc, char** argv)
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"REHN");
 	rehn.setFramerateLimit(60);
 	
-	//sim.add_body(new Celestial_body(200));
+	sim.add_body(new Planet(10,{250,250},{-0.6,0.8}));
+	sim.add_body(new Star(100,{200,200},{0,0}));
 	
 	while(rehn.isOpen())
 	{

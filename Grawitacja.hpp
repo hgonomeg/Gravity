@@ -9,8 +9,9 @@ class UI_state;
 class UI_tool :public sf::Drawable
 {
 	friend class UI_state;
+	protected:
 	UI_state* patris;
-	std::string name;
+	static const std::string name;
 	public:
 	virtual void mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
@@ -42,7 +43,25 @@ class CB_gen :public UI_tool //Celestial_body_gen
 		Planet,
 		Star
 	} currently_picked;
+	protected:
+	static const std::string name;
+	public:
+	CB_gen();
 	unsigned mass_multiplier;
+	virtual void mbp(sf::Event&) override;
+	virtual void mbr(sf::Event&) override;
+	virtual void kbp(sf::Event&) override;
+	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+};
+
+class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkretnym ciele niebieskim. Zawiera możlwiość usuwania ciał
+{
+	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick;
+	void pop_body();
+	protected:
+	static const std::string name;
+	public:
+	CB_selector();
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;

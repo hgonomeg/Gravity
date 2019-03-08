@@ -11,7 +11,7 @@ class Planet :public Celestial_body
 	{
 		gas,
 		liquid,
-		solid
+		rock
 	} planet_type; 
 	
 	Planet(int mass=10, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});

@@ -22,6 +22,7 @@ class Celestial_body :public sf::Drawable
 	
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override; // "override" upewnienie się nadpisania metody z klasy od której dzidziczymy
 	int& get_mass();
+	void refresh();
 	sf::Vector2f& get_loc();
 	sf::Vector2f& get_v();
 	

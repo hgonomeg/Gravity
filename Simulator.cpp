@@ -1,6 +1,6 @@
 #include "Simulator.hpp"
 
-const float Simulator::G = 1;
+const float Simulator::G = 0.1;
 
 void Simulator::tick()
 {
@@ -23,8 +23,8 @@ void Simulator::tick()
 		sf::Vector2f sila_graw_vec={diff_x,diff_y};
 		sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 		
-		left_v+=sila_graw_vec;
-		right_v-=sila_graw_vec;
+		left_v-=sila_graw_vec;
+		right_v+=sila_graw_vec;
 		
 		
 		
@@ -46,7 +46,7 @@ void Simulator::tick()
 	for(auto j=ciala.begin(); j!=ciala.end(); j++)
 	{
 		auto q=j->get();
-		q->get_loc()+(q->get_v());
+		q->get_loc()+=(q->get_v());
 	}
 	
 }
@@ -55,11 +55,24 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	for(auto& x: ciala)
 	{
+		x.get()->refresh();
 		x.get()->draw(tgt,st);
+		
 	}
 }
 
 void Simulator::add_body(Celestial_body* koles)
 {
 	ciala.push_back(std::unique_ptr<Celestial_body>(koles));
+}
+
+std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el)
+{
+	return ciala.erase(el);
+}
+
+std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int y)
+{
+	//To be further implemented
+	return ciala.end();
 }
