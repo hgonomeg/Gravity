@@ -15,6 +15,8 @@ class Celestial_body :public sf::Drawable
 	sf::Color thecol;
 	
 	float radius;
+	static unsigned int Global_ID=0;
+	unsigned int Local_ID=0;
 	
 	public:
 	
