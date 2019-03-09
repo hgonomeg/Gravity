@@ -57,7 +57,12 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	for(auto& x: ciala)
 	{
-		x.get()->refresh();
+		if(!paused) x.get()->refresh();
+		x.get()->draw_trace(tgt,st);
+		
+	}
+	for(auto& x: ciala)
+	{
 		x.get()->draw(tgt,st);
 		
 	}

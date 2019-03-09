@@ -53,7 +53,7 @@ int main(int argc, char** argv)
 	Simulator sim;
 	UI_state gui(&sim);
 	sf::Event ev;
-	sf::RenderWindow rehn(sf::VideoMode(500,500),"Grawitacja");
+	sf::RenderWindow rehn(sf::VideoMode(960,960),"Grawitacja");
 	rehn.setFramerateLimit(60);
 	rehn.clear(); //wypełnienie okna na czarno
 	
@@ -65,10 +65,11 @@ int main(int argc, char** argv)
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
 	
-	sim.add_body(new Planet(10,{250,250},{-0.75,2}));
-	sim.add_body(new Star(850,{200,200},{0.1,-0.12}));
-	sim.add_body(new Planet(5,{450,5},{0.4,0.3}));
-	sim.add_body(new Planet(15,{4,250},{-0.4,-1.2}));
+	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
+	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
+	sim.add_body(new Star(850,{200,200},{0.1,-0.05}));
+	sim.add_body(new Planet(5,{450,5},{0.6,0.9}));
+	sim.add_body(new Planet(15,{4,250},{-0.4,-1.8}));
 
 	bool pauza=false;
 	
