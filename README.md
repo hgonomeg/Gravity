@@ -21,27 +21,28 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Podstawowa mechanika klasy `Celestial_body`
 * Zarys klas `Planet` oraz `Star`
 * Szkielet mechanizmu interfejsów graficznych
-* Podstawowa mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
+* Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
+	* Każde ciało niebieskie jest rysowane osobno
+	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity
 * Pierwotna implementacja metody `tick` w Symulatorze
 	* Wykonywanie fukncji obliczającej siłę grawitacji dla każdej pary
-	  obiektów
+	  obiektów oraz stosowanie jej efektów na prędkościach obiektów
 	* Poruszenie każdym ciałem zgodnie z jego prędkością
 * Detekcja kolizji
+* Obsługa poprawnego skalowania okna
+* Pauzowanie symulacji
+* Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
 ## Do zrobienia
 * Odpowiednie teksturowanie ciał niebieskich
 * Przełączanie narzędzi GUI
 * Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
 * Wyświetlanie tekstu interfejsów graficznych
 * Stworzenie przycisków w GUI
-* Obsługa poprawnego skalowania okna
-* Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
 * Funkcja `Simulator::at_pos`
 * Okodowanie `CB_selector` i `CB_gen`
 	* Generacja ciał niebieskich różnych typów
 	* Usuwanie ciał niebieskich
 	* Modyfikacja parametrów ciał niebieskich
-* Pauzowanie przenieść do Symulatora
-* każde `Celestial_body` ma ID
 * `UI_state::hint_text`
 * Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
 ## Jak skompilować?
@@ -50,5 +51,4 @@ Wymagany standard C++11 wraz z RTTI.
 ## Do rozważenia
 * Przypisanie pewnym klawiszom zmiany tempa symulacji
 * Śledzenie widokiem danego ciała niebieskiego
-* Dodanie każdemu ciału niebieskiemu blednącego stopniowo śladu jego ścieżki ruchu
 * Zapis i odczyt z pliku przez moduł XML
