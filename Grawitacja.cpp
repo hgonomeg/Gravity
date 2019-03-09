@@ -51,17 +51,20 @@ void UI_state::switch_tool(UI_tool* ut)
 int main(int argc, char** argv)
 {
 	Simulator sim;
-	UI_state gui(&sim);
+	
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,960),"Grawitacja");
+	
 	rehn.setFramerateLimit(60);
 	rehn.setKeyRepeatEnabled(false);
-	rehn.clear(); //wypełnienie okna na czarno
+	
 	sf::Vector2f whatlook(0,0);
 	sf::Vector2u whatsize(rehn.getSize());
 	float scale=1;
 	bool translkeys[4] = {0};
 	float translation_constant=30;
+	
+	rehn.clear(); //wypełnienie okna na czarno
 	sf::Font arimo_font; arimo_font.loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
 	sf::Text status_text(std::string("Loading..."),arimo_font); //informacja o ładowaniu gry
 	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
@@ -69,6 +72,7 @@ int main(int argc, char** argv)
 	rehn.display(); //zamiana bufora obrazu na karcie graficznej czyli pokazanie tego co wyrenderowane
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
+	UI_state gui(&sim);
 	
 	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
@@ -215,6 +219,7 @@ int main(int argc, char** argv)
 		rehn.draw(gui);
 		rehn.display();
 		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
+		gui.tick();
 	}
 	
 	delete zasoby;

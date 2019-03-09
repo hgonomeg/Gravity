@@ -8,7 +8,7 @@
 #include <thread>
 #include <mutex>
 #include <future>
-
+#include <chrono>
 
 class UI_state;
 
@@ -28,6 +28,20 @@ class UI_tool :public sf::Drawable
 
 class UI_state :public sf::Drawable
 {
+	using sysclck = std::chrono::system_clock;
+	public:
+	class hint_text
+	{
+		std::string text;
+		sf::Font czcionka;
+		sf::Text sf_text;
+		sysclck::duration data_waznosci;
+		sysclck::time_point init_time;
+		public:
+		hint_text(const std::string&,unsigned int);
+		bool przeterminowane();
+	};
+	private:
 	UI_tool* curr;
 	Simulator* sim;
  	public:
@@ -38,6 +52,8 @@ class UI_state :public sf::Drawable
 	void mbp(sf::Event&);
 	void mbr(sf::Event&);
 	void kbp(sf::Event&);
+	void push_hint_text(UI_state);
+	void tick();
 	Simulator* getsim();
 };
 
