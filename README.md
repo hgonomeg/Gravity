@@ -26,6 +26,7 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* Wykonywanie fukncji obliczającej siłę grawitacji dla każdej pary
 	  obiektów
 	* Poruszenie każdym ciałem zgodnie z jego prędkością
+* Detekcja kolizji
 ## Do zrobienia
 * Odpowiednie teksturowanie ciał niebieskich
 * Przełączanie narzędzi GUI
@@ -39,8 +40,9 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* Generacja ciał niebieskich różnych typów
 	* Usuwanie ciał niebieskich
 	* Modyfikacja parametrów ciał niebieskich
-* Pauzowanie symulacji
-* Detekcja kolizji
+* Pauzowanie przenieść do Symulatora
+* każde `Celestial_body' ma ID
+* `UI_state::hint_text`
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
