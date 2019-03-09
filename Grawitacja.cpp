@@ -55,8 +55,13 @@ int main(int argc, char** argv)
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,960),"Grawitacja");
 	rehn.setFramerateLimit(60);
+	rehn.setKeyRepeatEnabled(false);
 	rehn.clear(); //wypełnienie okna na czarno
-	
+	sf::Vector2f whatlook(0,0);
+	sf::Vector2u whatsize(rehn.getSize());
+	float scale=1;
+	bool translkeys[4] = {0};
+	float translation_constant=30;
 	sf::Font arimo_font; arimo_font.loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
 	sf::Text status_text(std::string("Loading..."),arimo_font); //informacja o ładowaniu gry
 	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
@@ -72,6 +77,39 @@ int main(int argc, char** argv)
 	sim.add_body(new Planet(15,{4,250},{-0.4,-1.8}));
 
 	bool pauza=false;
+	
+	auto windowsetter = [&](){
+		auto tmp = rehn.getView();
+		tmp.setSize(whatsize.x/scale,whatsize.y/scale);
+		tmp.setCenter(whatlook+sf::Vector2f(whatsize.x/2.f,whatsize.y/2.f));
+		rehn.setView(tmp);
+	};
+	
+	auto perform_translation = [&](){
+		if(translkeys[0]) //up
+		{
+			whatlook.y-=translation_constant/scale;
+			windowsetter();
+			
+		}
+		if(translkeys[1]) //down
+		{
+			whatlook.y+=translation_constant/scale;
+			windowsetter();
+			
+		}
+		if(translkeys[2]) //right
+		{
+			whatlook.x+=translation_constant/scale;
+			windowsetter();
+			
+		}
+		if(translkeys[3]) //left
+		{
+			whatlook.x-=translation_constant/scale;
+			windowsetter();
+		}
+	};
 	
 	while(rehn.isOpen())
 	{
@@ -99,17 +137,79 @@ int main(int argc, char** argv)
 					switch(ev.key.code)
 					{
 					case sf::Keyboard::P:
+					{
 						pauza=!pauza;
 						sim.pause(pauza);
 						break;
+					}
+					case sf::Keyboard::Up:
+					{
+						translkeys[0]=true;
+						break;
+					}
+					case sf::Keyboard::Down:
+					{
+						translkeys[1]=true;
+						break;
+					}
+					case sf::Keyboard::Right:
+					{
+						translkeys[2]=true;
+						break;
+					}
+					case sf::Keyboard::Left:
+					{
+						translkeys[3]=true;
+						break;
+					}
 					default: gui.kbp(ev);
 					}
 					break;
 				}
-
+				case sf::Event::Resized:
+				{
+					whatsize.x = ev.size.width;
+					whatsize.y = ev.size.height;
+					windowsetter();
+					break;
+				}
+				case sf::Event::MouseWheelScrolled:
+				{
+					scale*=pow(1.05,ev.mouseWheelScroll.delta);
+					windowsetter();
+					break;
+				}
+				case sf::Event::KeyReleased:
+				{
+					switch(ev.key.code)
+					{
+					case sf::Keyboard::Up:
+					{
+						translkeys[0]=false;
+						break;
+					}
+					case sf::Keyboard::Down:
+					{
+						translkeys[1]=false;
+						break;
+					}
+					case sf::Keyboard::Right:
+					{
+						translkeys[2]=false;
+						break;
+					}
+					case sf::Keyboard::Left:
+					{
+						translkeys[3]=false;
+						break;
+					}
+					default: gui.kbp(ev);
+					}
+					break;
+				}
 			}
 		}
-		
+		perform_translation();
 		rehn.clear();
 		rehn.draw(sim);
 		rehn.draw(gui);
