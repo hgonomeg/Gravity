@@ -46,7 +46,7 @@ void Simulator::tick()
 	for(auto j=ciala.begin(); j!=ciala.end(); j++)
 	{
 		auto q=j->get();
-		q->get_loc()+=(q->get_v());
+		q->get_loc()+=(q->get_v()); 
 	}
 	
 }
