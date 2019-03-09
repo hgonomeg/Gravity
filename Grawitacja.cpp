@@ -53,10 +53,17 @@ int main(int argc, char** argv)
 	Simulator sim;
 	UI_state gui(&sim);
 	sf::Event ev;
-	sf::RenderWindow rehn(sf::VideoMode(500,500),"REHN");
+	sf::RenderWindow rehn(sf::VideoMode(500,500),"Grawitacja");
 	rehn.setFramerateLimit(60);
+	rehn.clear(); //wypełnienie okna na czarno
 	
-	zasoby = LoadResources();
+	sf::Font arimo_font; arimo_font.loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
+	sf::Text status_text(std::string("Loading..."),arimo_font); //informacja o ładowaniu gry
+	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
+	rehn.draw(status_text); //narysowanie napisu
+	rehn.display(); //zamiana bufora obrazu na karcie graficznej czyli pokazanie tego co wyrenderowane
+	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
+	zasoby = LoadResources(); //ładowanie gry
 	
 	sim.add_body(new Planet(10,{250,250},{-0.6,0.8}));
 	sim.add_body(new Star(100,{200,200},{0,0}));

@@ -5,7 +5,9 @@
 #define EXTERNPLEASE
 #include "ResourceLoader.hpp"
 #include <string>
-
+#include <thread>
+#include <mutex>
+#include <future>
 
 
 class UI_state;
