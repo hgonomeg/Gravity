@@ -68,7 +68,7 @@ int main(int argc, char** argv)
 	sim.add_body(new Planet(10,{250,250},{-0.75,2}));
 	sim.add_body(new Star(850,{200,200},{0.1,-0.12}));
 	sim.add_body(new Planet(5,{450,5},{0.4,0.3}));
-	sim.add_body(new Planet(15,{4,450},{-0.4,-1.2}));
+	sim.add_body(new Planet(15,{4,250},{-0.4,-1.2}));
 
 	bool pauza=false;
 	
