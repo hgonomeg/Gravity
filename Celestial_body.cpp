@@ -45,7 +45,7 @@ void Celestial_body::refresh()
 					iter->color.g--;
 					iter->color.b--;
 				}
-				if(purge>1000)
+				if(purge>125000)
 				{
 					purge=0;
 					slad.erase(slad.begin(),std::find_if(slad.rbegin(),slad.rend(),[](const sf::Vertex& xe){return xe.color.r==0;}).base());
