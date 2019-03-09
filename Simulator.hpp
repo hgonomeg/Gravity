@@ -8,11 +8,13 @@ class Simulator :public sf::Drawable
 {
 	
 	static const float G;
-	
+	bool paused;
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	public:
 	
 	void tick();
+	void pause(bool);
+	bool pause();
 	
 	std::list<std::unique_ptr<Celestial_body>>::iterator at_pos(int,int); //zwraca iterator listy do elementu który znajduje się na podanych koordynatach. W razie braku ciał niebieskich o podobnych koordynatach, zwraca list::end().
 	

@@ -97,6 +97,7 @@ int main(int argc, char** argv)
 					{
 					case sf::Keyboard::P:
 						pauza=!pauza;
+						sim.pause(pauza);
 						break;
 					default: gui.kbp(ev);
 					}
@@ -110,7 +111,7 @@ int main(int argc, char** argv)
 		rehn.draw(sim);
 		rehn.draw(gui);
 		rehn.display();
-		if(!pauza) sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
+		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
 	}
 	
 	delete zasoby;
