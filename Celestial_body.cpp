@@ -1,5 +1,7 @@
 #include "Celestial_body.hpp"
 
+unsigned int Celestial_body::Global_ID=0;
+
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	tgt.draw(wyglond,st);
@@ -39,8 +41,8 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
 	
-	Global_ID++;
 	Local_ID=Global_ID; 
+	Global_ID++;
 }
 
 float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
