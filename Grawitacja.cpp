@@ -65,9 +65,11 @@ int main(int argc, char** argv)
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
 	
-	sim.add_body(new Planet(10,{250,250},{-0.6,0.8}));
-	sim.add_body(new Star(100,{200,200},{0,0}));
-	
+	sim.add_body(new Planet(10,{250,250},{-0.75,2}));
+	sim.add_body(new Star(850,{200,200},{0.1,-0.12}));
+	sim.add_body(new Planet(5,{450,5},{0.4,0.3}));
+	sim.add_body(new Planet(15,{4,450},{-0.4,-1.2}));
+
 	bool pauza=false;
 	
 	while(rehn.isOpen())
