@@ -41,8 +41,9 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* Usuwanie ciał niebieskich
 	* Modyfikacja parametrów ciał niebieskich
 * Pauzowanie przenieść do Symulatora
-* każde `Celestial_body' ma ID
+* każde `Celestial_body` ma ID
 * `UI_state::hint_text`
+* Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
