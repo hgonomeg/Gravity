@@ -51,3 +51,4 @@ Wymagany standard C++11 wraz z RTTI.
 * Przypisanie pewnym klawiszom zmiany tempa symulacji
 * Śledzenie widokiem danego ciała niebieskiego
 * Dodanie każdemu ciału niebieskiemu blednącego stopniowo śladu jego ścieżki ruchu
+* Zapis i odczyt z pliku przez moduł XML
