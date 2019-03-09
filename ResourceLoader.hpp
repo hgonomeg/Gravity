@@ -1,6 +1,6 @@
 
 #ifndef RESOURCE_LOADER_HPP
-
+#include "resources/Arimo-Regular.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
 

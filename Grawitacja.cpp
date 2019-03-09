@@ -1,5 +1,4 @@
 #include "Grawitacja.hpp"
-#include "resources/Arimo-Regular.hpp"
 
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
