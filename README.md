@@ -13,12 +13,13 @@ Banalny symulator grawitacji i planet, SFML, C++.
 * Zcalanie ciał niebieskich w razie kolizji (planety wchłaniają asteroidy, a gwiazdy wchłaniają wszystko pozostałe).
 * Usuwanie istniejących ciał niebieskich.
 * Rozróżnianie między różnymi typami spektralnymi gwiazd oraz różnymi typami planet
+* Kontrola tempa symulacji
 ## Opis techniczny
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
 Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedzicyz `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
 Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Okno programu będzie posiadało specjalny obiekt przechowujący i sterujący stanem interfejsu graficznego (`UI_state`). Występujące w oknie zdarzenia sterujące programem są przekierowywane do specjalnych funkcji obiektu sterującego. Pewnym klawiszom zostaną przypisane funkcje przełączające tzw. narzędzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzędzi UI, w tym m.in. generator ciał niebieskich, selektor i usuwacz.
 ## Obecny stan implementacji
-* Podstawowa mechanika klasy `Celestial_body`
+* Kompletna mechanika klasy `Celestial_body`
 * Zarys klas `Planet` oraz `Star`
 * Podstawa mechanizmu interfejsów graficznych
 	* Wyświetlanie zielonych wiadomości tekstowych
@@ -26,7 +27,8 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* `CB_selector` usuwa ciała niebieskie
 * Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
 	* Każde ciało niebieskie jest rysowane osobno
-	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity
+	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity,
+	  którego czas zanikania da się przestawiać
 * Pierwotna implementacja metody `tick` w Symulatorze
 	* Wykonywanie fukncji obliczającej siłę grawitacji dla każdej pary
 	  obiektów oraz stosowanie jej efektów na prędkościach obiektów
@@ -38,6 +40,10 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 ## Do zrobienia
 * Odpowiednie teksturowanie ciał niebieskich
 * Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
+	* Zachowanie momentu pędu
+	* Tworzenie nowego obiektu w zależności od tego jakie obiekty kolidują ze sobą (RTTI na `Celestial_body*`)
+	* Zcalenie śladów w nowym obiekcie `Celestial_body`
+	* Usunięcie pierwszego obiektu i nadpisanie drugiego nowym
 * Wyświetlanie interfejsów graficznych
 * Stworzenie przycisków w GUI
 * Okodowanie `CB_selector`, `CB_gen` i `Sim_chrono`
@@ -50,4 +56,5 @@ Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytoriu
 Wymagany standard C++11 wraz z RTTI.
 ## Do rozważenia
 * Śledzenie widokiem danego ciała niebieskiego
+* Dodać sterowalny statek kosmiczny
 * Zapis i odczyt z pliku przez moduł XML
