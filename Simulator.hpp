@@ -3,7 +3,6 @@
 #include <math.h>
 #include "Celestial_body.hpp"
 #include <memory>
-#include <Rect.hpp>
 
 class Simulator :public sf::Drawable
 {
