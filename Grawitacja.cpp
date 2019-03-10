@@ -20,7 +20,7 @@ void UI_state::kbp(sf::Event& ev)
 	{
 		case sf::Keyboard::G:
 		{
-			push_hint_text(hint_text("Celestial body generator: Use M to switch between creating planets and stars",1500));
+			push_hint_text(hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
 			switch_tool(new CB_gen);
 			break;
 		}
@@ -32,7 +32,7 @@ void UI_state::kbp(sf::Event& ev)
 		}
 		case sf::Keyboard::T:
 		{
-			push_hint_text(hint_text("Simulation pace manager",1500));
+			push_hint_text(hint_text("Simulation pace manager: Nothing to do here yet.",1500));
 			switch_tool(new Sim_chrono);
 			break;
 		}
@@ -191,6 +191,7 @@ int main(int argc, char** argv)
 		
 	UI_state gui(&sim,&rehn,&status_text,&whatlook,&whatsize,&scale);
 	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",8000));
+	gui.push_hint_text(UI_state::hint_text("Use T (Timing Manager), G (Generator) and S (Selector) to switch between UI tools.",5000));
 	
 	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
