@@ -33,7 +33,7 @@ class Celestial_body :public sf::Drawable
 	sf::Vector2f& get_v();
 	unsigned int get_id();
 	void refresh();
-	
+	sf::FloatRect getGlobalBounds();
 	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	

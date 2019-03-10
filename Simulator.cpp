@@ -83,7 +83,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int
 	
 	for(auto i=ciala.begin(); i!=ciala.end(); i++) //i jest iteratorem listy
 	{
-		auto w=i->get()->wyglond.getGlobalBounds();
+		auto w=i->get()->getGlobalBounds();
 
 		if(w.contains(x,y))
 			return i;
@@ -92,7 +92,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int
 		
 	}
 
-	return ciala.end;
+	return ciala.end();
 	
 }
 
