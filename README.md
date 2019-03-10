@@ -20,7 +20,9 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 ## Obecny stan implementacji
 * Podstawowa mechanika klasy `Celestial_body`
 * Zarys klas `Planet` oraz `Star`
-* Szkielet mechanizmu interfejsów graficznych
+* Podstawa mechanizmu interfejsów graficznych
+	* Wyświetlanie zielonych wiadomości tekstowych
+	* Przełączanie narzędzi GUI
 * Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
 	* Każde ciało niebieskie jest rysowane osobno
 	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity
@@ -34,16 +36,13 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
 ## Do zrobienia
 * Odpowiednie teksturowanie ciał niebieskich
-* Przełączanie narzędzi GUI
 * Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
-* Wyświetlanie tekstu interfejsów graficznych
+* Wyświetlanie interfejsów graficznych
 * Stworzenie przycisków w GUI
-* Funkcja `Simulator::at_pos`
 * Okodowanie `CB_selector` i `CB_gen`
 	* Generacja ciał niebieskich różnych typów
 	* Usuwanie ciał niebieskich
 	* Modyfikacja parametrów ciał niebieskich
-* `UI_state::hint_text`
 * Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)

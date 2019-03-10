@@ -49,7 +49,7 @@ class UI_state :public sf::Drawable
 	
 	std::list<hint_text> hint_texts;
 	UI_tool* curr;
-	unsigned int last_ht_winoffset;
+	int last_ht_winoffset;
 	sf::Text* status_text;
 	Simulator* sim;
 	sf::Vector2f* whatlook;
@@ -96,6 +96,20 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 {
 	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick;
 	void pop_body();
+	protected:
+	
+	public:
+	static const std::string nam;
+	virtual const std::string& name() override;
+	CB_selector();
+	virtual void mbp(sf::Event&) override;
+	virtual void mbr(sf::Event&) override;
+	virtual void kbp(sf::Event&) override;
+	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+};
+
+class Sim_chrono :public UI_tool //Simulation pace manager; Odpowiedzialny za sterowanie prędkością symulacji
+{
 	protected:
 	
 	public:

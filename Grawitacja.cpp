@@ -16,12 +16,43 @@ void UI_state::mbr(sf::Event& ev)
 }
 void UI_state::kbp(sf::Event& ev)
 {
+	switch(ev.key)
+	{
+		case sf::Keyboard::G:
+		{
+			push_hint_text("Celestial body generator: Use M to switch between creating planets and stars",1500);
+			switch_tool(new CB_gen);
+			break;
+		}
+		case sf::Keyboard::S:
+		{
+			push_hint_text("Celestial body generator: Use E (or X) to edit (or remove) your current selection.",1500);
+			switch_tool(new CB_selector);
+			break;
+		}
+		case sf::Keyboard::T:
+		{
+			push_hint_text("Simulation pace manager",1500);
+			switch_tool(new Sim_chrono);
+			break;
+		}
+	}
 	if(curr) curr->kbp(ev);
 }
 
 void UI_state::tick()
 {
-	auto last_ht_winoffset_tmp = last_ht_winoffset;
+	const int separ = 20;
+	int tmp_ht_h = last_ht_winoffset;
+	int orto_ht_h = [this](){
+		int orto = (-1)*separ*hint_texts.size()/2.f;
+		return orto;
+	}();
+	if(last_ht_winoffset!=orto_ht_h)
+	{
+		int diff = orto_ht_h - last_ht_winoffset;
+		last_ht_winoffset+=cbrt(diff);
+	}
 	status_text->setPosition(win->mapPixelToCoords({5,5}));
 	status_text->setScale(1/(*scale),1/(*scale));
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
@@ -41,9 +72,9 @@ void UI_state::tick()
 	}
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
 	{
-		x->sf_text.setPosition(win->mapPixelToCoords({(*whatsize).x/2,(*whatsize).y/2+last_ht_winoffset}));
+		x->sf_text.setPosition(win->mapPixelToCoords({(*whatsize).x/2,(*whatsize).y/2+tmp_ht_h}));
 		x->sf_text.setScale(1/(*scale),1/(*scale));
-		last_ht_winoffset_tmp+=20;
+		tmp_ht_h+=separ;
 	}
 }
 
