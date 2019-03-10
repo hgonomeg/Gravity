@@ -11,7 +11,7 @@ class Celestial_body :public sf::Drawable
 	
 	
 	int mass;
-	unsigned short rc;
+	unsigned short rc;	
 	unsigned int purge;
 	sf::Vector2f loc;
 	sf::Vector2f v;
@@ -38,6 +38,8 @@ class Celestial_body :public sf::Drawable
 	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	
+	//zmienne publiczne
+	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
 	
 };
 #endif
