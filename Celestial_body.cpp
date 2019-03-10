@@ -99,7 +99,7 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 	
 }
 
-sf::FloatRect getGlobalBounds()
+sf::FloatRect Celestial_body::getGlobalBounds()
 {
 	return wyglond.getGlobalBounds();
 }
