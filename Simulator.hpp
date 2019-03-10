@@ -3,6 +3,7 @@
 #include <math.h>
 #include "Celestial_body.hpp"
 #include <memory>
+#include <Rect.hpp>
 
 class Simulator :public sf::Drawable
 {
@@ -16,7 +17,7 @@ class Simulator :public sf::Drawable
 	void pause(bool);
 	bool pause();
 	
-	std::list<std::unique_ptr<Celestial_body>>::iterator at_pos(int,int); //zwraca iterator listy do elementu który znajduje się na podanych koordynatach. W razie braku ciał niebieskich o podobnych koordynatach, zwraca list::end().
+	std::list<std::unique_ptr<Celestial_body>>::iterator at_pos(int,int); //funkcja at_pos(int,int) zwraca iterator listy do elementu który znajduje się na podanych koordynatach. W razie braku ciał niebieskich o podobnych koordynatach, zwraca list::end().
 	
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	

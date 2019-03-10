@@ -80,8 +80,22 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const
 
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int y)
 {
-	//To be further implemented
-	return ciala.end();
+	
+	for(auto i=ciala.begin(); i!=ciala.end(); i++) //i jest iteratorem listy
+	{
+		auto w; //FloatRect
+		
+		w=i->sf::CircleShape::getGlobalBounds();
+
+		if(w::contains(x.f,y.f))
+			return i;
+		
+		
+		
+	}
+
+	return ciala.end;
+	
 }
 
 void Simulator::pause(bool rzejak)
