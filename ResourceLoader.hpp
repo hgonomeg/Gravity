@@ -15,7 +15,9 @@ ResourceBase* LoadResources();
 
 #if defined(EXTERNPLEASE)
 extern ResourceBase* zasoby;
+extern sf::Font* fona;
 #else
+sf::Font* fona;
 ResourceBase* zasoby;
 #endif
 

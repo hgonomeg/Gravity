@@ -1,5 +1,6 @@
 #include "Grawitacja.hpp"
 
+
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	//ma byc puste
@@ -56,8 +57,7 @@ UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
 {
 	init_time = sysclck::now();
 	data_waznosci = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
-	czcionka.loadFromMemory(arimo.data,arimo.size);
-	sf_text.setFont(czcionka);
+	sf_text.setFont(*fona);
 	sf_text.setString(tr);
 	sf_text.setCharacterSize(15);
 	sf_text.setFillColor(sf::Color(0,255,0,128));
@@ -126,8 +126,8 @@ int main(int argc, char** argv)
 	float translation_constant=30; 
 
 	rehn.clear(); //wypełnienie okna na czarno
-	sf::Font arimo_font; arimo_font.loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
-	sf::Text status_text(std::string("Loading..."),arimo_font); //informacja o ładowaniu gry
+	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
+	sf::Text status_text(std::string("Loading..."),*fona); //informacja o ładowaniu gry
 	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
 	rehn.draw(status_text); //renderowanie napisu
 	rehn.display(); //zamiana bufora obrazu na karcie graficznej czyli pokazanie tego co wyrenderowane
@@ -286,4 +286,5 @@ int main(int argc, char** argv)
 	}
 	
 	delete zasoby;
+	delete fona;
 }

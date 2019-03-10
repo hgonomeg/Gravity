@@ -37,7 +37,6 @@ class UI_state :public sf::Drawable
 	{
 		sysclck::duration data_waznosci;
 		sysclck::time_point init_time;
-		sf::Font czcionka;
 		public:
 		
 		sf::Text sf_text;
