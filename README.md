@@ -23,6 +23,7 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Podstawa mechanizmu interfejsów graficznych
 	* Wyświetlanie zielonych wiadomości tekstowych
 	* Przełączanie narzędzi GUI
+	* `CB_selector` usuwa ciała niebieskie
 * Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
 	* Każde ciało niebieskie jest rysowane osobno
 	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity
@@ -39,15 +40,14 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
 * Wyświetlanie interfejsów graficznych
 * Stworzenie przycisków w GUI
-* Okodowanie `CB_selector` i `CB_gen`
+* Okodowanie `CB_selector`, `CB_gen` i `Sim_chrono`
 	* Generacja ciał niebieskich różnych typów
-	* Usuwanie ciał niebieskich
 	* Modyfikacja parametrów ciał niebieskich
+	* Stworzenie narzędzia do manipulacji czasem
 * Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
 ## Do rozważenia
-* Przypisanie pewnym klawiszom zmiany tempa symulacji
 * Śledzenie widokiem danego ciała niebieskiego
 * Zapis i odczyt z pliku przez moduł XML
