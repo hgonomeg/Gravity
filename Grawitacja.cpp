@@ -45,16 +45,16 @@ void UI_state::tick()
 	const int separ = 20;
 	int tmp_ht_h = last_ht_winoffset;
 	int orto_ht_h = [this](){
-		int orto = (-1)*separ*hint_texts.size()/2.f;
+		int orto = (int)((-1.f)*(float)separ*(float)hint_texts.size()/2.f);
+		//std::cout<<orto<<'\n';
 		return orto;
+		
 	}();
-	/*
 	if(last_ht_winoffset!=orto_ht_h)
 	{
 		int diff = orto_ht_h - last_ht_winoffset;
 		last_ht_winoffset+=cbrt(diff);
 	}
-	*/
 	status_text->setPosition(win->mapPixelToCoords({5,5}));
 	status_text->setScale(1/(*scale),1/(*scale));
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
@@ -78,6 +78,10 @@ void UI_state::tick()
 		x->sf_text.setScale(1/(*scale),1/(*scale));
 		tmp_ht_h+=separ;
 	}
+	std::chrono::microseconds interval = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
+	fps = (int)(1/((double)interval.count()/1000000.d));
+	set_status_text();
+	last_tick = sysclck::now();
 }
 
 void UI_state::push_hint_text(hint_text&& x)
@@ -88,7 +92,7 @@ void UI_state::push_hint_text(hint_text&& x)
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	if(curr) curr->draw(tgt,st);
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st); std::cout<<(int)(x->sf_text.getFillColor().a)<<'\n';};
+	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st);};
 	tgt.draw(*status_text,st);
 }
 
@@ -121,6 +125,7 @@ UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector
 	win = xt;
 	last_ht_winoffset = 0;
 	stxt->setCharacterSize(15);
+	fps = 0;
 }
 
 Simulator* UI_state::getsim()
@@ -143,8 +148,7 @@ void UI_state::switch_tool(UI_tool* ut)
 
 void UI_state::set_status_text()
 {
-	std::string tmp = "Current tool: ";
-	tmp+=curr->name();
+	std::string tmp = "FPS: "+std::to_string(fps)+" Current tool: "+curr->name();
 	status_text->setString(tmp);
 }
 

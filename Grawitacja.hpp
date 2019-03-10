@@ -47,6 +47,8 @@ class UI_state :public sf::Drawable
 	};
 	private:
 	
+	sysclck::time_point last_tick;
+	int fps;
 	void set_status_text();
 	
 	std::list<hint_text> hint_texts;
