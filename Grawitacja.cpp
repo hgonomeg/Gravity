@@ -177,9 +177,20 @@ int main(int argc, char** argv)
 	rehn.display(); //zamiana bufora obrazu na karcie graficznej czyli pokazanie tego co wyrenderowane
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
-	
+	if(!zasoby->correct)
+	{
+		delete zasoby;
+		delete fona;
+		status_text.setString("Failed loading resources!");
+		status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f);
+		rehn.draw(status_text); 
+		rehn.display();
+		std::this_thread::sleep_for(std::chrono::milliseconds(1500)); 
+		return 1;
+	}
+		
 	UI_state gui(&sim,&rehn,&status_text,&whatlook,&whatsize,&scale);
-	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",5000));
+	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",8000));
 	
 	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
