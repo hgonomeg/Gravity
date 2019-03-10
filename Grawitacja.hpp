@@ -30,7 +30,9 @@ class UI_tool :public sf::Drawable
 
 class UI_state :public sf::Drawable
 {
-	friend class UI_tool;
+	friend class CB_gen;
+	friend class CB_selector;
+	friend class Sim_chrono;
 	using sysclck = std::chrono::high_resolution_clock;
 	public:
 	class hint_text
@@ -95,6 +97,7 @@ class CB_gen :public UI_tool //Celestial_body_gen
 class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkretnym ciele niebieskim. Zawiera możlwiość usuwania ciał
 {
 	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick;
+	std::list<std::unique_ptr<Celestial_body>>::iterator* c_pick_helper;
 	void pop_body();
 	protected:
 	
@@ -115,7 +118,7 @@ class Sim_chrono :public UI_tool //Simulation pace manager; Odpowiedzialny za st
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
-	CB_selector();
+	Sim_chrono();
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;

@@ -78,14 +78,19 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const
 	return ciala.erase(el);
 }
 
-std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int y)
+std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end()
+{
+	return ciala.cend();
+}
+
+std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf::Vector2f& here)
 {
 	
 	for(auto i=ciala.begin(); i!=ciala.end(); i++) //i jest iteratorem listy
 	{
 		auto w=i->get()->getGlobalBounds();
 
-		if(w.contains(x,y))
+		if(w.contains(here))
 			return i;
 		
 		
