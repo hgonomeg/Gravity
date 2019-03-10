@@ -1,6 +1,11 @@
 #include "Grawitacja.hpp"
 
-const std::string CB_gen::name="Celestial body generator";
+const std::string CB_gen::nam="Celestial body generator";
+
+const std::string& CB_gen::name()
+{
+	return nam;
+}
 
 void CB_gen::mbp(sf::Event& ev)
 {

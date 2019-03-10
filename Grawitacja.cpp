@@ -20,19 +20,23 @@ void UI_state::kbp(sf::Event& ev)
 
 void UI_state::tick()
 {
-	auto& vue = win->getViewport();
+	auto last_ht_winoffset_tmp = last_ht_winoffset;
+	status_text->setPosition(win->mapPixelToCoords({5,5}));
+	status_text->setScale(1/(*scale),1/(*scale));
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
 	{
 		 if(x->przeterminowane())
 		 {
-			x->setFillColor(x->getFillColor()-sf::Color(1,1,1));
-			if(x->getFillColor().r==0) x=hint_texts.erase(x);
+			x->sf_text.setFillColor(x->sf_text.getFillColor()-sf::Color(0,0,0,1));
+			if(x->sf_text.getFillColor().a==0) x=hint_texts.erase(x);
 		 }
 		 else x++;
 	}
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
 	{
-		
+		x->sf_text.setPosition(win->mapPixelToCoords({(*whatsize).x/2,(*whatsize).y/2+last_ht_winoffset}));
+		x->sf_text.setScale(1/(*scale),1/(*scale));
+		last_ht_winoffset_tmp+=20;
 	}
 }
 
@@ -44,35 +48,38 @@ void UI_state::push_hint_text(hint_text&& x)
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	if(curr) curr->draw(tgt,st);
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) tgt.draw(x->sf_text,st);
+	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st); };
 	tgt.draw(*status_text,st);
 }
 
 UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
-:text(tr),
- sf_text(text,czcionka,15)
 {
 	init_time = sysclck::now();
 	data_waznosci = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
 	czcionka.loadFromMemory(arimo.data,arimo.size);
+	sf_text.setFont(czcionka);
+	sf_text.setString(tr);
+	sf_text.setCharacterSize(50);
 	sf_text.setFillColor(sf::Color(0,255,0,128));
-	
+	sf_text.setOutlineThickness(0);
 }
 bool UI_state::hint_text::przeterminowane()
 {
-	return data_waznosci>(sysclck::now()-init_time);
+	return data_waznosci<(sysclck::now()-init_time);
 }
 
-UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
+UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector2f* wl,sf::Vector2u* ws, float* sc)
 {
 	status_text=stxt;
+	whatlook = wl;
+	whatsize = ws;
+	scale = sc;
 	curr = NULL;
 	switch_tool(new CB_gen);
 	sim = sjm;
 	win = xt;
 	last_ht_winoffset = 0;
 	stxt->setCharacterSize(15);
-	stxt->setPosition(5,5);
 }
 
 Simulator* UI_state::getsim()
@@ -90,6 +97,14 @@ void UI_state::switch_tool(UI_tool* ut)
 	if(curr) delete curr;
 	curr = ut;
 	curr->patris=this;
+	set_status_text();
+}
+
+void UI_state::set_status_text()
+{
+	std::string tmp = "Current tool: ";
+	tmp+=curr->name();
+	status_text->setString(tmp);
 }
 
 
@@ -118,8 +133,8 @@ int main(int argc, char** argv)
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
 	
-	UI_state gui(&sim,&status_text);
-	void push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",5000));
+	UI_state gui(&sim,&rehn,&status_text,&whatlook,&whatsize,&scale);
+	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",5000));
 	
 	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
@@ -261,9 +276,9 @@ int main(int argc, char** argv)
 			}
 		}
 		perform_translation();
+		gui.tick();
 		rehn.clear();
 		rehn.draw(sim);
-		gui.tick();
 		rehn.draw(gui);
 		rehn.display();
 		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
