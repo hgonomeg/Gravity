@@ -8,7 +8,8 @@
 #include <thread>
 #include <mutex>
 #include <future>
-
+#include <chrono>
+#include <list>
 
 class UI_state;
 
@@ -19,7 +20,8 @@ class UI_tool :public sf::Drawable
 	UI_state* patris;
 	
 	public:
-	static const std::string name;
+	static const std::string nam;
+	virtual const std::string& name() = 0;
 	virtual void mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
 	virtual void kbp(sf::Event&) = 0;
@@ -28,16 +30,44 @@ class UI_tool :public sf::Drawable
 
 class UI_state :public sf::Drawable
 {
+	friend class UI_tool;
+	using sysclck = std::chrono::high_resolution_clock;
+	public:
+	class hint_text
+	{
+		sysclck::duration data_waznosci;
+		sysclck::time_point init_time;
+		sf::Font czcionka;
+		public:
+		
+		sf::Text sf_text;
+		hint_text(const std::string&,unsigned int);
+		bool przeterminowane();
+	};
+	private:
+	
+	void set_status_text();
+	
+	std::list<hint_text> hint_texts;
 	UI_tool* curr;
+	unsigned int last_ht_winoffset;
+	sf::Text* status_text;
 	Simulator* sim;
+	sf::Vector2f* whatlook;
+	sf::Vector2u* whatsize;
+	float* scale;
+	sf::RenderWindow* win;
  	public:
+	
 	~UI_state();
-	UI_state(Simulator*);
+	UI_state(Simulator*,sf::RenderWindow*,sf::Text*,sf::Vector2f*,sf::Vector2u*,float*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
 	void mbr(sf::Event&);
 	void kbp(sf::Event&);
+	void push_hint_text(hint_text&&);
+	void tick();
 	Simulator* getsim();
 };
 
@@ -53,7 +83,8 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	protected:
 	
 	public:
-	static const std::string name;
+	static const std::string nam;
+	virtual const std::string& name() override;
 	CB_gen();
 	unsigned mass_multiplier;
 	virtual void mbp(sf::Event&) override;
@@ -69,7 +100,8 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 	protected:
 	
 	public:
-	static const std::string name;
+	static const std::string nam;
+	virtual const std::string& name() override;
 	CB_selector();
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;

@@ -1,6 +1,10 @@
 #include "Grawitacja.hpp"
 
-const std::string CB_selector::name="Celestial body selector";
+const std::string CB_selector::nam="Celestial body selector";
+const std::string& CB_selector::name()
+{
+	return nam;
+}
 
 void CB_selector::mbp(sf::Event& ev)
 {

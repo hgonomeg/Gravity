@@ -11,7 +11,8 @@ class Celestial_body :public sf::Drawable
 	
 	
 	int mass;
-	unsigned short rc, purge;
+	unsigned short rc;
+	unsigned int purge;
 	sf::Vector2f loc;
 	sf::Vector2f v;
 	sf::CircleShape wyglond;
