@@ -55,17 +55,17 @@ int main(int argc, char** argv)
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,960),"Grawitacja");
 	rehn.setFramerateLimit(60);
-	rehn.setKeyRepeatEnabled(false);
+	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
 	rehn.clear(); //wypełnienie okna na czarno
 	sf::Vector2f whatlook(0,0);
-	sf::Vector2u whatsize(rehn.getSize());
+	sf::Vector2u whatsize(rehn.getSize()); //
 	float scale=1;
 	bool translkeys[4] = {0};
-	float translation_constant=30;
+	float translation_constant=30; 
 	sf::Font arimo_font; arimo_font.loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
 	sf::Text status_text(std::string("Loading..."),arimo_font); //informacja o ładowaniu gry
 	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
-	rehn.draw(status_text); //narysowanie napisu
+	rehn.draw(status_text); //renderowanie napisu
 	rehn.display(); //zamiana bufora obrazu na karcie graficznej czyli pokazanie tego co wyrenderowane
 	//std::this_thread::sleep_for(std::chrono::milliseconds(500)); //czekanie 500 milisekund
 	zasoby = LoadResources(); //ładowanie gry
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
 		{
 			switch(ev.type)
 			{
-				case sf::Event::Closed:
+				case sf::Event::Closed: // okno zamknięte
 				{
 					rehn.close();
 					break;

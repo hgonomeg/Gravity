@@ -48,7 +48,7 @@ void Celestial_body::refresh()
 				if(purge>1000)
 				{
 					purge=0;
-					slad.erase(slad.begin(),std::find_if(slad.rbegin(),slad.rend(),[](const sf::Vertex& xe){return xe.color.r==0;}).base());
+					slad.erase(slad.begin(),std::find_if(slad.rbegin(),slad.rend(),[](const sf::Vertex& xe){return xe.color.r==0;}).base()); //slad jest wektorem którego usuwamy początek
 					break;	
 				}
 				
