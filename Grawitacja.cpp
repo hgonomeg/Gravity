@@ -325,7 +325,6 @@ int main(int argc, char** argv)
 						translkeys[3]=false;
 						break;
 					}
-					default: gui.kbp(ev);
 					}
 					break;
 				}

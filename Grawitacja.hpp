@@ -78,18 +78,24 @@ class CB_gen :public UI_tool //Celestial_body_gen
 {
 	Planet::planetary_classification temp_planet;
 	Star::stellar_classification temp_star; 
+	
 	enum cb_type 
 	{
 		Planet,
 		Star
 	} currently_picked;
+	
+	int current_mass;
+	bool active_state;
+	sf::Vector2f rel_init;
+	sf::Vector2f rel_end;
+	void add_body();
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	CB_gen();
-	unsigned mass_multiplier;
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
