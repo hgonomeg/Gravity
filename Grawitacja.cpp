@@ -52,8 +52,9 @@ void UI_state::tick()
 	}();
 	if(last_ht_winoffset!=orto_ht_h)
 	{
+		auto sgn = [](int a)->int{return a>=0? 1 : -1;};
 		int diff = orto_ht_h - last_ht_winoffset;
-		last_ht_winoffset+=cbrt(diff);
+		last_ht_winoffset+=cbrt(cbrt(diff+1));
 	}
 	status_text->setPosition(win->mapPixelToCoords({5,5}));
 	status_text->setScale(1/(*scale),1/(*scale));
