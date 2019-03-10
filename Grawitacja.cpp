@@ -28,8 +28,14 @@ void UI_state::tick()
 	{
 		 if(x->przeterminowane())
 		 {
-			x->sf_text.setFillColor(x->sf_text.getFillColor()-sf::Color(0,0,0,1));
 			if(x->sf_text.getFillColor().a==0) x=hint_texts.erase(x);
+			else
+			{
+				auto col = x->sf_text.getFillColor();
+				col.a--;
+				x->sf_text.setFillColor(col);
+				x++;
+			}
 		 }
 		 else x++;
 	}
@@ -49,7 +55,7 @@ void UI_state::push_hint_text(hint_text&& x)
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	if(curr) curr->draw(tgt,st);
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st); std::cout<<(x->sf_text.getGlobalBounds().width)<<" "<<(std::string)(x->sf_text.getString())<<'\n';};
+	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st); std::cout<<(int)(x->sf_text.getFillColor().a)<<'\n';};
 	tgt.draw(*status_text,st);
 }
 
@@ -60,9 +66,10 @@ UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
 	sf_text.setFont(*fona);
 	sf_text.setString(tr);
 	sf_text.setCharacterSize(15);
-	sf_text.setFillColor(sf::Color(0,255,0,128));
+	sf_text.setFillColor(sf::Color(0,255,0,200));
 	sf_text.setStyle(sf::Text::Regular);
-	sf_text.setOutlineThickness(10);
+	sf_text.setOutlineThickness(0);
+	sf_text.setOrigin(sf_text.getLocalBounds().width/2.f,sf_text.getLocalBounds().height/2.f);
 }
 bool UI_state::hint_text::przeterminowane()
 {
