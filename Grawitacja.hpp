@@ -35,21 +35,24 @@ class UI_state :public sf::Drawable
 	{
 		std::string text;
 		sf::Font czcionka;
-		sf::Text sf_text;
 		sysclck::duration data_waznosci;
 		sysclck::time_point init_time;
 		public:
+		sf::Text sf_text;
 		hint_text(const std::string&,unsigned int);
 		bool przeterminowane();
 	};
 	private:
 	std::list<hint_text> hint_texts;
 	UI_tool* curr;
+	std::string status_msg;
+	unsigned int last_ht_winoffset;
 	sf::Text* status_text;
 	Simulator* sim;
+	sf::RenderWindow* win;
  	public:
 	~UI_state();
-	UI_state(Simulator*,sf::Text*);
+	UI_state(Simulator*,sf::Window*,sf::Text*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
