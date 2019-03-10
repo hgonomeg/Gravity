@@ -9,6 +9,7 @@
 #include <mutex>
 #include <future>
 #include <chrono>
+#include <list>
 
 class UI_state;
 
@@ -42,17 +43,19 @@ class UI_state :public sf::Drawable
 		bool przeterminowane();
 	};
 	private:
+	std::list<hint_text> hint_texts;
 	UI_tool* curr;
+	sf::Text* status_text;
 	Simulator* sim;
  	public:
 	~UI_state();
-	UI_state(Simulator*);
+	UI_state(Simulator*,sf::Text*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
 	void mbr(sf::Event&);
 	void kbp(sf::Event&);
-	void push_hint_text(UI_state);
+	void push_hint_text(hint_text&&);
 	void tick();
 	Simulator* getsim();
 };

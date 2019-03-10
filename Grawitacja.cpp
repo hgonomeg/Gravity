@@ -2,7 +2,7 @@
 
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	
+	//ma byc puste
 }
 
 void UI_state::mbp(sf::Event& ev)
@@ -18,16 +18,53 @@ void UI_state::kbp(sf::Event& ev)
 	if(curr) curr->kbp(ev);
 }
 
+void UI_state::tick()
+{
+	for(auto x=hint_texts.begin();x!=hint_texts.end();)
+	{
+	 if(x->przeterminowane())
+	 {
+	 	x=hint_texts.erase(x);
+	 }
+	 else x++;
+	}
+}
+
+void UI_state::push_hint_text(hint_text&& x)
+{
+	hint_texts.push_back(std::forward(x));
+}
+
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	if(curr) curr->draw(tgt,st);
+	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) tgt.draw(x->sf_text,st);
+	status_text->draw(tgt,st);
 }
 
-UI_state::UI_state(Simulator* sjm)
+UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
+:text(tr),
+ sf_text(text,czcionka,15)
 {
+	init_time = sysclck::now();
+	data_waznosci = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
+	czcionka.loadFromMemory(arimo.data,arimo.size);
+	sf_text.setColor(sf::Color(0,255,0,128));
+	
+}
+bool UI_state::hint_text::przeterminowane()
+{
+	return data_waznosci>(sysclck::now()-init_time);
+}
+
+UI_state::UI_state(Simulator* sjm,sf::Text* stxt)
+{
+	status_text=stxt;
 	curr = new CB_gen;
 	curr->patris=this;
 	sim = sjm;
+	stxt->setCharacterSize(15);
+	stxt->setPosition(5,5);
 }
 
 Simulator* UI_state::getsim()
