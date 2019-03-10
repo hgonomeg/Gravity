@@ -83,11 +83,9 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(int x,int
 	
 	for(auto i=ciala.begin(); i!=ciala.end(); i++) //i jest iteratorem listy
 	{
-		auto w; //FloatRect
-		
-		w=i->sf::CircleShape::getGlobalBounds();
+		auto w=i->get()->wyglond.getGlobalBounds();
 
-		if(w::contains(x.f,y.f))
+		if(w.contains(x,y))
 			return i;
 		
 		
