@@ -50,7 +50,7 @@ void UI_state::tick()
 	{
 		auto sgn = [](int a)->int{return a>=0? 1 : -1;};
 		int diff = orto_ht_h - last_ht_winoffset;
-		last_ht_winoffset+=cbrt(cbrt(diff+1));
+		last_ht_winoffset+=cbrt(diff);
 	}
 	status_text->setPosition(win->mapPixelToCoords({5,5}));
 	status_text->setScale(1/(*scale),1/(*scale));
@@ -124,6 +124,7 @@ UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector
 	stxt->setCharacterSize(15);
 	fps = 0;
 	masterpanel = new UI_masterpanel;
+	masterpanel -> patris = this;
 }
 
 Simulator* UI_state::getsim()

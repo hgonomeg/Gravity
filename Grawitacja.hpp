@@ -107,8 +107,10 @@ class CB_gen :public UI_tool //Celestial_body_gen
 
 class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkretnym ciele niebieskim. Zawiera możlwiość usuwania ciał
 {
-	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick;
-	std::list<std::unique_ptr<Celestial_body>>::iterator* c_pick_helper;
+	Celestial_body* c_pick;
+	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick_iter;
+	unsigned int pick_id;
+	bool verify_body();
 	void pop_body();
 	protected:
 	

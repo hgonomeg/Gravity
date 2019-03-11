@@ -3,12 +3,14 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <vector>
+#include <utility>
 #include <algorithm>
 #include <iostream>
 
 class Celestial_body :public sf::Drawable
 {
-	
+	static unsigned int Global_ID;
+	static std::vector<bool> alloc_diagram;
 	
 	int mass;
 	unsigned short rc;	
@@ -19,13 +21,12 @@ class Celestial_body :public sf::Drawable
 	sf::Color thecol;
 	std::vector<sf::Vertex> slad;
 	float radius;
-	static unsigned int Global_ID;
 	unsigned int Local_ID;
 	
 	public:
 	
 	Celestial_body(int,const sf::Color& et=sf::Color::White,const sf::Vector2f& ye={0,0},const sf::Vector2f& ey={0,0}); 
-	
+	~Celestial_body();
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override; // "override" upewnienie się nadpisania metody z klasy od której dziedziczymy
 	virtual void draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const;
 	int& get_mass();
@@ -37,7 +38,7 @@ class Celestial_body :public sf::Drawable
 	sf::FloatRect getGlobalBounds();
 	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
-	
+	static const std::vector<bool>& get_alloc_diagram();
 	//zmienne publiczne
 	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
 	

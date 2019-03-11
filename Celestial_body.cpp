@@ -2,6 +2,7 @@
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
+std::vector<bool> Celestial_body::alloc_diagram = std::vector<bool>();
 
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -83,7 +84,18 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setPosition(loc);
 	slad.emplace_back(sf::Vertex(loc,sf::Color(255,255,255)));
 	Local_ID=Global_ID; 
+	alloc_diagram.push_back(true);
 	Global_ID++;
+}
+
+const std::vector<bool>& Celestial_body::get_alloc_diagram()
+{
+	return alloc_diagram;
+}
+
+Celestial_body::~Celestial_body()
+{
+	alloc_diagram[Local_ID]=false;
 }
 
 float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
