@@ -168,7 +168,6 @@ int main(int argc, char** argv)
 	sf::Vector2u whatsize(rehn.getSize());
 	float scale=1;
 	bool translkeys[4] = {0};
-	bool zmiana_znikacza[2] = {0};
 	float translation_constant=30; 
 
 	rehn.clear(); //wypełnienie okna na czarno
@@ -236,22 +235,7 @@ int main(int argc, char** argv)
 		}
 	};
 	
-	auto zmien_znikacza = [&](){
-		if(zmiana_znikacza[0]) //K zmniejszeie
-		{
-			if(Celestial_body::znikacz_sladu==1)
-			{
-				gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",1000));
-			}
-			else
-			Celestial_body::znikacz_sladu--;
-			
-		}
-		if(zmiana_znikacza[1]) //O zwiekszenie
-		{
-			Celestial_body::znikacz_sladu++;
-		}
-	};
+
 	
 	while(rehn.isOpen())
 	{
@@ -306,12 +290,17 @@ int main(int argc, char** argv)
 					}
 					case sf::Keyboard::K: //zmniejszenie zikacza
 					{
-						zmiana_znikacza[0]=true;
+						if(Celestial_body::znikacz_sladu==1)
+						{
+							gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",1000));
+						}
+						else
+						Celestial_body::znikacz_sladu--;
 						break;
 					}
 					case sf::Keyboard::O: //zwiekszenie zikacza
 					{
-						zmiana_znikacza[1]=true;
+						Celestial_body::znikacz_sladu++;
 						break;
 					}
 					default: gui.kbp(ev);
@@ -355,23 +344,12 @@ int main(int argc, char** argv)
 						translkeys[3]=false;
 						break;
 					}
-					case sf::Keyboard::K: //zmniejszenie zikacza
-					{
-						zmiana_znikacza[0]=false;
-						break;
-					}
-					case sf::Keyboard::O: //zwiekszenie zikacza
-					{
-						zmiana_znikacza[1]=false;
-						break;
-					}
 					}
 					break;
 				}
 			}
 		}
 		perform_translation();
-		zmien_znikacza();
 		gui.tick();
 		rehn.clear();
 		rehn.draw(sim);
