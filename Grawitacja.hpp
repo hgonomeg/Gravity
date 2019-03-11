@@ -32,7 +32,7 @@ class UI_state :public sf::Drawable
 {
 	friend class CB_gen;
 	friend class CB_selector;
-	friend class Sim_chrono;
+	friend class UI_masterpanel;
 	using sysclck = std::chrono::high_resolution_clock;
 	public:
 	class hint_text
@@ -53,6 +53,7 @@ class UI_state :public sf::Drawable
 	
 	std::list<hint_text> hint_texts;
 	UI_tool* curr;
+	UI_masterpanel* masterpanel;
 	int last_ht_winoffset;
 	sf::Text* status_text;
 	Simulator* sim;
@@ -119,14 +120,14 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 };
 
-class Sim_chrono :public UI_tool //Simulation pace manager; Odpowiedzialny za sterowanie prędkością symulacji
+class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_state
 {
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
-	Sim_chrono();
+	UI_masterpanel();
 	virtual void mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;

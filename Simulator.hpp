@@ -11,19 +11,22 @@ class Simulator :public sf::Drawable
 	
 	static float STEPPPING_RATE;
 	
-	bool paused;
+	bool paused, draw_traces;
+	
 	std::list<std::unique_ptr<Celestial_body>> ciala;
+	
 	public:
 	
 	void tick();
 	void pause(bool);
 	bool pause();
+	void add_body(Celestial_body*);
+	void toggle_traces();
+	Simulator();
 	
 	std::list<std::unique_ptr<Celestial_body>>::iterator at_pos(const sf::Vector2f&); //funkcja at_pos(int,int) zwraca iterator listy do elementu który znajduje się na podanych koordynatach. W razie braku ciał niebieskich o podobnych koordynatach, zwraca list::end().
 	
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
-	
-	void add_body(Celestial_body*);
 	std::list<std::unique_ptr<Celestial_body>>::iterator erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el);
 	std::list<std::unique_ptr<Celestial_body>>::const_iterator get_end();
 };

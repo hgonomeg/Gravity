@@ -9,6 +9,7 @@ void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 void UI_state::mbp(sf::Event& ev)
 {
 	if(curr) curr->mbp(ev);
+	masterpanel -> mbp(ev);
 }
 void UI_state::mbr(sf::Event& ev)
 {
@@ -30,14 +31,9 @@ void UI_state::kbp(sf::Event& ev)
 			switch_tool(new CB_selector);
 			break;
 		}
-		case sf::Keyboard::T:
-		{
-			push_hint_text(hint_text("Simulation pace manager: Nothing to do here yet.",1500));
-			switch_tool(new Sim_chrono);
-			break;
-		}
 	}
 	if(curr) curr->kbp(ev);
+	masterpanel -> kbp(ev);
 }
 
 void UI_state::tick()
@@ -127,6 +123,7 @@ UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector
 	last_ht_winoffset = 0;
 	stxt->setCharacterSize(15);
 	fps = 0;
+	masterpanel = new UI_masterpanel;
 }
 
 Simulator* UI_state::getsim()
@@ -137,6 +134,7 @@ Simulator* UI_state::getsim()
 UI_state::~UI_state()
 {
 	delete curr;
+	delete masterpanel;
 }
 
 void UI_state::switch_tool(UI_tool* ut)
@@ -191,8 +189,9 @@ int main(int argc, char** argv)
 	}
 		
 	UI_state gui(&sim,&rehn,&status_text,&whatlook,&whatsize,&scale);
-	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",8000));
-	gui.push_hint_text(UI_state::hint_text("Use T (Timing Manager), G (Generator) and S (Selector) to switch between UI tools.",5000));
+	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
+	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
+	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));
 	
 	sim.add_body(new Planet(12,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(10,{250,250},{-1.2,2.4}));
@@ -288,7 +287,7 @@ int main(int argc, char** argv)
 						translkeys[3]=true;
 						break;
 					}
-					case sf::Keyboard::K: //zmniejszenie zikacza
+					case sf::Keyboard::K: //zmniejszenie znikacza
 					{
 						if(Celestial_body::znikacz_sladu==1)
 						{
@@ -298,9 +297,19 @@ int main(int argc, char** argv)
 						Celestial_body::znikacz_sladu--;
 						break;
 					}
-					case sf::Keyboard::O: //zwiekszenie zikacza
+					case sf::Keyboard::O: //zwiekszenie znikacza
 					{
 						Celestial_body::znikacz_sladu++;
+						break;
+					}
+					case sf::Keyboard::H: //zwiekszenie znikacza
+					{
+						gui.push_hint_text(UI_state::hint_text("CONTROLS",25000));
+						gui.push_hint_text(UI_state::hint_text("S - switch to Celestial body selector",25000));
+						gui.push_hint_text(UI_state::hint_text("G - switch to Celestial body generator",25000));
+						gui.push_hint_text(UI_state::hint_text("O / K - increase / decrease the length of orbital paths",25000));
+						gui.push_hint_text(UI_state::hint_text("P - Pause simulation",25000));
+						gui.push_hint_text(UI_state::hint_text("L - toggle orbital paths",25000));
 						break;
 					}
 					default: gui.kbp(ev);

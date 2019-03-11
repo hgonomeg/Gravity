@@ -59,7 +59,7 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	for(auto& x: ciala)
 	{
 		if(!paused) x.get()->refresh();
-		x.get()->draw_trace(tgt,st);
+		if(draw_traces) x.get()->draw_trace(tgt,st);
 		
 	}
 	for(auto& x: ciala)
@@ -110,4 +110,15 @@ void Simulator::pause(bool rzejak)
 bool Simulator::pause()
 {
 	return paused;
+}
+
+void Simulator::toggle_traces()
+{
+	draw_traces=!draw_traces;
+}
+
+Simulator::Simulator()
+{
+	paused = false;
+	draw_traces = true;
 }
