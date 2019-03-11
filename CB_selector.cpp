@@ -69,6 +69,7 @@ void CB_selector::pop_body()
 		}
 		else c_pick = NULL;
 	}
+	else patris->push_hint_text(UI_state::hint_text("Nothing selected!",500));
 }
 
 CB_selector::CB_selector()
