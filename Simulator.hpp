@@ -8,6 +8,9 @@ class Simulator :public sf::Drawable
 {
 	
 	static const float G;
+	
+	static float STEPPPING_RATE;
+	
 	bool paused;
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	public:

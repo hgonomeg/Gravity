@@ -1,6 +1,7 @@
 #include "Simulator.hpp"
 
-const float Simulator::G = 0.1;
+const float Simulator::G = 0.5;
+float Simulator::STEPPPING_RATE = 1.f;
 
 void Simulator::tick()
 {
@@ -25,8 +26,8 @@ void Simulator::tick()
 			sf::Vector2f sila_graw_vec={diff_x,diff_y};
 			sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 			
-			left_v-=sila_graw_vec/(float)left_mass*5.f;
-			right_v+=sila_graw_vec/(float)right_mass*5.f;
+			left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
+			right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
 			
 			
 			
@@ -48,7 +49,7 @@ void Simulator::tick()
 			for(auto j=ciala.begin(); j!=ciala.end(); j++)
 			{
 				auto q=j->get();
-				q->get_loc()+=(q->get_v()); 
+				q->get_loc()+=(q->get_v())*STEPPPING_RATE; 
 			}
 		}
 }

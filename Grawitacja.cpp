@@ -292,7 +292,7 @@ int main(int argc, char** argv)
 					{
 						if(Celestial_body::znikacz_sladu==1)
 						{
-							gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",1000));
+							gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",3000));
 						}
 						else
 						Celestial_body::znikacz_sladu--;

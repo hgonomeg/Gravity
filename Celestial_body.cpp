@@ -33,7 +33,7 @@ sf::Vector2f& Celestial_body::get_v()
 void Celestial_body::refresh()
 {
 
-		if(rc==znikacz_sladu) rc=0;
+		if(rc>=znikacz_sladu) rc=0;
 		if(rc==0)
 		{
 			for(auto iter=slad.begin();iter!=slad.end();iter++)
