@@ -28,6 +28,8 @@ class UI_tool :public sf::Drawable
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 };
 
+class UI_masterpanel;
+
 class UI_state :public sf::Drawable
 {
 	friend class CB_gen;

@@ -1,30 +1,37 @@
 #include "Grawitacja.hpp"
 
-const std::string Sim_chrono::nam="Simulation pace manager";
+const std::string UI_masterpanel::nam="Simulation pace manager";
 
-const std::string& Sim_chrono::name()
+const std::string& UI_masterpanel::name()
 {
 	return nam;
 }
 
-void Sim_chrono::mbp(sf::Event& ev)
+void UI_masterpanel::mbp(sf::Event& ev)
 {
 	
 }
-void Sim_chrono::mbr(sf::Event& ev)
+void UI_masterpanel::mbr(sf::Event& ev)
 {
 	
 }
-void Sim_chrono::kbp(sf::Event& ev)
+void UI_masterpanel::kbp(sf::Event& ev)
 {
-	
+	switch(ev.key.code)
+	{
+		case sf::Keyboard::L:
+		{
+			patris->getsim()->toggle_traces();
+			break;
+		}
+	}
 }
-void Sim_chrono::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
+void UI_masterpanel::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	
 }
 
-Sim_chrono::Sim_chrono()
+UI_masterpanel::UI_masterpanel()
 {
 	
 }
