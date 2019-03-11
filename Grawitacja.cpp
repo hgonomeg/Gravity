@@ -168,7 +168,7 @@ int main(int argc, char** argv)
 	sf::Vector2u whatsize(rehn.getSize());
 	float scale=1;
 	bool translkeys[4] = {0};
-	bool zmiana_znikacza[1] = {0};
+	bool zmiana_znikacza[2] = {0};
 	float translation_constant=30; 
 
 	rehn.clear(); //wypełnienie okna na czarno
