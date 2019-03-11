@@ -1,6 +1,7 @@
 #include "Celestial_body.hpp"
 
 unsigned int Celestial_body::Global_ID=0;
+unsigned int Celestial_body::znikacz_sladu=5;
 
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -32,7 +33,7 @@ sf::Vector2f& Celestial_body::get_v()
 void Celestial_body::refresh()
 {
 
-		if(rc==5) rc=0;
+		if(rc==znikacz_sladu) rc=0;
 		if(rc==0)
 		{
 			for(auto iter=slad.begin();iter!=slad.end();iter++)
@@ -60,9 +61,10 @@ void Celestial_body::refresh()
 		wyglond.setPosition(loc);
 }
 
+
 unsigned int Celestial_body::get_id()
 {
-	return Local_ID;;
+	return Local_ID;
 }
 
 Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vector2f& iloc,const sf::Vector2f& iv)
