@@ -11,8 +11,12 @@ void CB_selector::mbp(sf::Event& ev)
 	if(ev.mouseButton.button==sf::Mouse::Button::Left)
 	{
 	c_pick_iter = patris->getsim()->at_pos(patris->win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
-	c_pick =  c_pick_iter->get();
-	pick_id = c_pick->get_id();
+	if(c_pick_iter!=patris->getsim()->get_end())	
+		{
+		c_pick =  c_pick_iter->get();
+		pick_id = c_pick->get_id();
+		}
+	else c_pick = NULL;
 	}
 }
 void CB_selector::mbr(sf::Event& ev)
@@ -58,8 +62,12 @@ void CB_selector::pop_body()
 	if(verify_body())
 	{
 		c_pick_iter = patris->getsim()->erase_body(c_pick_iter);
+		if(c_pick_iter!=patris->getsim()->get_end())	
+		{
 		c_pick =  c_pick_iter->get();
 		pick_id = c_pick->get_id();
+		}
+		else c_pick = NULL;
 	}
 }
 
