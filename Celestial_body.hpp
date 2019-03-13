@@ -46,6 +46,7 @@ class Celestial_body :public sf::Drawable
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	static const std::vector<bool>& get_alloc_diagram();
 	static void collision_handle(Celestial_body*, Celestial_body*&);
+
 	
 	
 	

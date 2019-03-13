@@ -27,7 +27,7 @@ void UI_state::kbp(sf::Event& ev)
 		}
 		case sf::Keyboard::S:
 		{
-			push_hint_text(hint_text("Celestial body generator: Use E (or X) to edit (or remove) your current selection.",1500));
+			push_hint_text(hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
 			switch_tool(new CB_selector);
 			break;
 		}

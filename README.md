@@ -10,7 +10,7 @@ Banalny symulator grawitacji i planet, SFML, C++.
 ## Możliwości programu
 * Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
 * Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
-* Zcalanie ciał niebieskich w razie kolizji (planety wchłaniają asteroidy, a gwiazdy wchłaniają wszystko pozostałe).
+* Scalanie ciał niebieskich w razie kolizji (planety wchłaniają asteroidy, a gwiazdy wchłaniają wszystko pozostałe).
 * Usuwanie istniejących ciał niebieskich.
 * Rozróżnianie między różnymi typami spektralnymi gwiazd oraz różnymi typami planet
 * Kontrola tempa symulacji
@@ -42,11 +42,11 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
 	* Zachowanie momentu pędu
 	* Tworzenie nowego obiektu w zależności od tego jakie obiekty kolidują ze sobą (RTTI na `Celestial_body*`)
-	* Zcalenie śladów w nowym obiekcie `Celestial_body`
+	* Scalenie śladów w nowym obiekcie `Celestial_body`
 	* Usunięcie pierwszego obiektu i nadpisanie drugiego nowym
 * Wyświetlanie interfejsów graficznych
 * Stworzenie przycisków w GUI
-* Okodowanie `CB_selector`, `CB_gen` i `Sim_chrono`
+* Okodowanie `CB_selector`, `CB_gen` i `UI_masterpanel`
 	* Generacja ciał niebieskich różnych typów
 	* Modyfikacja parametrów ciał niebieskich
 	* Stworzenie narzędzia do manipulacji czasem

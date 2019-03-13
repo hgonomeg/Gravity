@@ -214,9 +214,19 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 	
 }
 
+void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body* ojciec)
+{
+	
+}
+
 sf::FloatRect Celestial_body::getGlobalBounds()
 {
 	return wyglond.getGlobalBounds();
+}
+
+const std::vector<sf::Vertex>& Celestial_body::get_trace()
+{
+	return slad;
 }
 
 bool Celestial_body::collision_detec(Celestial_body* CB1, Celestial_body* CB2)
