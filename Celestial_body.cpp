@@ -75,7 +75,11 @@ void Celestial_body::refresh()
 							i->color.b--;
 						}
 					}
-					if(u->front().color.r==0) {u=slady_rodzicow->erase(u); u--;}
+					if(u->back().color.r==0) 
+						{
+						u=slady_rodzicow->erase(u); 
+						if(u==slady_rodzicow->end()) break;
+						}
 				}
 				if(slady_rodzicow->size()==0) {delete slady_rodzicow; slady_rodzicow = NULL; }
 			}
