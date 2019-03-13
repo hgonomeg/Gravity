@@ -1,5 +1,6 @@
 # Grawitacja
-Banalny symulator grawitacji i planet, SFML, C++.
+Prosty symulator grawitacji między ciałami niebieskimi, w tym gwiazdami, planetami i asteroidami.
+SFML, C++11.
 ## Cel projektu
 * Ćwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w języku C++, w tym metod wirtualnych, dziedziczenia.
 * Ćwiczenia korzystania z kontenerów biblioteki standardowej języka C++.
@@ -34,27 +35,31 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	  obiektów oraz stosowanie jej efektów na prędkościach obiektów
 	* Poruszenie każdym ciałem zgodnie z jego prędkością
 * Detekcja kolizji
+* Obsługa kolizji w funkcji statycznej w klasie `Celestial_body`
+	* Zachowanie momentu pędu
+	* Tworzenie nowego obiektu w zależności od mas obiektów kolidujących ze sobą (RTTI na `Celestial_body*`)
+	* Scalenie śladów zderzających się ciał w nowym obiekcie `Celestial_body` i zapisanie ich do specjalnej listy sladów odziedziczonych
+	* Spośród zderzających się obiektów: usunięcie pierwszego (w funkcji `Simulator::tick()`) i nadpisanie drugiego nowopowstałym.
 * Obsługa poprawnego skalowania okna
 * Pauzowanie symulacji
 * Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
 ## Do zrobienia
+* Stworzyć klasę `Asteroid` jako kolejny typ ciał niebieskich
 * Odpowiednie teksturowanie ciał niebieskich
-* Obsługa kolizji w specjalnej funkcji zaprzyjaźnionej
-	* Zachowanie momentu pędu
-	* Tworzenie nowego obiektu w zależności od tego jakie obiekty kolidują ze sobą (RTTI na `Celestial_body*`)
-	* Scalenie śladów w nowym obiekcie `Celestial_body`
-	* Usunięcie pierwszego obiektu i nadpisanie drugiego nowym
 * Wyświetlanie interfejsów graficznych
 * Stworzenie przycisków w GUI
+* Zmiana istniejacej mechaniki renderowania tekstów w klasie `UI_state`
+	* Porzucić skalowanie i translację napisów na rzecz przełączania `sf::View` dla obiektu okna
 * Okodowanie `CB_selector`, `CB_gen` i `UI_masterpanel`
 	* Generacja ciał niebieskich różnych typów
+		* Stworzenie `Textbox` do wybierania masy tworzonego ciała
 	* Modyfikacja parametrów ciał niebieskich
 	* Stworzenie narzędzia do manipulacji czasem
 * Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
+* Rozplanować i dodać tryb sterowalnego statku kosmicznego
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
 ## Do rozważenia
 * Śledzenie widokiem danego ciała niebieskiego
-* Dodać sterowalny statek kosmiczny
 * Zapis i odczyt z pliku przez moduł XML
