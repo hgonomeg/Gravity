@@ -40,6 +40,27 @@ void Simulator::tick()
 				ekaj++;
 				for(auto i=ekaj; i!=ciala.end(); i++)
 				{
+					if(Celestial_body::collision_detec(j->get(),i->get()))
+					{
+						//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+						Celestial_body* ojc=i->release();
+						Celestial_body::collision_handle(j->get(),ojc);	
+						i->reset(ojc);
+						ciala.erase(j); 
+						j=i; j--;
+					}
+				}
+				
+			
+			}
+			
+			for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
+			{
+				
+				auto ekaj=j;
+				ekaj++;
+				for(auto i=ekaj; i!=ciala.end(); i++)
+				{
 					obrob_grawitacje(j->get(),i->get());	
 				}
 				

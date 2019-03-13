@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <math.h>
 #include <vector>
+#include <list>
 #include <utility>
 #include <algorithm>
 #include <iostream>
@@ -11,7 +12,7 @@ class Celestial_body :public sf::Drawable
 {
 	static unsigned int Global_ID;
 	static std::vector<bool> alloc_diagram;
-	
+	unsigned int Local_ID;
 	int mass;
 	unsigned short rc;	
 	unsigned int purge;
@@ -20,8 +21,9 @@ class Celestial_body :public sf::Drawable
 	sf::CircleShape wyglond;
 	sf::Color thecol;
 	std::vector<sf::Vertex> slad;
+	std::list<std::vector<sf::Vertex>>* slady_rodzicow;
 	float radius;
-	unsigned int Local_ID;
+
 	
 	public:
 	
@@ -36,11 +38,16 @@ class Celestial_body :public sf::Drawable
 	unsigned int get_id();
 	void refresh();
 	sf::FloatRect getGlobalBounds();
+	std::list<std::vector<sf::Vertex>> get_traces();
+	//ZMIENNE STATYCZNE
+	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
+	//FUNKCJE STATYCZNE
 	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	static const std::vector<bool>& get_alloc_diagram();
-	//zmienne publiczne
-	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
+	static void collision_handle(Celestial_body*, Celestial_body*&);
+	
+	
 	
 };
 #endif

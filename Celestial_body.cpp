@@ -1,4 +1,5 @@
 #include "Celestial_body.hpp"
+#include "Space_objects.hpp"
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
@@ -12,6 +13,11 @@ void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 void Celestial_body::draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	tgt.draw(&slad[0],slad.size(),sf::LineStrip,st);
+
+	if(slady_rodzicow)
+	{
+		for(auto& x: (*slady_rodzicow)) tgt.draw(&x[0],x.size(),sf::LineStrip,st);
+	}
 }
 
 int& Celestial_body::get_mass() 
@@ -56,6 +62,23 @@ void Celestial_body::refresh()
 				
 					
 			}
+			if(slady_rodzicow)
+			{
+				for(auto u=slady_rodzicow->begin();u!=slady_rodzicow->end();u++)
+				{
+					for(auto i=u->begin();i!=u->end();i++)
+					{
+						if(i->color.r>0)
+						{
+							i->color.r--;
+							i->color.g--;
+							i->color.b--;
+						}
+					}
+					if(u->front().color.r==0) {u=slady_rodzicow->erase(u); u--;}
+				}
+				if(slady_rodzicow->size()==0) {delete slady_rodzicow; slady_rodzicow = NULL; }
+			}
 		}
 		rc++;
 		slad.emplace_back(sf::Vertex(wyglond.getPosition(),sf::Color(255,255,255)));
@@ -86,6 +109,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	Local_ID=Global_ID; 
 	alloc_diagram.push_back(true);
 	Global_ID++;
+	slady_rodzicow = NULL;
 }
 
 const std::vector<bool>& Celestial_body::get_alloc_diagram()
@@ -96,6 +120,83 @@ const std::vector<bool>& Celestial_body::get_alloc_diagram()
 Celestial_body::~Celestial_body()
 {
 	alloc_diagram[Local_ID]=false;
+}
+
+std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
+{
+	std::list<std::vector<sf::Vertex>> ret;
+	ret.push_back(slad);
+	if(slady_rodzicow)
+	{
+		for(auto i=slady_rodzicow->begin();i!=slady_rodzicow->end();i++) ret.push_back(*i);
+	}
+	return ret;
+}
+
+
+
+void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& ojciec)
+{
+	auto S_m=matka->get_traces();
+	auto S_o=ojciec->get_traces();
+	
+	sf::Vector2f V_m, V_o, V_d;
+	int M_m, M_o, M_d;
+	
+	//gettery
+	
+	M_m=matka->get_mass();
+	M_o=ojciec->get_mass();
+	
+	V_m=matka->get_v();
+	V_o=ojciec->get_v();
+	
+	//obliczenia
+	
+	M_d=M_m+M_o;
+	V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(float)M_d;
+	
+	Planet* planeta;
+	Star* gwiazda;
+	Celestial_body* dziecko;
+	
+	
+	if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
+	{
+		planeta=dynamic_cast<Planet*>(matka);
+		gwiazda=dynamic_cast<Star*>(matka);
+		if(planeta==NULL) //obiekt będzie gwiazdą
+		{
+			dziecko=new Star(M_d,matka->get_loc(),V_d);
+		}
+		else //obiekt będzie planetą
+		{
+			dziecko=new Planet(M_d,matka->get_loc(),V_d);
+		}
+	}	
+	else //tu dziecko przyjmie klase ojca
+	{
+		planeta=dynamic_cast<Planet*>(ojciec);
+		gwiazda=dynamic_cast<Star*>(ojciec);
+		if(planeta==NULL) // gwiazda
+		{
+			dziecko=new Star(M_d,ojciec->get_loc(),V_d);
+		}
+		else //obiekt będzie planetą
+		{
+			dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
+		}	
+	}	
+	dziecko->slady_rodzicow = new std::list<std::vector<sf::Vertex>>();
+	for(auto i=S_o.begin();i!=S_o.end();i++)
+	{
+		dziecko->slady_rodzicow->push_back(*i);
+	}
+	for(auto i=S_m.begin();i!=S_m.end();i++)
+	{
+		dziecko->slady_rodzicow->push_back(*i);
+	}
+	delete ojciec; ojciec = dziecko;
 }
 
 float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
