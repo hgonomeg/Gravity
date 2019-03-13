@@ -124,6 +124,7 @@ const std::vector<bool>& Celestial_body::get_alloc_diagram()
 Celestial_body::~Celestial_body()
 {
 	alloc_diagram[Local_ID]=false;
+	if(slady_rodzicow) delete slady_rodzicow;
 }
 
 std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
