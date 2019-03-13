@@ -7,14 +7,16 @@ SFML, C++11.
 * Upłynnienie posługiwania się inteligentnymi wskaźnikami (`std::unique_ptr<>`).
 * Ćwiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
 * Stworzenie prostej zabawki pomagającej zrozumieć działanie mechaniki orbitalnej.
+* Zdobycie doświadczenia w zakresie rysowania treści graficznych i kontroli okna  w bibliotece SFML
 * Bliższe zapoznanie się z mechaniką Git oraz GitHub; ćwiczenia w kooperacji wieloosobowej.
-## Możliwości programu
+## Zadania i możliwości programu
 * Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
 * Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
-* Scalanie ciał niebieskich w razie kolizji (planety wchłaniają asteroidy, a gwiazdy wchłaniają wszystko pozostałe).
+* Scalanie ciał niebieskich w razie kolizji.
 * Usuwanie istniejących ciał niebieskich.
 * Rozróżnianie między różnymi typami spektralnymi gwiazd oraz różnymi typami planet
 * Kontrola tempa symulacji
+* Rozrywkowy tryb polegający na kontroli statku kosmicznego
 ## Opis techniczny
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
 Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedzicyz `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
