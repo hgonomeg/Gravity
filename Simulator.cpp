@@ -48,6 +48,7 @@ void Simulator::tick()
 						i->reset(ojc);
 						ciala.erase(j); 
 						j=i; j--;
+						if(i==ciala.begin()) break;
 					}
 				}
 				
