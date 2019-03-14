@@ -22,6 +22,7 @@ ResourceBase* LoadResources()
 	neter->button_CB_selector = button_tex_gen("S",sf::Color::Green);
 	neter->button_left = button_tex_gen("<",sf::Color::Red);
 	neter->button_right = button_tex_gen(">",sf::Color::Red);
+	neter->button_toggle_traces = button_tex_gen("L",sf::Color::Cyan);
 	
 	return neter;
 }

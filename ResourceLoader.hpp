@@ -14,6 +14,7 @@ struct ResourceBase
 	sf::Texture button_CB_selector;
 	sf::Texture button_right;
 	sf::Texture button_left;
+	sf::Texture button_toggle_traces;
 	bool correct;
 };
 

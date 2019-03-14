@@ -133,6 +133,7 @@ class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_stat
 {
 	Button b_gen;
 	Button b_sel;
+	Button b_traces;
 	protected:
 	
 	public:
