@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	UI_state gui(&sim,&rehn,&status_text,&whatlook,whatsize,&scale);
+	UI_state gui(&sim,&rehn,&status_text);
 	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
 	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
 	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));

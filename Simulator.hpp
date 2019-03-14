@@ -28,6 +28,7 @@ class Simulator :public sf::Drawable
 	
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	std::list<std::unique_ptr<Celestial_body>>::iterator erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el);
+	void erase_body(unsigned int);
 	std::list<std::unique_ptr<Celestial_body>>::const_iterator get_end();
 };
 

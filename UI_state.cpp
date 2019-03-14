@@ -7,8 +7,7 @@ void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 
 void UI_state::mbp(sf::Event& ev)
 {
-	if(curr) curr->mbp(ev);
-	masterpanel -> mbp(ev);
+	if(!masterpanel -> mbp(ev)) if(curr) curr->mbp(ev);
 }
 void UI_state::mbr(sf::Event& ev)
 {
@@ -20,14 +19,20 @@ void UI_state::kbp(sf::Event& ev)
 	{
 		case sf::Keyboard::G:
 		{
+			if(dynamic_cast<CB_gen*>(curr)==NULL)
+			{
 			push_hint_text(hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
 			switch_tool(new CB_gen);
+			}
 			break;
 		}
 		case sf::Keyboard::S:
 		{
+			if(dynamic_cast<CB_selector*>(curr)==NULL)
+			{
 			push_hint_text(hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
 			switch_tool(new CB_selector);
+			}
 			break;
 		}
 	}
@@ -91,6 +96,7 @@ void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	auto pkp = tgt.getView();
 	tgt.setView(sf::View({(float)tgt.getSize().x/2.f,(float)tgt.getSize().y/2.f},{(float)tgt.getSize().x,(float)tgt.getSize().y}));
 	if(curr) curr->draw(tgt,st);
+	masterpanel->draw(tgt,st);
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st);};
 	tgt.draw(*status_text,st);
 	tgt.setView(pkp);
@@ -131,7 +137,7 @@ int UI_state::vertoffset_of_last_ht()
 	return hint_texts.size()*20;
 }
 
-UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector2f* wl,sf::Vector2u* ws, float* sc)
+UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
 {
 	status_text=stxt;
 	curr = NULL;
@@ -154,6 +160,11 @@ Simulator* UI_state::getsim()
 sf::RenderWindow* UI_state::gettgt()
 {
 	return target;
+}
+
+const UI_tool* UI_state::getcurr()
+{
+	return curr;
 }
 
 UI_state::~UI_state()

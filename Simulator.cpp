@@ -96,6 +96,11 @@ void Simulator::add_body(Celestial_body* koles)
 	ciala.push_back(std::unique_ptr<Celestial_body>(koles));
 }
 
+void Simulator::erase_body(unsigned int ajdi)
+{
+	for(auto i=ciala.begin(); i!=ciala.end(); i++) if(i->get()->get_id()==ajdi) {erase_body(i); return;}
+}
+
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el)
 {
 	return ciala.erase(el);

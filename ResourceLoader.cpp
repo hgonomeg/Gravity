@@ -10,7 +10,7 @@ ResourceBase* LoadResources()
 		sf::RenderTexture ren;
 		sf::Text textext(txt,*fona,12);
 		ren.create(15,15);
-		textext.setPosition(3,3);
+		textext.setPosition(3,0);
 		textext.setFillColor(sf::Color::Black);
 		ren.clear(col);
 		ren.draw(textext);

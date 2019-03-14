@@ -49,15 +49,14 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Stworzyć klasę `Asteroid` jako kolejny typ ciał niebieskich
 * Odpowiednie teksturowanie ciał niebieskich
 * Wyświetlanie interfejsów graficznych
+* Przerobić statyczny diagram alokacji w `Celestial_body` z `std::vector<bool>` na `std::map<unsigned int, unsigned int>`
 * Stworzenie przycisków w GUI
-* Zmiana istniejacej mechaniki renderowania tekstów w klasie `UI_state`
-	* Porzucić skalowanie i translację napisów na rzecz przełączania `sf::View` dla obiektu okna
 * Okodowanie `CB_selector`, `CB_gen` i `UI_masterpanel`
 	* Generacja ciał niebieskich różnych typów
 		* Stworzenie `Textbox` do wybierania masy tworzonego ciała
 	* Modyfikacja parametrów ciał niebieskich
 	* Stworzenie narzędzia do manipulacji czasem
-* Generator tekstur przycisków i ładowanie tekstur z pliku w `LoadResources()`
+* Ładowanie tekstur z pliku w `LoadResources()`
 * Rozplanować i dodać tryb sterowalnego statku kosmicznego
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)

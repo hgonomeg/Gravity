@@ -10,6 +10,7 @@
 #include <future>
 #include <chrono>
 #include <list>
+#include "Button.hpp"
 
 class UI_state;
 
@@ -22,7 +23,7 @@ class UI_tool :public sf::Drawable
 	public:
 	static const std::string nam;
 	virtual const std::string& name() = 0;
-	virtual void mbp(sf::Event&) = 0;
+	virtual bool mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
 	virtual void kbp(sf::Event&) = 0;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
@@ -63,7 +64,7 @@ class UI_state :public sf::Drawable
  	public:
 	
 	~UI_state();
-	UI_state(Simulator*,sf::RenderWindow*,sf::Text*,sf::Vector2f*,sf::Vector2u*,float*);
+	UI_state(Simulator*,sf::RenderWindow*,sf::Text*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
@@ -73,6 +74,7 @@ class UI_state :public sf::Drawable
 	void tick();
 	int vertoffset_of_last_ht();
 	Simulator* getsim();
+	const UI_tool* getcurr();
 	sf::RenderWindow* gettgt();
 };
 
@@ -92,13 +94,14 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	sf::Vector2f rel_init;
 	sf::Vector2f rel_end;
 	void add_body();
+	Celestial_body* lbod;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	CB_gen();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
@@ -112,13 +115,14 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 	unsigned int pick_id;
 	bool verify_body();
 	void pop_body();
+	sf::Text napis;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	CB_selector();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
@@ -127,13 +131,15 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 
 class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_state
 {
+	Button b_gen;
+	Button b_sel;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	UI_masterpanel();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
