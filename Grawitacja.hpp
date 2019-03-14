@@ -30,7 +30,7 @@ class UI_tool :public sf::Drawable
 
 class UI_masterpanel;
 
-class UI_state :public sf::Drawable
+class UI_state :public sf::Drawable //usunąć przyjaźnie i ogarnąć renderowanie za pomocą przełączania sf::View a nie bawienie się w skalowanie ze wskaźnikami do rzeczy z maina
 {
 	friend class CB_gen;
 	friend class CB_selector;

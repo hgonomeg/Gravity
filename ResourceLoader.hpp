@@ -3,11 +3,13 @@
 #include "resources/Arimo-Regular.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
+#include <string>
 
 #define RESOURCE_LOADER_HPP
 
 struct ResourceBase
 {
+	std::string except_text;
 	bool correct;
 };
 
