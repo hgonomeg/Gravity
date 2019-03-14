@@ -10,6 +10,7 @@
 #include <future>
 #include <chrono>
 #include <list>
+#include "Button.hpp"
 
 class UI_state;
 
@@ -22,30 +23,30 @@ class UI_tool :public sf::Drawable
 	public:
 	static const std::string nam;
 	virtual const std::string& name() = 0;
-	virtual void mbp(sf::Event&) = 0;
+	virtual bool mbp(sf::Event&) = 0;
 	virtual void mbr(sf::Event&) = 0;
 	virtual void kbp(sf::Event&) = 0;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+	virtual void tick() = 0;
 };
 
 class UI_masterpanel;
 
-class UI_state :public sf::Drawable //usunąć przyjaźnie i ogarnąć renderowanie za pomocą przełączania sf::View a nie bawienie się w skalowanie ze wskaźnikami do rzeczy z maina
+class UI_state :public sf::Drawable 
 {
-	friend class CB_gen;
-	friend class CB_selector;
-	friend class UI_masterpanel;
 	using sysclck = std::chrono::high_resolution_clock;
 	public:
 	class hint_text
 	{
 		sysclck::duration data_waznosci;
 		sysclck::time_point init_time;
-		public:
 		
+		public:
+		int last_vertoffset;
 		sf::Text sf_text;
 		hint_text(const std::string&,unsigned int);
 		bool przeterminowane();
+		int process_height(int);
 	};
 	private:
 	
@@ -59,14 +60,11 @@ class UI_state :public sf::Drawable //usunąć przyjaźnie i ogarnąć renderowa
 	int last_ht_winoffset;
 	sf::Text* status_text;
 	Simulator* sim;
-	sf::Vector2f* whatlook;
-	sf::Vector2u* whatsize;
-	float* scale;
-	sf::RenderWindow* win;
+	sf::RenderWindow* target;
  	public:
 	
 	~UI_state();
-	UI_state(Simulator*,sf::RenderWindow*,sf::Text*,sf::Vector2f*,sf::Vector2u*,float*);
+	UI_state(Simulator*,sf::RenderWindow*,sf::Text*);
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
@@ -74,7 +72,10 @@ class UI_state :public sf::Drawable //usunąć przyjaźnie i ogarnąć renderowa
 	void kbp(sf::Event&);
 	void push_hint_text(hint_text&&);
 	void tick();
+	int vertoffset_of_last_ht();
 	Simulator* getsim();
+	const UI_tool* getcurr();
+	sf::RenderWindow* gettgt();
 };
 
 class CB_gen :public UI_tool //Celestial_body_gen
@@ -93,16 +94,18 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	sf::Vector2f rel_init;
 	sf::Vector2f rel_end;
 	void add_body();
+	Celestial_body* lbod;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	CB_gen();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+	virtual void tick() override;
 };
 
 class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkretnym ciele niebieskim. Zawiera możlwiość usuwania ciał
@@ -112,29 +115,35 @@ class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkr
 	unsigned int pick_id;
 	bool verify_body();
 	void pop_body();
+	sf::Text napis;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	CB_selector();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+	virtual void tick() override;
 };
 
 class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_state
 {
+	Button b_gen;
+	Button b_sel;
+	Button b_traces;
 	protected:
 	
 	public:
 	static const std::string nam;
 	virtual const std::string& name() override;
 	UI_masterpanel();
-	virtual void mbp(sf::Event&) override;
+	virtual bool mbp(sf::Event&) override;
 	virtual void mbr(sf::Event&) override;
 	virtual void kbp(sf::Event&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
+	virtual void tick() override;
 };
 #endif

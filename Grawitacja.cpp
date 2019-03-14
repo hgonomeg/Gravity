@@ -9,18 +9,18 @@ int main(int argc, char** argv)
 	
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.2.1");
-	
+	win = &rehn;
 	rehn.setFramerateLimit(60);
 	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
 	
 	sf::Vector2f whatlook(0,0);
-	sf::Vector2u whatsize(rehn.getSize());
+	whatsize = new sf::Vector2u(rehn.getSize());
 	float scale=1;
 	bool translkeys[4] = {0};
 	float translation_constant=30; 
 
 	rehn.clear(); //wypełnienie okna na czarno
-	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //utworzenie obiektu czcionki
+	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //załadowanie czcionki do obiektu. NIE WOLNO DAĆ TEJ LINIJKI PO LoadResources() 
 	sf::Text status_text(std::string("Loading..."),*fona); //informacja o ładowaniu gry
 	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
 	rehn.draw(status_text); //renderowanie napisu
@@ -46,7 +46,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	UI_state gui(&sim,&rehn,&status_text,&whatlook,&whatsize,&scale);
+	UI_state gui(&sim,&rehn,&status_text);
 	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
 	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
 	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));
@@ -64,8 +64,8 @@ int main(int argc, char** argv)
 	
 	auto windowsetter = [&](){
 		auto tmp = rehn.getView();
-		tmp.setSize(whatsize.x/scale,whatsize.y/scale);
-		tmp.setCenter(whatlook+sf::Vector2f(whatsize.x/2.f,whatsize.y/2.f));
+		tmp.setSize((*whatsize).x/scale,(*whatsize).y/scale);
+		tmp.setCenter(whatlook+sf::Vector2f((*whatsize).x/2.f,(*whatsize).y/2.f));
 		rehn.setView(tmp);
 	};
 	
@@ -180,8 +180,8 @@ int main(int argc, char** argv)
 				}
 				case sf::Event::Resized:
 				{
-					whatsize.x = ev.size.width;
-					whatsize.y = ev.size.height;
+					whatsize->x = ev.size.width;
+					whatsize->y = ev.size.height;
 					windowsetter();
 					break;
 				}
