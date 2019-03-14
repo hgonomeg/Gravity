@@ -51,8 +51,6 @@ void UI_state::tick()
 		int diff = orto_ht_h - last_ht_winoffset;
 		last_ht_winoffset+=cbrt(diff);
 	}
-	status_text->setPosition(win->mapPixelToCoords({5,5}));
-	status_text->setScale(1/(*scale),1/(*scale));
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
 	{
 		 if(x->przeterminowane())
@@ -70,10 +68,12 @@ void UI_state::tick()
 	}
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
 	{
-		x->sf_text.setPosition(win->mapPixelToCoords({(*whatsize).x/2,(*whatsize).y/2+tmp_ht_h}));
-		x->sf_text.setScale(1/(*scale),1/(*scale));
+		auto why = x->process_height(tmp_ht_h);
+		x->sf_text.setPosition((float)(target->getSize().x/2),(float)(target->getSize().y/2+why));
 		tmp_ht_h+=separ;
 	}
+	if(curr) curr->tick();
+	masterpanel -> tick();
 	std::chrono::microseconds interval = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
 	fps = (int)(1/((double)interval.count()/1000000.d));
 	set_status_text();
@@ -82,14 +82,18 @@ void UI_state::tick()
 
 void UI_state::push_hint_text(hint_text&& x)
 {
+	x.last_vertoffset = vertoffset_of_last_ht()+20;
 	hint_texts.push_back(std::forward<hint_text>(x));
 }
 
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
+	auto pkp = tgt.getView();
+	tgt.setView(sf::View({(float)tgt.getSize().x/2.f,(float)tgt.getSize().y/2.f},{(float)tgt.getSize().x,(float)tgt.getSize().y}));
 	if(curr) curr->draw(tgt,st);
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st);};
 	tgt.draw(*status_text,st);
+	tgt.setView(pkp);
 }
 
 UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
@@ -109,19 +113,35 @@ bool UI_state::hint_text::przeterminowane()
 	return data_waznosci<(sysclck::now()-init_time);
 }
 
+int UI_state::hint_text::process_height(int orto)
+{
+	auto lv = last_vertoffset;
+	if(last_vertoffset!=orto)
+	{
+		auto sgn = [](int a)->int{return a>=0? 1 : -1;};
+		int diff = orto - last_vertoffset;
+		last_vertoffset+=cbrt(diff);
+	}
+	return lv;
+}
+
+int UI_state::vertoffset_of_last_ht()
+{
+	if(hint_texts.size()==0) return 0;
+	return hint_texts.size()*20;
+}
+
 UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector2f* wl,sf::Vector2u* ws, float* sc)
 {
 	status_text=stxt;
-	whatlook = wl;
-	whatsize = ws;
-	scale = sc;
 	curr = NULL;
 	switch_tool(new CB_gen);
 	sim = sjm;
-	win = xt;
 	last_ht_winoffset = 0;
-	stxt->setCharacterSize(15);
+	status_text->setCharacterSize(15);
+	status_text->setPosition(5.f,5.f);
 	fps = 0;
+	target = xt;
 	masterpanel = new UI_masterpanel;
 	masterpanel -> patris = this;
 }
@@ -129,6 +149,11 @@ UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt,sf::Vector
 Simulator* UI_state::getsim()
 {
 	return sim;
+}
+
+sf::RenderWindow* UI_state::gettgt()
+{
+	return target;
 }
 
 UI_state::~UI_state()

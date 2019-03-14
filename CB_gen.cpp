@@ -13,7 +13,7 @@ void CB_gen::mbp(sf::Event& ev)
 	if(ev.mouseButton.button==sf::Mouse::Button::Left)
 	{
 	if(!active_state) active_state = true;
-	rel_init = patris->win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
+	rel_init = win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
 	}
 }
 void CB_gen::mbr(sf::Event& ev)
@@ -21,7 +21,7 @@ void CB_gen::mbr(sf::Event& ev)
 	if(ev.mouseButton.button==sf::Mouse::Button::Left)
 	{
 	if(active_state) active_state = false;
-	rel_end = patris->win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
+	rel_end = win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
 	add_body();
 	}
 }
@@ -55,4 +55,9 @@ CB_gen::CB_gen()
 	currently_picked = cb_type::Planet;
 	temp_planet = Planet::planetary_classification::rock;
 	temp_star = Star::stellar_classification::A; 
+}
+
+void CB_gen::tick()
+{
+	
 }

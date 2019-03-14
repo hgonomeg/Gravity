@@ -10,7 +10,7 @@ void CB_selector::mbp(sf::Event& ev)
 {
 	if(ev.mouseButton.button==sf::Mouse::Button::Left)
 	{
-	c_pick_iter = patris->getsim()->at_pos(patris->win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
+	c_pick_iter = patris->getsim()->at_pos(win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
 	if(c_pick_iter!=patris->getsim()->get_end())	
 		{
 		c_pick =  c_pick_iter->get();
@@ -76,5 +76,10 @@ CB_selector::CB_selector()
 {
 	c_pick = NULL;
 	pick_id = 0;
+}
+
+void CB_selector::tick()
+{
+	
 }
 
