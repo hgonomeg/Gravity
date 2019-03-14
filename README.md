@@ -32,11 +32,12 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* Każde ciało niebieskie jest rysowane osobno
 	* Każde ciało niebieskie ma uprzednio rysowany jego ślad orbity,
 	  którego czas zanikania da się przestawiać
+	* Rysowanie śladów ciał niebieskich da się wyłączyć
 * Pierwotna implementacja metody `tick` w Symulatorze
 	* Wykonywanie fukncji obliczającej siłę grawitacji dla każdej pary
 	  obiektów oraz stosowanie jej efektów na prędkościach obiektów
 	* Poruszenie każdym ciałem zgodnie z jego prędkością
-* Detekcja kolizji
+	* Przeprowadzanie detekcji kolizji i obsługi kolizji
 * Obsługa kolizji w funkcji statycznej w klasie `Celestial_body`
 	* Zachowanie momentu pędu
 	* Tworzenie nowego obiektu w zależności od mas obiektów kolidujących ze sobą (RTTI na `Celestial_body*`)
@@ -45,19 +46,31 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Obsługa poprawnego skalowania okna
 * Pauzowanie symulacji
 * Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzałek
+* Generator tekstur przycisków
 ## Do zrobienia
 * Stworzyć klasę `Asteroid` jako kolejny typ ciał niebieskich
 * Odpowiednie teksturowanie ciał niebieskich
-* Wyświetlanie interfejsów graficznych
+* Pełne wyświetlanie interfejsów graficznych
+	* Pełna implementacja zaplanowanych przycisków
+	* Pełna implementacja zaplanowanych komunikatów tekstowych
+* Ślady ciał niebieskich mają ciemnieć przez kanał alfa, a nie zmianę barw RGB
+* Konstruktor kopiujący `Simulator`
+* Przewidywanie śladów ciał niebieskich
+* Stos diagramów alokacji dla `Celestial_body`, potrzebny do zapanowania nad alokacją obiektów w trybie przewidywania śladów
 * Przerobić statyczny diagram alokacji w `Celestial_body` z `std::vector<bool>` na `std::map<unsigned int, unsigned int>`
-* Stworzenie przycisków w GUI
 * Okodowanie `CB_selector`, `CB_gen` i `UI_masterpanel`
+	* Zwiększenie ilości funkcji i udogodnień podpiętych pod wciśnięcie danego klawisza
 	* Generacja ciał niebieskich różnych typów
 		* Stworzenie `Textbox` do wybierania masy tworzonego ciała
+		* Okodowanie serii przycisków do wyboru typu tworzonego ciała
 	* Modyfikacja parametrów ciał niebieskich
 	* Stworzenie narzędzia do manipulacji czasem
-* Ładowanie tekstur z pliku w `LoadResources()`
-* Rozplanować i dodać tryb sterowalnego statku kosmicznego
+		* Mechanizm przełączania dokładności symulacji za pomocą zmiennej `Simulator::STEPPINGRATE`
+		* Mechanizm sterowania szybkością symulacji, poprzez zmianę liczby ticków symulatora przypadających na jedno odświeżenie okna
+* Ładowanie tekstur z plików w funkcji `LoadResources()`
+* Rozplanować i dodać tryb sterowalnego statku kosmicznego (dziedziczącego z klasy `Asteroid`, reprezentującej ciało o minimalnej masie)
+* Funkcje usuwające istniejące ślady ciał niebieskich
+* System szybkich zapisów i odtworzeń obecnego stanu symulatora w pamięci
 ## Jak skompilować?
 Aby skompilować projekt, należy skompilować wszystkie dostępne w repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należey dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
