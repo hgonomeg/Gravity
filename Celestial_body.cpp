@@ -219,6 +219,49 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 	
 }
 
+void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
+{
+	//liczymy dla pierwszego dla MATKI
+	
+	sf::Vector2f V_m, V_o; //początkowe
+	int M_m, M_o;
+	
+	//gettery
+	
+	M_m=matka->get_mass();
+	M_o=ojciec->get_mass();
+	
+	V_m=matka->get_v();
+	V_o=ojciec->get_v();
+	
+	loc_m=matka->get_loc();
+	loc_o=ojciec->get_loc();
+	
+	//konty wyliczałem z relacji pokazanych w https://stackoverflow.com/questions/1736734/circle-circle-collision
+	
+	float kat_kolizji = 90-(atan(fabs(loc_o.x-loc_m.x)/fabs(loc_o.y-loc_m.y)));
+	float kat_przed_matki = atan(V_m.y/V_m.x);
+	float kat_przed_ojca = atan(V_o.y/V_o.x);
+	
+	//NOWE
+	
+	// zrobione ze wzrotu na https://williamecraver.wixsite.com/elastic-equations
+	
+	V_m.x = ((V_m*cos(kat_przed_matki-kat_kolizji)*(M_m-M_o))+2*M_o*V_o*cos(kat_przed_ojca-kat_kolizji)/(M_m+M_o))*cos(kat_kolizji)+(V_m*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+(M_Pi/2)));
+	V_m.y =	((V_m*cos(kat_przed_matki-kat_kolizji)*(M_m-M_o))+2*M_o*V_o*cos(kat_przed_ojca-kat_kolizji)/(M_m+M_o))*sin(kat_kolizji)+(V_m*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+(M_Pi/2)));
+	V_o.x = ((V_o*cos(kat_przed_ojca-kat_kolizji)*(M_o-M_m))+2*M_m*V_m*cos(kat_przed_matki-kat_kolizji)/(M_m+M_o))*cos(kat_kolizji)+(V_o*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+(M_Pi/2)));
+	V_o.x = ((V_o*cos(kat_przed_ojca-kat_kolizji)*(M_o-M_m))+2*M_m*V_m*cos(kat_przed_matki-kat_kolizji)/(M_m+M_o))*sin(kat_kolizji)+(V_o*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+(M_Pi/2)));
+	
+	// nowe prędkości
+	
+	st::Vector2f V_m_koncowy(V_m.x,V_m.y);
+	st::Vector2f V_o_koncowy(V_o.x,V_o.y);
+	
+	//setter
+	
+	matka->v=V_m_koncowy;
+	ojciec->v=V_o_koncowy;
+}
 
 sf::FloatRect Celestial_body::getGlobalBounds()
 {
