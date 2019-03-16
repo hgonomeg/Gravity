@@ -28,6 +28,30 @@ void UI_masterpanel::kbp(sf::Event& ev)
 			patris->getsim()->toggle_traces();
 			break;
 		}
+		case sf::Keyboard::R:
+		{
+			Simulator::collision_approach pi =  patris->getsim()->cycle_collision_approach();
+			switch(pi)
+			{
+				case Simulator::collision_approach::merge:
+				{
+					patris->push_hint_text(UI_state::hint_text("Current collision handling approach: merge",3000));
+					break;
+				}
+				case Simulator::collision_approach::bounce:
+				{
+					patris->push_hint_text(UI_state::hint_text("Current collision handling approach: bounce",3000));
+					break;
+				}
+			}
+			break;
+		}
+		case sf::Keyboard::H:
+		{
+			patris->push_hint_text(UI_state::hint_text("L - toggle orbital paths",25000));
+			patris->push_hint_text(UI_state::hint_text("R - cycle through available collision handling approaches",25000));
+			break;
+		}
 	}
 }
 void UI_masterpanel::draw(sf::RenderTarget& tgt,sf::RenderStates st) const

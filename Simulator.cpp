@@ -2,6 +2,7 @@
 
 const float Simulator::G = 0.5;
 float Simulator::STEPPPING_RATE = 1.f;
+const unsigned short Simulator::CA_count = 2;
 
 void Simulator::tick()
 {
@@ -42,12 +43,24 @@ void Simulator::tick()
 				{
 					if(Celestial_body::collision_detec(j->get(),i->get()))
 					{
-						//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
-						Celestial_body* ojc=i->release();
-						Celestial_body::collision_handle(j->get(),ojc);	
-						i->reset(ojc);
-						ciala.erase(j); 
-						j=i; j--;
+						switch(ca)
+							{
+							case collision_approach::merge:
+								{
+								//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+								Celestial_body* ojc=i->release();
+								Celestial_body::collision_handle(j->get(),ojc);	
+								i->reset(ojc);
+								ciala.erase(j); 
+								j=i; j--;
+								break;
+								}
+							case collision_approach::bounce:
+								{
+								Celestial_body::bounce_handle(j->get(),i->get());
+								break;
+								}
+							}
 						if(i==ciala.begin()) break;
 					}
 				}
@@ -144,8 +157,18 @@ void Simulator::toggle_traces()
 	draw_traces=!draw_traces;
 }
 
+Simulator::collision_approach Simulator::cycle_collision_approach()
+{
+	unsigned short u = (unsigned short)ca;
+	u++;
+	if(u>CA_count) u=1;
+	ca = (collision_approach)u;
+	return ca;
+}
+
 Simulator::Simulator()
 {
 	paused = false;
 	draw_traces = true;
+	ca = collision_approach::merge;
 }
