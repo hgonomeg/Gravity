@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 	Simulator sim;
 	
 	sf::Event ev;
-	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.2.1");
+	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.3.0");
 	win = &rehn;
 	rehn.setFramerateLimit(60);
 	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
@@ -170,7 +170,6 @@ int main(int argc, char** argv)
 						gui.push_hint_text(UI_state::hint_text("G - switch to Celestial body generator",25000));
 						gui.push_hint_text(UI_state::hint_text("O / K - increase / decrease the length of orbital paths",25000));
 						gui.push_hint_text(UI_state::hint_text("P - Pause simulation",25000));
-						gui.push_hint_text(UI_state::hint_text("L - toggle orbital paths",25000));
 						gui.kbp(ev);
 						break;
 					}
