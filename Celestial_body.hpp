@@ -46,8 +46,8 @@ class Celestial_body :public sf::Drawable
 	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
 	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	static const std::vector<bool>& get_alloc_diagram();
-	static void collision_handle(Celestial_body*, Celestial_body*&); // kolizje perfekcyjnie nieelastyczne
-	static void bounce_handle(Celestial_body*, Celestial_body*);
+	static void collision_handle(Celestial_body*, Celestial_body*&); //dlaczego tu jest referancja przy jednym wskaźniku a przy drugim nie? // kolizje perfekcyjnie nieelastyczne
+	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
 
 	
 	
