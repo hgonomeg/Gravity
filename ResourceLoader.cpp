@@ -25,5 +25,7 @@ ResourceBase* LoadResources()
 	neter->button_right = button_tex_gen(">",sf::Color::Red);
 	neter->button_toggle_traces = button_tex_gen("L",sf::Color::Cyan);
 	neter->button_cycle_collision = button_tex_gen("R",sf::Color::Cyan);
+	neter->button_deltraces = button_tex_gen("^L",sf::Color::Yellow);
+	neter->button_gen_mode = button_tex_gen("M",sf::Color::Red);;
 	return neter;
 }

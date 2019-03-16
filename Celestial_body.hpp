@@ -19,13 +19,15 @@ class Celestial_body :public sf::Drawable
 	sf::Vector2f loc;
 	std::vector<sf::Vertex> slad;
 	std::list<std::vector<sf::Vertex>>* slady_rodzicow;
-	float radius;
+	
 	protected:
 	
+	sf::Color tracecolor;
 	int mass;
 	sf::Vector2f v;
 	sf::Texture tex;
 	sf::CircleShape wyglond;
+	float radius;
 	
 	public:
 	

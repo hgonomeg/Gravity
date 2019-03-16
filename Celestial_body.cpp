@@ -46,17 +46,15 @@ void Celestial_body::refresh()
 			for(auto iter=slad.begin();iter!=slad.end();iter++)
 			{
 				//if(iter==slad.begin()) std::cout<<(int)iter->color.r<<'\n';
-				if(iter->color.r==0) purge++;
+				if(iter->color.a==0) purge++;
 				else
 				{
-					iter->color.r--;
-					iter->color.g--;
-					iter->color.b--;
+					iter->color.a--;
 				}
 				if(purge>125000)
 				{
 					purge=0;
-					slad.erase(slad.begin(),std::find_if(slad.rbegin(),slad.rend(),[](const sf::Vertex& xe){return xe.color.r==0;}).base()); //slad jest wektorem którego usuwamy początek
+					slad.erase(slad.begin(),std::find_if(slad.rbegin(),slad.rend(),[](const sf::Vertex& xe){return xe.color.a==0;}).base()); //slad jest wektorem którego usuwamy początek
 					break;	
 				}
 				
@@ -68,14 +66,12 @@ void Celestial_body::refresh()
 				{
 					for(auto i=u->begin();i!=u->end();i++)
 					{
-						if(i->color.r>0)
+						if(i->color.a>0)
 						{
-							i->color.r--;
-							i->color.g--;
-							i->color.b--;
+							i->color.a--;
 						}
 					}
-					if(u->back().color.r==0) 
+					if(u->back().color.a==0) 
 						{
 						u=slady_rodzicow->erase(u); 
 						if(u==slady_rodzicow->end()) break;
@@ -85,7 +81,7 @@ void Celestial_body::refresh()
 			}
 		}
 		rc++;
-		slad.emplace_back(sf::Vertex(wyglond.getPosition(),sf::Color(255,255,255)));
+		slad.emplace_back(sf::Vertex(wyglond.getPosition(),tracecolor));
 		wyglond.setPosition(loc);
 }
 
@@ -101,6 +97,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	loc = iloc;
 	v = iv;
 	rc = 0;
+	tracecolor = sf::Color(255,255,255);
 	purge = 0;
 	radius = sqrt(mass/10.f);
 	wyglond.setRadius(radius);
@@ -109,7 +106,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
 	wyglond.setPosition(loc);
-	slad.emplace_back(sf::Vertex(loc,sf::Color(255,255,255)));
+	slad.emplace_back(sf::Vertex(loc,tracecolor));
 	Local_ID=Global_ID; 
 	alloc_diagram.push_back(true);
 	Global_ID++;

@@ -83,7 +83,7 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	Planet::planetary_classification temp_planet;
 	Star::stellar_classification temp_star; 
 	sf::Text napis;
-	
+	Button b_mode;
 	enum class cb_type :unsigned short
 	{
 		Planet,

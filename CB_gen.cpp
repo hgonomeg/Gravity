@@ -10,13 +10,38 @@ const std::string& CB_gen::name()
 
 bool CB_gen::mbp(sf::Event& ev)
 {
-	if(ev.mouseButton.button==sf::Mouse::Button::Left)
+	if(!b_mode.mbp(ev))
 	{
-	if(!active_state) active_state = true;
-	rel_init = patris->gettgt()->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
-	return true;
+		if(ev.mouseButton.button==sf::Mouse::Button::Left)
+		{
+			if(!active_state) active_state = true;
+			rel_init = patris->gettgt()->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y});
+			return true;
+		}
 	}
-	return false;
+	else 
+	{
+		switch(currently_picked)
+			{
+				case cb_type::Planet:
+				{
+					currently_picked = cb_type::Star;
+					break;
+				}
+				case cb_type::Star:
+				{
+					currently_picked = cb_type::Asteroid;
+					break;
+				}
+				case cb_type::Asteroid:
+				{
+					currently_picked = cb_type::Planet;
+					break;
+				}
+				
+			}
+	}
+	return true;
 }
 void CB_gen::mbr(sf::Event& ev)
 {
@@ -95,12 +120,13 @@ void CB_gen::kbp(sf::Event& ev)
 void CB_gen::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	tgt.draw(napis,st);
+	tgt.draw(b_mode,st);
 }
 
 void CB_gen::add_body()
 {
 	Celestial_body* neu;
-	sf::Vector2f vel = (rel_init-rel_end)*0.05f;
+	sf::Vector2f vel = (rel_init-rel_end)*0.01f;
 	switch(currently_picked)
 	{
 		case cb_type::Planet:
@@ -127,7 +153,8 @@ void CB_gen::add_body()
 }
 
 CB_gen::CB_gen()
-:napis("NULL",*fona,15)
+:napis("NULL",*fona,15),
+ b_mode(zasoby->button_gen_mode)
 {
 	lbod = NULL;
 	active_state = false;
@@ -163,5 +190,8 @@ void CB_gen::tick()
 	tmp+=" Mass: "+std::to_string(current_mass); //do zmian
 	napis.setString(tmp);
 	int renlen=5;
+	b_mode.tick();
+	b_mode.setPosition({renlen,patris->gettgt()->getSize().y-25}); renlen+=20;
 	napis.setPosition(renlen,patris->gettgt()->getSize().y-25);
+	
 }
