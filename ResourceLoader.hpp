@@ -15,6 +15,7 @@ struct ResourceBase
 	sf::Texture button_right;
 	sf::Texture button_left;
 	sf::Texture button_toggle_traces;
+	sf::Texture button_cycle_collision;
 	bool correct;
 };
 

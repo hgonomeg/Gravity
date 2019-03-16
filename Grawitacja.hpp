@@ -134,6 +134,8 @@ class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_stat
 	Button b_gen;
 	Button b_sel;
 	Button b_traces;
+	Button b_collision;
+	void collision_cycle();
 	protected:
 	
 	public:

@@ -10,7 +10,8 @@ ResourceBase* LoadResources()
 		sf::RenderTexture ren;
 		sf::Text textext(txt,*fona,12);
 		ren.create(15,15);
-		textext.setPosition(3,0);
+		textext.setOrigin({textext.getLocalBounds().width/2.f,textext.getLocalBounds().height/2.f});
+		textext.setPosition(7.5,5);
 		textext.setFillColor(sf::Color::Black);
 		ren.clear(col);
 		ren.draw(textext);
@@ -23,6 +24,6 @@ ResourceBase* LoadResources()
 	neter->button_left = button_tex_gen("<",sf::Color::Red);
 	neter->button_right = button_tex_gen(">",sf::Color::Red);
 	neter->button_toggle_traces = button_tex_gen("L",sf::Color::Cyan);
-	
+	neter->button_cycle_collision = button_tex_gen("R",sf::Color::Cyan);
 	return neter;
 }
