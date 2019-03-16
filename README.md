@@ -1,6 +1,9 @@
 # Grawitacja
 Prosty symulator grawitacji między ciałami niebieskimi, w tym gwiazdami, planetami i asteroidami.
 SFML, C++11.
+
+The whole description will be available in English soon and it will entirely replace the Polish text. 
+Polska wersja opisu zostanie niebawem usunięta na korzyść angielskiej. 
 ## Cel projektu
 * Ćwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w języku C++, w tym metod wirtualnych, dziedziczenia.
 * Ćwiczenia korzystania z kontenerów biblioteki standardowej języka C++.
