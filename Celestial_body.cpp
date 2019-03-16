@@ -142,19 +142,19 @@ std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
 
 void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& ojciec)
 {
-	auto S_m=matka->get_traces();
-	auto S_o=ojciec->get_traces();
+	auto&& S_m=matka->get_traces();
+	auto&& S_o=ojciec->get_traces();
 	
-	sf::Vector2f V_m, V_o, V_d;
-	int M_m, M_o, M_d;
+	sf::Vector2f V_d;
+	int M_d;
 	
 	//gettery
 	
-	M_m=matka->get_mass();
-	M_o=ojciec->get_mass();
+	int& M_m=matka->get_mass();
+	int& M_o=ojciec->get_mass();
 	
-	V_m=matka->get_v();
-	V_o=ojciec->get_v();
+	auto& V_m=matka->get_v();
+	auto& V_o=ojciec->get_v();
 	
 	//obliczenia
 	
@@ -164,15 +164,20 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	Planet* planeta;
 	Star* gwiazda;
 	Celestial_body* dziecko;
-	
+	Asteroid* asteroida;
 	
 	if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
 	{
 		planeta=dynamic_cast<Planet*>(matka);
 		gwiazda=dynamic_cast<Star*>(matka);
-		if(planeta==NULL) //obiekt będzie gwiazdą
+		asteroida=dynamic_cast<Asteroid*>(matka);
+		if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
 		{
 			dziecko=new Star(M_d,matka->get_loc(),V_d);
+		}
+		else if(asteroida!=NULL)
+		{
+			dziecko=new Asteroid(matka->get_loc(),V_d);
 		}
 		else //obiekt będzie planetą
 		{
@@ -183,9 +188,14 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	{
 		planeta=dynamic_cast<Planet*>(ojciec);
 		gwiazda=dynamic_cast<Star*>(ojciec);
-		if(planeta==NULL) // gwiazda
+		asteroida=dynamic_cast<Asteroid*>(ojciec);
+		if(planeta==NULL&&asteroida==NULL) // gwiazda
 		{
 			dziecko=new Star(M_d,ojciec->get_loc(),V_d);
+		}
+		else if(asteroida!=NULL)
+		{
+			dziecko=new Asteroid(ojciec->get_loc(),V_d);
 		}
 		else //obiekt będzie planetą
 		{

@@ -39,6 +39,13 @@ void CB_selector::kbp(sf::Event& ev)
 			pop_body();
 			break;
 		}
+		case sf::Keyboard::H:
+		{
+			patris->push_hint_text(UI_state::hint_text("CELESTIAL BODY SELECTOR",25000));
+			patris->push_hint_text(UI_state::hint_text("E - edit the currently selected body",25000));
+			patris->push_hint_text(UI_state::hint_text("X - remove the currently selected body",25000));
+			break;
+		}
 	}
 }
 void CB_selector::draw(sf::RenderTarget& tgt,sf::RenderStates st) const

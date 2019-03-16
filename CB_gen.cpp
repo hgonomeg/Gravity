@@ -36,12 +36,49 @@ void CB_gen::kbp(sf::Event& ev)
 	{
 		case sf::Keyboard::M:
 		{
-			patris->push_hint_text(UI_state::hint_text("Mode switching currently not supported",500));
+			switch(currently_picked)
+			{
+				case cb_type::Planet:
+				{
+					currently_picked = cb_type::Star;
+					break;
+				}
+				case cb_type::Star:
+				{
+					currently_picked = cb_type::Asteroid;
+					break;
+				}
+				case cb_type::Asteroid:
+				{
+					currently_picked = cb_type::Planet;
+					break;
+				}
+				
+			}
+			break;
+		}
+		case sf::Keyboard::B:
+		{
+			current_mass*=(1.f/1.2f);
+			if(current_mass==0) current_mass=1;
+			break;
+		}
+		case sf::Keyboard::N:
+		{
+			current_mass*=(1.2f);
+			break;
+		}
+		case sf::Keyboard::H:
+		{
+			patris->push_hint_text(UI_state::hint_text("CELESTIAL BODY GENERATOR",25000));
+			patris->push_hint_text(UI_state::hint_text("M - switch the type of celestial body to be generated",25000));
+			patris->push_hint_text(UI_state::hint_text("B / N - decrease / increase mass",25000));
+			patris->push_hint_text(UI_state::hint_text("Z - remove last body",25000));
 			break;
 		}
 		case sf::Keyboard::Z:
 		{
-			if(lbod) 
+			if(lbod&&!didrem) 
 			{
 			patris->getsim()->erase_body(lbod->get_id());
 			patris->push_hint_text(UI_state::hint_text("Last body removed",500));
@@ -57,21 +94,44 @@ void CB_gen::kbp(sf::Event& ev)
 }
 void CB_gen::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	
+	tgt.draw(napis,st);
 }
 
 void CB_gen::add_body()
 {
-	Celestial_body* neu; //do zmian
-	neu = new ::Planet(current_mass,rel_init,(rel_init-rel_end)*0.05f);
+	Celestial_body* neu;
+	sf::Vector2f vel = (rel_init-rel_end)*0.05f;
+	switch(currently_picked)
+	{
+		case cb_type::Planet:
+		{
+			neu = new ::Planet(current_mass,rel_init,vel);
+			break;
+		}
+		case cb_type::Star:
+		{
+			neu = new ::Star(current_mass,rel_init,vel);
+			break;
+		}
+		case cb_type::Asteroid:
+		{
+			neu = new ::Asteroid(rel_init,vel);
+			break;
+		}
+		
+	}
+	
 	lbod = neu;
+	didrem=false;
 	patris->getsim()->add_body(neu);
 }
 
 CB_gen::CB_gen()
+:napis("NULL",*fona,15)
 {
 	lbod = NULL;
 	active_state = false;
+	didrem=false;
 	current_mass=10;
 	currently_picked = cb_type::Planet;
 	temp_planet = Planet::planetary_classification::rock;
@@ -80,5 +140,28 @@ CB_gen::CB_gen()
 
 void CB_gen::tick()
 {
-	
+	std::string tmp="Body type: ";
+	switch(currently_picked)
+	{
+		case cb_type::Planet:
+		{
+			tmp+="PLANET";
+			break;
+		}
+		case cb_type::Star:
+		{
+			tmp+="STAR";
+			break;
+		}
+		case cb_type::Asteroid:
+		{
+			tmp+="ASTEROID";
+			break;
+		}
+		
+	}
+	tmp+=" Mass: "+std::to_string(current_mass); //do zmian
+	napis.setString(tmp);
+	int renlen=5;
+	napis.setPosition(renlen,patris->gettgt()->getSize().y-25);
 }

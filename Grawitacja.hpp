@@ -82,11 +82,13 @@ class CB_gen :public UI_tool //Celestial_body_gen
 {
 	Planet::planetary_classification temp_planet;
 	Star::stellar_classification temp_star; 
+	sf::Text napis;
 	
-	enum cb_type 
+	enum class cb_type :unsigned short
 	{
 		Planet,
-		Star
+		Star,
+		Asteroid
 	} currently_picked;
 	
 	int current_mass;
@@ -95,6 +97,7 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	sf::Vector2f rel_end;
 	void add_body();
 	Celestial_body* lbod;
+	bool didrem;
 	protected:
 	
 	public:

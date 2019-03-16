@@ -36,8 +36,9 @@ void UI_state::kbp(sf::Event& ev)
 			break;
 		}
 	}
-	if(curr) curr->kbp(ev);
 	masterpanel -> kbp(ev);
+	if(curr) curr->kbp(ev);
+	
 }
 
 void UI_state::tick()
