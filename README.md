@@ -1,78 +1,76 @@
 # Grawitacja
-Prosty symulator grawitacji miedzy cialami niebieskimi, w tym gwiazdami, planetami i asteroidami.
+Prosty symulator grawitacji mi臋dzy cia艂ami niebieskimi, w tym gwiazdami, planetami i asteroidami.
 SFML, C++11.
 ## Cel projektu
-* Cwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w jezyku C++, w tym metod wirtualnych, dziedziczenia.
-* Cwiczenia korzystania z kontener biblioteki standardowej jezyka C++.
-* Uplynnienie poslugiwania sie inteligentnymi wskaznikami (`std::unique_ptr<>`).
-* Cwiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
-* Stworzenie prostej zabawki pomagajacej zrozumiec dzialanie mechaniki orbitalnej.
-* Zdobycie doswiadczenia w zakresie rysowania tresci graficznych i kontroli okna  w bibliotece SFML
-* Blizsze zapoznanie sie z mechanika Git oraz GitHub; cwiczenia w kooperacji wieloosobowej.
-## Zadania i mozliwosci programu
-* Symulacja grawitacji w ukladzie wielu cial w czasie rzeczywistym - gwiazd, planet i asteroid.
-* Dodawanie nowych cial niebieskich w czasie dzialania programu posiadajacych predkosc, polozenie i zwrot nadawane w ramach zdarzen wcisniecia i opuszczenia przycisku myszy.
-* Scalanie cial niebieskich w razie kolizji.
-* Usuwanie istniejacych cial niebieskich.
-* Rozrnianie miedzy rnymi typami spektralnymi gwiazd oraz rnymi typami planet
+* 膯wiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w j臋zyku C++, w tym metod wirtualnych, dziedziczenia.
+* 膯wiczenia korzystania z kontener贸w biblioteki standardowej jezyka C++.
+* Up艂ynnienie pos艂ugiwania si臋 inteligentnymi wska藕nikami (`std::unique_ptr<>`).
+* 膯wiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
+* Stworzenie prostej zabawki pomagaj膮cej zrozumie膰 dzia艂anie mechaniki orbitalnej.
+* Zdobycie do艣wiadczenia w zakresie rysowania tre艣ci graficznych i kontroli okna w bibliotece SFML
+* Bli偶sze zapoznanie si臋 z mechanik膮 Git oraz GitHub; 膰wiczenia w kooperacji wieloosobowej.
+## Zadania i mo偶liwosci programu
+* Symulacja grawitacji w uk艂adzie wielu cia艂 w czasie rzeczywistym - gwiazd, planet i asteroid.
+* Dodawanie nowych cia艂 niebieskich w czasie dzia艂ania programu posiadaj膮cych pr臋dko艣膰, po艂o偶enie i zwrot nadawane w ramach zdarze艅 wci艣ni臋cia i opuszczenia przycisku myszy.
+* Scalanie cia艂 niebieskich w razie kolizji.
+* Usuwanie istniej膮cych cia艂 niebieskich.
+* Rozr贸偶nianie miedzy r贸znymi typami spektralnymi gwiazd oraz r贸znymi typami planet
 * Kontrola tempa symulacji
-* Rozrywkowy tryb polegajacy na kontroli statku kosmicznego
+* Rozrywkowy tryb polegaj膮cy na kontroli statku kosmicznego
 ## Opis techniczny
-Caly program gleboko bazuje na bibliotece SFML i jej filozofii obiektowej.
-Procedura glna (main) otwiera okno na ktym w kazdym cyklu odswiezenia okna (60FPS) rysuje obiekt Symulatora, wywolujac metode `draw` (sam obiekt dziedzicyz `sf::Drawable`). Rysowanie obiektu sprowadza sie do narysowania calej jego zawartosci (jest to lista obiekt (`std::list<std::unique_ptr<Celestial_body>>`) kte wszystkie dziedzicza z `Celestial_body`, kta to klasa rniez jest pochodna klasy `sf::Drawable`). Ponadto oprz rysowania, na obiekcie symulatora wywolywana jest metoda `tick`, w ramach ktej prowadzona jest obsluga calej symulacji.
-Program bedzie sie obslugiwac za pomoca zarno myszy jak i klawiatury. Okno programu bedzie posiadalo specjalny obiekt przechowujacy i sterujacy stanem interfejsu graficznego (`UI_state`). Wystepujace w oknie zdarzenia sterujace programem sa przekierowywane do specjalnych funkcji obiektu sterujacego. Pewnym klawiszom zostana przypisane funkcje przelaczajace tzw. narzedzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzedzi UI, w tym m.in. generator cial niebieskich, selektor i usuwacz.
+Ca艂y program g艂臋boko bazuje na bibliotece SFML i jej filozofii obiektowej.
+Procedura gl贸wna (main) otwiera okno na kt贸rym w ka偶dym cyklu od艣wie偶enia okna (60FPS) rysuje obiekt Symulatora, wywo艂uj膮c metod臋 `draw` (sam obiekt dziedziczy z `sf::Drawable`). Rysowanie obiektu sprowadza si臋 do narysowania ca艂ej jego zawarto艣ci (jest to lista obiekt贸w (`std::list<std::unique_ptr<Celestial_body>>`) kt贸re wszystkie dziedzicz膮 z `Celestial_body`, kt贸ra to klasa r贸wnie偶 jest pochodn膮 klasy `sf::Drawable`). Ponadto opr贸cz rysowania, na obiekcie symulatora wywo艂ywana jest metoda `tick`, w ramach kt贸rej prowadzona jest obs艂uga ca艂ej symulacji.
+Program b臋dzie si臋 obs艂ugiwa膰 za pomoc膮 zar贸wno myszy jak i klawiatury. Okno programu b臋dzie posiada艂o specjalny obiekt przechowuj膮cy i steruj膮cy stanem interfejsu graficznego (`UI_state`). Wyst臋pujace w oknie zdarzenia steruj膮ce programem s膮 przekierowywane do specjalnych funkcji obiektu steruj膮cego. Pewnym klawiszom zostan膮 przypisane funkcje prze艂膮czajace tzw. narz臋dzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzedzi UI, w tym m.in. generator cia艂 niebieskich, selektor i usuwacz.
 ## Obecny stan implementacji
 * Kompletna mechanika klasy `Celestial_body`
 * Zarys klas `Planet` oraz `Star`
 * Klasa `Asteroid`
-* Podstawa mechanizmu interfejs graficznych
-	* Wyswietlanie zielonych wiadomosci tekstowych
-	* Przelaczanie narzedzi GUI
-	* `CB_selector` usuwa ciala niebieskie
-* Mechanika pokazywania i odswiezania okna, a takze tworzenia i rysowania obiektu symulatora.
-	* Kazde cialo niebieskie jest rysowane osobno
-	* Kazde cialo niebieskie ma uprzednio rysowany jego slad orbity,
-	  ktego czas zanikania da sie przestawiac
-	* Rysowanie slad cial niebieskich da sie wylaczyc
+* Podstawa mechanizmu interfejs贸w graficznych
+	* Wy艣wietlanie zielonych wiadomo艣ci tekstowych
+	* Prze艂膮czanie narzedzi GUI
+	* `CB_selector` usuwa cia艂a niebieskie
+* Mechanika pokazywania i od艣wie偶ania okna, a tak偶e tworzenia i rysowania obiektu symulatora.
+	* Ka偶de cia艂o niebieskie jest rysowane osobno
+	* Ka偶de cialo niebieskie ma uprzednio rysowany jego 艣lad orbity, kt贸rego czas zanikania da si臋 przestawia膰
+	* Rysowanie slad藰w cial niebieskich da sie wylaczyc
 * Pierwotna implementacja metody `tick` w Symulatorze
-	* Wykonywanie fukncji obliczajacej sile grawitacji dla kazdej pary
-	  obiekt oraz stosowanie jej efekt na predkosciach obiekt
-	* Poruszenie kazdym cialem zgodnie z jego predkoscia
-	* Przeprowadzanie detekcji kolizji i obslugi kolizji
-* Obsluga kolizji w funkcji statycznej w klasie `Celestial_body`
-	* Zachowanie momentu pedu
-	* Tworzenie nowego obiektu w zaleznosci od mas obiekt kolidujacych ze soba (RTTI na `Celestial_body*`)
-	* Scalenie slad zderzajacych sie cial w nowym obiekcie `Celestial_body` i zapisanie ich do specjalnej listy slad odziedziczonych
-	* Sposr zderzajacych sie obiekt: usuniecie pierwszego (w funkcji `Simulator::tick()`) i nadpisanie drugiego nowopowstalym.
-* Obsluga poprawnego skalowania okna
+	* Wykonywanie funkcji obliczaj膮cej si艂臋 grawitacji dla ka偶dej pary obiekt贸w oraz stosowanie jej efekt贸w na pr臋dko艣ciach obiekt贸w
+	* Poruszanie ka偶dym cia艂em zgodnie z jego pr臋dkoscia
+	* Przeprowadzanie detekcji i obs艂ugi kolizji
+* Obs艂uga kolizji w funkcji statycznej w klasie `Celestial_body`
+	* Zachowanie momentu p臋du
+	* Tworzenie nowego obiektu w zale偶no艣ci od mas obiekt贸w koliduj膮cych ze sob膮 (RTTI na `Celestial_body*`)
+	* Scalenie slad贸w zderzaj膮cych si臋 cia艂 w nowym obiekcie `Celestial_body` i zapisanie ich do specjalnej listy 艣lad贸w odziedziczonych
+	* Spo艣r贸d zderzaj膮cych si臋 obiekt贸w: usuni臋cie pierwszego (w funkcji `Simulator::tick()`) i nadpisanie drugiego nowopowsta艂ym.
+* Obs艂uga poprawnego skalowania okna
 * Pauzowanie symulacji
-* Zmiana widoku w oknie zgodnie poprzez scrollowanie i klawisze strzalek
-* Generator tekstur przycisk
+* Zmiana widoku w oknie poprzez scrollowanie i klawisze strza艂ek
+* Generator tekstur przycisk贸w
 ## Do zrobienia
-* Odpowiednie teksturowanie cial niebieskich
-* Pelne wyswietlanie interfejs graficznych
-	* Pelna implementacja zaplanowanych przycisk
-	* Pelna implementacja zaplanowanych komunikat tekstowych
-* Konstruktor kopiujacy `Simulator`
-* Przewidywanie slad cial niebieskich
-* Stos diagram alokacji dla `Celestial_body`, potrzebny do zapanowania nad alokacja obiekt w trybie przewidywania slad
-* Przerobic statyczny diagram alokacji w `Celestial_body` z `std::vector<bool>` na `std::map<unsigned int, unsigned int>`
+* Odpowiednie teksturowanie cia艂 niebieskich
+* Pe艂ne wy艣wietlanie interfejs贸w graficznych
+	* Pe艂na implementacja zaplanowanych przycisk贸w
+	* Pe艂na implementacja zaplanowanych komunikat贸w tekstowych
+* Konstruktor kopiuj膮cy `Simulator`
+* Przewidywanie slad贸w cia艂 niebieskich
+* Stos diagram贸w alokacji dla `Celestial_body`, potrzebny do zapanowania nad alokacj膮 obiekt贸w w trybie przewidywania slad贸w
+* Przerobi膰 statyczny diagram alokacji w `Celestial_body` z `std::vector<bool>` na `std::map<unsigned int, unsigned int>`
 * Okodowanie `CB_selector`, `CB_gen` i `UI_masterpanel`
-	* Zwiekszenie ilosci funkcji i udogodnien podpietych pod wcisniecie danego klawisza
-	* Generacja cial niebieskich rnych typ
-		* Stworzenie `Textbox` do wybierania masy tworzonego ciala
-		* Okodowanie serii przycisk do wyboru typu tworzonego ciala
-	* Modyfikacja parametr cial niebieskich
-	* Stworzenie narzedzia do manipulacji czasem
-		* Mechanizm przelaczania dokladnosci symulacji za pomoca zmiennej `Simulator::STEPPINGRATE`
-		* Mechanizm sterowania szybkoscia symulacji, poprzez zmiane liczby tick symulatora przypadajacych na jedno odswiezenie okna
-* Ladowanie tekstur z plik w funkcji `LoadResources()`
-* Rozplanowac i dodac tryb sterowalnego statku kosmicznego (dziedziczacego z klasy `Asteroid`, reprezentujacej cialo o minimalnej masie)
-* Funkcje usuwajace istniejace slady cial niebieskich
-* System szybkich zapis i odtworzen obecnego stanu symulatora w pamieci
-## Jak skompilowac?
-Aby skompilowac projekt, nalezy skompilowac wszystkie dostepne w repozytorium pliki .cpp - wszystko ma zostac skladowa pliku wykonywalnego "Grawitacja.exe", do ktego nalezey dolinkowac biblioteke SFML (modul graficzny tej biblioteki)
+	* Zwi臋kszenie ilo艣ci funkcji i udogodnie艅 podpi臋tych pod wci艣ni臋cie danego klawisza
+	* Generacja cia艂 niebieskich r贸偶nych typ贸w
+		* Stworzenie `Textbox` do wybierania masy tworzonego cia艂a
+		* Okodowanie serii przycisk贸w do wyboru typu tworzonego ciala
+	* Modyfikacja parametr贸w cia艂 niebieskich
+	* Stworzenie narz臋dzia do manipulacji czasem
+		* Mechanizm prze艂膮czania dok艂adno艣ci symulacji za pomoc膮 zmiennej `Simulator::STEPPINGRATE`
+		* Mechanizm sterowania szybko艣ci膮 symulacji, poprzez zmian臋 liczby tick贸w symulatora przypadaj膮cych na jedno od艣wie偶enie okna
+* 艁adowanie tekstur z plik贸w w funkcji `LoadResources()`
+* Rozplanowa膰 i doda膰 tryb sterowalnego statku kosmicznego 
+* Funkcje usuwaj膮ce istniej膮ce 艣lady cia艂 niebieskich
+* System szybkich zapis贸w i odtworze艅 obecnego stanu symulatora w pami臋ci
+## Jak skompilowa膰?
+Aby skompilowa膰 projekt, nale偶y skompilowa膰 wszystkie dost臋pne w repozytorium pliki .cpp - wszystko ma zosta膰 sk艂adow膮 pliku wykonywalnego "Grawitacja.exe", do kt贸rego nale偶y dolinkowa膰 bibliotek臋 SFML (modu艂 graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
-## Do rozwazenia
-* Sledzenie widokiem danego ciala niebieskiego
+## Do rozwa偶enia
+* 艢ledzenie widokiem danego cia艂a niebieskiego
 * Zapis i odczyt z pliku przez modul XML
