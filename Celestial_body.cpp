@@ -244,10 +244,10 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 	
 	// zrobione ze wzrotu na https://williamecraver.wixsite.com/elastic-equations
 	
-	V_m.x = ((V_m.x*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_m*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_m.y =	((V_m.y*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_m*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
-	V_o.x = ((V_o.x*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_o*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_o.y = ((V_o.y*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_o*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
+	V_m.x = ((V_m.x*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.x*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_m.x*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
+	V_m.y =	((V_m.y*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.y*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_m.y*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
+	V_o.x = ((V_o.x*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.x*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_o.x*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
+	V_o.y = ((V_o.y*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.y*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_o.y*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
 	
 	// nowe prędkości
 	
