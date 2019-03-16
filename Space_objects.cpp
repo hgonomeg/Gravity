@@ -15,3 +15,15 @@ Star::Star(int masa_gwiazdy,const sf::Vector2f& lokacja,const sf::Vector2f& pred
 
 
 }
+
+Asteroid::Asteroid(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
+:Celestial_body(1,sf::Color(128,128,128),lokacja,predkosc)
+{
+	
+}
+
+Spaceship::Spaceship(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
+:Celestial_body(1,sf::Color::Red,lokacja,predkosc)
+{
+	
+}

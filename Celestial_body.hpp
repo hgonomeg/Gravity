@@ -14,17 +14,18 @@ class Celestial_body :public sf::Drawable
 	static unsigned int Global_ID;
 	static std::vector<bool> alloc_diagram;
 	unsigned int Local_ID;
-	int mass;
 	unsigned short rc;	
 	unsigned int purge;
 	sf::Vector2f loc;
-	sf::Vector2f v;
-	sf::CircleShape wyglond;
-	sf::Color thecol;
 	std::vector<sf::Vertex> slad;
 	std::list<std::vector<sf::Vertex>>* slady_rodzicow;
 	float radius;
-
+	protected:
+	
+	int mass;
+	sf::Vector2f v;
+	sf::Texture tex;
+	sf::CircleShape wyglond;
 	
 	public:
 	

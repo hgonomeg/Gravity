@@ -1,6 +1,6 @@
 #include "Simulator.hpp"
 
-const float Simulator::G = 0.5;
+const float Simulator::G = 0.05;
 float Simulator::STEPPPING_RATE = 1.f;
 const unsigned short Simulator::CA_count = 2;
 

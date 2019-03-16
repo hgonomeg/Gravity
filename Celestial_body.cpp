@@ -102,7 +102,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	v = iv;
 	rc = 0;
 	purge = 0;
-	radius = sqrt(mass);
+	radius = sqrt(mass/10.f);
 	wyglond.setRadius(radius);
 	wyglond.setPointCount(64);
 	wyglond.setOrigin(radius,radius);
