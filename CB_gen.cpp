@@ -91,6 +91,7 @@ void CB_gen::kbp(sf::Event& ev)
 		case sf::Keyboard::N:
 		{
 			current_mass*=(1.2f);
+			if(current_mass<5) current_mass++;
 			break;
 		}
 		case sf::Keyboard::H:
