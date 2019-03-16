@@ -33,7 +33,7 @@ void UI_masterpanel::collision_cycle()
 		}
 		case Simulator::collision_approach::bounce:
 		{
-			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: bounce",3000));
+			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: bounce [EXPERIMENTAL]",3000));
 			break;
 		}
 	}
