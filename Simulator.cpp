@@ -166,9 +166,20 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 	return ca;
 }
 
-Simulator::Simulator()
+Simulator::Simulator()  //kostruktor domyślny
 {
 	paused = false;
 	draw_traces = true;
 	ca = collision_approach::merge;
+}
+
+Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
+{
+	paused=sim.paused;
+	draw_traces=sim.draw_traces;
+	ca=sim.ca;
+	
+	ciala
+	
+	
 }

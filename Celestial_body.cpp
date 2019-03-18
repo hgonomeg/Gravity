@@ -104,13 +104,30 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setPointCount(64);
 	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
-	wyglond.setFillColor(kolorek);
+	wyglond.setFillColor(kolor);
 	wyglond.setPosition(loc);
 	slad.emplace_back(sf::Vertex(loc,tracecolor));
 	Local_ID=Global_ID; 
 	alloc_diagram.push_back(true);
 	Global_ID++;
 	slady_rodzicow = NULL;
+}
+
+Celestial_body::Celestial_body(const Celestial_body &CB)
+{
+	mass=CB.mass;
+	loc =CB.loc;
+	v =CB.v;
+	rc =CB.rc;
+	tracecolor = CB.tracecolor;
+	purge = CB.purge;
+	radius = CB.radius;
+	wyglond=CB.wyglond;
+	slad=CB.slad;
+	Local_ID=CB.Local_ID; 
+	alloc_diagram=CB.alloc_diagram;
+	Global_ID=CB.Global_ID;
+	slady_rodzicow = CB.slady_rodzicow;
 }
 
 const std::vector<bool>& Celestial_body::get_alloc_diagram()

@@ -30,6 +30,7 @@ class Simulator :public sf::Drawable
 	void add_body(Celestial_body*);
 	void toggle_traces();
 	Simulator();
+	Simulator(const Simulator& sim);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	
 	std::list<std::unique_ptr<Celestial_body>>::iterator at_pos(const sf::Vector2f&); //funkcja at_pos(int,int) zwraca iterator listy do elementu który znajduje się na podanych koordynatach. W razie braku ciał niebieskich o podobnych koordynatach, zwraca list::end().
