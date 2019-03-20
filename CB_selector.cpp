@@ -55,7 +55,7 @@ void CB_selector::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 
 bool CB_selector::verify_body()
 {
-	if(Celestial_body::get_alloc_diagram()[pick_id]==pick_id)
+	if(Celestial_body::get_alloc_diagram().at(pick_id)==pick_id)
 	{
 		if(c_pick)
 		{

@@ -35,7 +35,7 @@ class Celestial_body :public sf::Drawable
 	
 	Celestial_body(int,const sf::Color& et=sf::Color::White,const sf::Vector2f& ye={0,0},const sf::Vector2f& ey={0,0}); 
 	virtual Celestial_body* clone(const Celestial_body&) = 0;
-	Celestial_body(const Celestial_body& CB);
+	Celestial_body(const Celestial_body&);
 	~Celestial_body();
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override; // "override" upewnienie się nadpisania metody z klasy od której dziedziczymy
 	virtual void draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const;
