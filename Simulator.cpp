@@ -179,7 +179,7 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	draw_traces=sim.draw_traces;
 	ca=sim.ca;
 	
-	ciala
+	//ciala
 	
 	
 }

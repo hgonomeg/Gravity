@@ -17,6 +17,7 @@ class Planet :public Celestial_body
 	
 	planetary_classification planet_type;
 	public:
+	virtual Celestial_body* clone(const Celestial_body&) override;
 	Planet(int mass=100, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 };
 
@@ -38,13 +39,14 @@ class Star :public Celestial_body
 	stellar_classification star_type;
 	
 	public:
-	
+	virtual Celestial_body* clone(const Celestial_body&) override;
 	Star(int mass=5000, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 };
 
 class Asteroid :public Celestial_body
 {
 	public:
+	virtual Celestial_body* clone(const Celestial_body&) override;
 	Asteroid(const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 };
 
@@ -52,5 +54,6 @@ class Spaceship :public Celestial_body
 {
 	unsigned short fuel; //max 10 000
 	public:
+	virtual Celestial_body* clone(const Celestial_body&) override;
 	Spaceship(const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 };

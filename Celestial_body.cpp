@@ -3,7 +3,7 @@
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
-std::vector<bool> Celestial_body::alloc_diagram = std::vector<bool>();
+std::map<unsigned int, unsigned int> Celestial_body::alloc_diagram = std::map<unsigned int, unsigned int>();
 
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -104,40 +104,38 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setPointCount(64);
 	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
-	wyglond.setFillColor(kolor);
+	wyglond.setFillColor(kolorek);
 	wyglond.setPosition(loc);
 	slad.emplace_back(sf::Vertex(loc,tracecolor));
 	Local_ID=Global_ID; 
-	alloc_diagram.push_back(true);
+	alloc_diagram.emplace(Local_ID,Local_ID);
 	Global_ID++;
 	slady_rodzicow = NULL;
 }
 
-Celestial_body::Celestial_body(const Celestial_body &CB)
+Celestial_body::Celestial_body(const Celestial_body& rhs);
 {
-	mass=CB.mass;
-	loc =CB.loc;
-	v =CB.v;
-	rc =CB.rc;
-	tracecolor = CB.tracecolor;
-	purge = CB.purge;
-	radius = CB.radius;
-	wyglond=CB.wyglond;
-	slad=CB.slad;
-	Local_ID=CB.Local_ID; 
-	alloc_diagram=CB.alloc_diagram;
-	Global_ID=CB.Global_ID;
-	slady_rodzicow = CB.slady_rodzicow;
+	mass = rhs.mass;
+	loc = rhs.loc;
+	v = rhs.v;
+	rc = rhs.rc;
+	tracecolor = rhs.tracecolor;
+	purge = rhs.purge;
+	radius = rhs.radius;
+	wyglond = rhs.wyglond;
+	slad = rhs.slad;
+	Local_ID = rhs.Local_ID; 
+	slady_rodzicow = rhs.slady_rodzicow;
 }
 
-const std::vector<bool>& Celestial_body::get_alloc_diagram()
+const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 {
 	return alloc_diagram;
 }
 
 Celestial_body::~Celestial_body()
 {
-	alloc_diagram[Local_ID]=false;
+	//alloc_diagram[Local_ID]=false;
 	if(slady_rodzicow) delete slady_rodzicow;
 }
 
