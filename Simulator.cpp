@@ -172,6 +172,13 @@ void Simulator::delete_traces()
 	for(auto& x: ciala) x->delete_traces();
 }
 
+std::list<std::vector<sf::Vertex>> Simulator::get_traces()
+{
+	std::list<std::vector<sf::Vertex>> ret;
+	for(auto& x: ciala) ret.splice(ret.begin(),x->get_traces());
+	return ret;
+}
+
 Simulator::collision_approach Simulator::cycle_collision_approach()
 {
 	unsigned short u = (unsigned short)ca;
