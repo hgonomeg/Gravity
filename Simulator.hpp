@@ -32,6 +32,7 @@ class Simulator :public sf::Drawable
 	void delete_traces();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	Simulator();
+	~Simulator();
 	Simulator(const Simulator& sim);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	

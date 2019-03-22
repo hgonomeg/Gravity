@@ -4,6 +4,7 @@
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
 std::map<unsigned int, unsigned int> Celestial_body::alloc_diagram = std::map<unsigned int, unsigned int>();
+std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>> Celestial_body::alloc_diagram_stack = std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>>();
 
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -132,6 +133,25 @@ Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
 		slady_rodzicow = new std::list<std::vector<sf::Vertex>>(*rhs.slady_rodzicow);
 	}
 	else slady_rodzicow=NULL;
+}
+
+void Celestial_body::popstax()
+{
+	if(alloc_diagram_stack.size()>0)
+	{
+		std::pair<std::map<unsigned int, unsigned int>,unsigned int> pya = alloc_diagram_stack.top();
+		alloc_diagram_stack.pop();
+		Global_ID=pya.second;
+		alloc_diagram=pya.first;
+	}
+}
+
+void Celestial_body::pushstax()
+{
+	std::pair<std::map<unsigned int, unsigned int>,unsigned int> pya;
+	pya.second=Global_ID;
+	pya.first=alloc_diagram;
+	alloc_diagram_stack.push(pya);
 }
 
 const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()

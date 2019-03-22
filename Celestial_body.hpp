@@ -9,12 +9,13 @@
 #include <utility>
 #include <algorithm>
 #include <iostream>
+#include <stack>
 
 class Celestial_body :public sf::Drawable
 {
 	static unsigned int Global_ID;
 	static std::map<unsigned int, unsigned int> alloc_diagram;
-	
+	static std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>> alloc_diagram_stack;
 	unsigned int Local_ID;
 	unsigned short rc;	
 	unsigned int purge;
@@ -58,7 +59,8 @@ class Celestial_body :public sf::Drawable
 	static const std::map<unsigned int, unsigned int>& get_alloc_diagram();
 	static void collision_handle(Celestial_body*, Celestial_body*&); //dlaczego tu jest referancja przy jednym wskaźniku a przy drugim nie? // kolizje perfekcyjnie nieelastyczne
 	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
-
+	static void pushstax();
+	static void popstax();
 	
 	
 	

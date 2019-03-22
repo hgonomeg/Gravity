@@ -1,5 +1,4 @@
 #include "Simulator.hpp"
-#include <list>
 
 const float Simulator::G = 0.05;
 float Simulator::STEPPPING_RATE = 1.f;
@@ -190,6 +189,7 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 
 Simulator::Simulator()  //kostruktor domyślny
 {
+	Celestial_body::pushstax();
 	paused = false;
 	draw_traces = true;
 	ca = collision_approach::merge;
@@ -197,6 +197,7 @@ Simulator::Simulator()  //kostruktor domyślny
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 {
+	Celestial_body::pushstax();
 	paused=sim.paused;
 	draw_traces=sim.draw_traces;
 	ca=sim.ca;
@@ -220,4 +221,10 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	
 	
 }
+
+Simulator::~Simulator()
+{
+	Celestial_body::popstax();
+}
+
 
