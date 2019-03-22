@@ -113,7 +113,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	slady_rodzicow = NULL;
 }
 
-Celestial_body::Celestial_body(const Celestial_body& rhs)
+Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
 {
 	mass = rhs.mass;
 	loc = rhs.loc;

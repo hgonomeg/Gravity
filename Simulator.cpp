@@ -1,4 +1,5 @@
 #include "Simulator.hpp"
+#include <list>
 
 const float Simulator::G = 0.05;
 float Simulator::STEPPPING_RATE = 1.f;
@@ -180,6 +181,27 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	ca=sim.ca;
 	
 	//ciala
+	
+	std::list<std::unique_ptr<Celestial_body>> nowe_ciala;
+	
+	auto rozmiar_starej sim.ciala.size(); //
+	
+	for(auto i=sim.ciala.begin(); i!=sim.ciala.end(); i++)
+	{
+		Celestial_body* bufor = NULL;
+		
+		//Leszek czy tutaj podrodze nie trzeba użyć "new" na buforze?
+		
+		//biore wskażnik ze starej listy
+		
+		Celestial_body* wsk_stare_cialo = *i;
+		
+		*bufor = *wsk_stare_cialo.clone(*wsk_stare_cialo); //objekt stare ciało się koluje które ma być w buforze 
+		
+		nowe_ciala.push_back(bufor);
+
+	}
+	
 	
 	
 }
