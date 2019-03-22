@@ -183,7 +183,6 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	//ciala
 	
 	
-	auto rozmiar_starej sim.ciala.size(); //
 	
 	for(auto i=sim.ciala.begin(); i!=sim.ciala.end(); i++)
 	{
@@ -193,9 +192,9 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 		
 		//biore wskażnik ze starej listy
 		
-		Celestial_body* wsk_stare_cialo = *i; //pobranie tego na co wskazuje "i"
+		Celestial_body* wsk_stare_cialo = i->get(); //pobranie tego na co wskazuje "i"
 		
-		*bufor = *wsk_stare_cialo.clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
+		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
 		
 		ciala.push_back(std::unique_ptr<Celestial_body*>(bufor)); //push do docelowej listy
 
