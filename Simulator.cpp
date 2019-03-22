@@ -209,11 +209,7 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	{
 		Celestial_body* bufor = NULL;
 		
-		//Leszek czy tutaj podrodze nie trzeba użyć "new" na buforze?
-		
-		//biore wskażnik ze starej listy
-		
-		Celestial_body* wsk_stare_cialo = i->get(); //pobranie tego na co wskazuje "i"
+		Celestial_body* wsk_stare_cialo = i->get(); //pobranie wskaźnika do Celestial_body którym opiekuje się obiekt unique_ptr znajdujący się pod iteratorem "i".
 		
 		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
 		
@@ -224,3 +220,4 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	
 	
 }
+

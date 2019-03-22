@@ -123,9 +123,15 @@ Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
 	purge = rhs.purge;
 	radius = rhs.radius;
 	wyglond = rhs.wyglond;
+	tex = rhs.tex;
 	slad = rhs.slad;
-	Local_ID = rhs.Local_ID; 
-	slady_rodzicow = rhs.slady_rodzicow;
+	Local_ID=Global_ID; 
+	alloc_diagram.emplace(Local_ID,Local_ID);
+	if(rhs.slady_rodzicow)
+	{
+		slady_rodzicow = new std::list<std::vector<sf::Vertex>>(*rhs.slady_rodzicow);
+	}
+	else slady_rodzicow=NULL;
 }
 
 const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()

@@ -14,6 +14,7 @@ class Celestial_body :public sf::Drawable
 {
 	static unsigned int Global_ID;
 	static std::map<unsigned int, unsigned int> alloc_diagram;
+	
 	unsigned int Local_ID;
 	unsigned short rc;	
 	unsigned int purge;
