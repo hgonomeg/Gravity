@@ -196,7 +196,7 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 		
 		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
 		
-		ciala.push_back(std::unique_ptr<Celestial_body*>(bufor)); //push do docelowej listy
+		ciala.push_back(std::unique_ptr<Celestial_body>(bufor)); //push do docelowej listy
 
 	}
 	
