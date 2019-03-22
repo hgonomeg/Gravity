@@ -125,6 +125,15 @@ std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end()
 	return ciala.cend();
 }
 
+std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::iterator_of(unsigned int ajdi)
+{
+	for(auto i=ciala.begin();i!=ciala.end();i++)
+	{
+		if(i->get()->get_id()==ajdi) return i;
+	}
+	return ciala.end();
+}
+
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf::Vector2f& here)
 {
 	

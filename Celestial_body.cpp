@@ -223,6 +223,10 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	{
 		dziecko->slady_rodzicow->push_back(*i);
 	}
+	
+	alloc_diagram[ojciec->get_id()]=dziecko->get_id();
+	alloc_diagram[matka->get_id()]=dziecko->get_id();
+	
 	delete ojciec; ojciec = dziecko;
 }
 

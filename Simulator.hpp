@@ -37,7 +37,7 @@ class Simulator :public sf::Drawable
 	std::list<std::unique_ptr<Celestial_body>>::iterator erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el);
 	void erase_body(unsigned int);
 	std::list<std::unique_ptr<Celestial_body>>::const_iterator get_end();
-	
+	std::list<std::unique_ptr<Celestial_body>>::iterator iterator_of(unsigned int);
 	collision_approach cycle_collision_approach();
 };
 
