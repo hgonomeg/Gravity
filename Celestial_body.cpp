@@ -245,6 +245,14 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 	
 }
 
+void Celestial_body::delete_traces()
+{
+	slad.clear();
+	slad.shrink_to_fit();
+	if(slady_rodzicow) delete slady_rodzicow;
+	slady_rodzicow=NULL;
+}
+
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
 {
 	//liczymy dla pierwszego dla MATKI

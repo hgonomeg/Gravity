@@ -48,6 +48,7 @@ class Celestial_body :public sf::Drawable
 	void refresh();
 	sf::FloatRect getGlobalBounds();
 	std::list<std::vector<sf::Vertex>> get_traces();
+	void delete_traces();
 	//ZMIENNE STATYCZNE
 	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
 	//FUNKCJE STATYCZNE

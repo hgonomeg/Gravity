@@ -29,6 +29,7 @@ class Simulator :public sf::Drawable
 	bool pause();
 	void add_body(Celestial_body*);
 	void toggle_traces();
+	void delete_traces();
 	Simulator();
 	Simulator(const Simulator& sim);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;

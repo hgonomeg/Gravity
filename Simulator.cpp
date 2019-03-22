@@ -167,6 +167,11 @@ void Simulator::toggle_traces()
 	draw_traces=!draw_traces;
 }
 
+void Simulator::delete_traces()
+{
+	for(auto& x: ciala) x->delete_traces();
+}
+
 Simulator::collision_approach Simulator::cycle_collision_approach()
 {
 	unsigned short u = (unsigned short)ca;
