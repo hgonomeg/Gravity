@@ -124,6 +124,15 @@ std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end()
 	return ciala.cend();
 }
 
+std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::iterator_of(unsigned int ajdi)
+{
+	for(auto i=ciala.begin();i!=ciala.end();i++)
+	{
+		if(i->get()->get_id()==ajdi) return i;
+	}
+	return ciala.end();
+}
+
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf::Vector2f& here)
 {
 	
@@ -157,6 +166,18 @@ void Simulator::toggle_traces()
 	draw_traces=!draw_traces;
 }
 
+void Simulator::delete_traces()
+{
+	for(auto& x: ciala) x->delete_traces();
+}
+
+std::list<std::vector<sf::Vertex>> Simulator::get_traces()
+{
+	std::list<std::vector<sf::Vertex>> ret;
+	for(auto& x: ciala) ret.splice(ret.begin(),x->get_traces());
+	return ret;
+}
+
 Simulator::collision_approach Simulator::cycle_collision_approach()
 {
 	unsigned short u = (unsigned short)ca;
@@ -166,9 +187,44 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 	return ca;
 }
 
-Simulator::Simulator()
+Simulator::Simulator()  //kostruktor domyślny
 {
+	Celestial_body::pushstax();
 	paused = false;
 	draw_traces = true;
 	ca = collision_approach::merge;
 }
+
+Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
+{
+	Celestial_body::pushstax();
+	paused=sim.paused;
+	draw_traces=sim.draw_traces;
+	ca=sim.ca;
+	
+	//ciala
+	
+	
+	
+	for(auto i=sim.ciala.begin(); i!=sim.ciala.end(); i++)
+	{
+		Celestial_body* bufor = NULL;
+		
+		Celestial_body* wsk_stare_cialo = i->get(); //pobranie wskaźnika do Celestial_body którym opiekuje się obiekt unique_ptr znajdujący się pod iteratorem "i".
+		
+		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
+		
+		ciala.push_back(std::unique_ptr<Celestial_body>(bufor)); //push do docelowej listy
+
+	}
+	
+	
+	
+}
+
+Simulator::~Simulator()
+{
+	Celestial_body::popstax();
+}
+
+

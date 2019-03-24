@@ -10,7 +10,7 @@ bool CB_selector::mbp(sf::Event& ev)
 {
 	if(ev.mouseButton.button==sf::Mouse::Button::Left)
 	{
-	c_pick_iter = patris->getsim()->at_pos(win->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
+	c_pick_iter = patris->getsim()->at_pos(patris->gettgt()->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
 	if(c_pick_iter!=patris->getsim()->get_end())	
 		{
 		c_pick =  c_pick_iter->get();
@@ -55,7 +55,7 @@ void CB_selector::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 
 bool CB_selector::verify_body()
 {
-	if(Celestial_body::get_alloc_diagram()[pick_id])
+	if(Celestial_body::get_alloc_diagram().at(pick_id)==pick_id)
 	{
 		if(c_pick)
 		{
@@ -63,7 +63,18 @@ bool CB_selector::verify_body()
 		}
 		else return false;
 	}
-	else return false;
+	else 
+	{
+		pick_id=Celestial_body::get_alloc_diagram().at(pick_id);
+		c_pick_iter=patris->getsim()->iterator_of(pick_id);
+		if(c_pick_iter!=patris->getsim()->get_end())	
+		{
+			c_pick =  c_pick_iter->get();
+		}
+		else c_pick = NULL;
+		
+		return verify_body();
+	}
 }
 
 void CB_selector::pop_body()

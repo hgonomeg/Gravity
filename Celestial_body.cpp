@@ -3,7 +3,8 @@
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
-std::vector<bool> Celestial_body::alloc_diagram = std::vector<bool>();
+std::map<unsigned int, unsigned int> Celestial_body::alloc_diagram = std::map<unsigned int, unsigned int>();
+std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>> Celestial_body::alloc_diagram_stack = std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>>();
 
 void Celestial_body::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -108,19 +109,59 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	wyglond.setPosition(loc);
 	slad.emplace_back(sf::Vertex(loc,tracecolor));
 	Local_ID=Global_ID; 
-	alloc_diagram.push_back(true);
+	alloc_diagram.emplace(Local_ID,Local_ID);
 	Global_ID++;
 	slady_rodzicow = NULL;
 }
 
-const std::vector<bool>& Celestial_body::get_alloc_diagram()
+Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
+{
+	mass = rhs.mass;
+	loc = rhs.loc;
+	v = rhs.v;
+	rc = rhs.rc;
+	tracecolor = rhs.tracecolor;
+	purge = rhs.purge;
+	radius = rhs.radius;
+	wyglond = rhs.wyglond;
+	tex = rhs.tex;
+	slad = rhs.slad;
+	Local_ID=Global_ID; 
+	alloc_diagram.emplace(Local_ID,Local_ID);
+	if(rhs.slady_rodzicow)
+	{
+		slady_rodzicow = new std::list<std::vector<sf::Vertex>>(*rhs.slady_rodzicow);
+	}
+	else slady_rodzicow=NULL;
+}
+
+void Celestial_body::popstax()
+{
+	if(alloc_diagram_stack.size()>0)
+	{
+		std::pair<std::map<unsigned int, unsigned int>,unsigned int> pya = alloc_diagram_stack.top();
+		alloc_diagram_stack.pop();
+		Global_ID=pya.second;
+		alloc_diagram=pya.first;
+	}
+}
+
+void Celestial_body::pushstax()
+{
+	std::pair<std::map<unsigned int, unsigned int>,unsigned int> pya;
+	pya.second=Global_ID;
+	pya.first=alloc_diagram;
+	alloc_diagram_stack.push(pya);
+}
+
+const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 {
 	return alloc_diagram;
 }
 
 Celestial_body::~Celestial_body()
 {
-	alloc_diagram[Local_ID]=false;
+	//alloc_diagram[Local_ID]=false;
 	if(slady_rodzicow) delete slady_rodzicow;
 }
 
@@ -208,6 +249,10 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	{
 		dziecko->slady_rodzicow->push_back(*i);
 	}
+	
+	alloc_diagram[ojciec->get_id()]=dziecko->get_id();
+	alloc_diagram[matka->get_id()]=dziecko->get_id();
+	
 	delete ojciec; ojciec = dziecko;
 }
 
@@ -224,6 +269,14 @@ float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
 		
 		return odleglosc;
 	
+}
+
+void Celestial_body::delete_traces()
+{
+	slad.clear();
+	slad.shrink_to_fit();
+	if(slady_rodzicow) delete slady_rodzicow;
+	slady_rodzicow=NULL;
 }
 
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
