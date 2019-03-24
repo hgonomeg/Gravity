@@ -25,4 +25,24 @@ node_stepper::node_stepper(const std::list<node>& nds, wuxing* ken)
 :nodes(nds)
 {
 	patris=ken;
+	koniec=false;
+	interval = patris->get_best_interval();
+}
+
+bool node_stepper::finished()
+{
+	bool buf = patris->quit();
+	std::unique_lock<std::mutex> locc(kon_mut);
+	{
+	if(buf) koniec=true;
+	return koniec;
+	}
+}
+
+node_stepper::~node_stepper()
+{
+	std::unique_lock<std::mutex>* locc = new std::unique_lock<std::mutex>(kon_mut);
+	koniec = true;
+	delete locc;
+	for(auto& x: thds) x.join();
 }

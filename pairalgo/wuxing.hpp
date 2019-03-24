@@ -9,8 +9,6 @@ sf::Font* fona;
 wuxing* wu;
 #endif
 #include "unit_base.hpp"
-#include "tianche.hpp"
-#include "sequential.hpp"
 #include <chrono>
 #include <thread>
 #include <mutex>
@@ -52,6 +50,7 @@ class wuxing :public sf::Drawable
 	void animate();
 	bool quit();
 	void consider_pair(const std::list<node>::const_iterator&,const std::list<node>::const_iterator&);
+	std::chrono::milliseconds get_best_interval();
 };
 
 

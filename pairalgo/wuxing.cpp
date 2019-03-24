@@ -1,15 +1,21 @@
 //silnik animacji do testów algorytmów obsługujących pary
 #include "wuxing.hpp"
+#include "tianche.hpp"
+#include "sequential.hpp"
 
 void wuxing::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
-{
-	
-		for(auto x: nodes) tgt.draw(x,st);
+{	
 		for(auto x: solidne_linie)
 		{
 			sf::Vertex line[2] = {x.first,x.second};
 			tgt.draw(line,2,sf::Lines,st);
 		}
+		for(auto x: wannabes)
+		{
+			sf::Vertex line[2] = {x.first,x.second};
+			tgt.draw(line,2,sf::Lines,st);
+		}
+		for(auto x: nodes) tgt.draw(x,st);
 }
 
 wuxing::wuxing(int cpx,sf::Vector2u winsi)
@@ -20,7 +26,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	sf::Vector2f winshi{(float)winsi.x,(float)winsi.y};
 	for(int i=0;i<cp;i++)
 	{
-		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  winshi.y/2.f-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  }));
+		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  (winshi.y/2.f-10.f)-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  }));
 	}
 	athd=NULL;
 }
@@ -32,13 +38,21 @@ bool wuxing::quit()
 	return koniec;
 	}
 }
+
+std::chrono::milliseconds wuxing::get_best_interval()
+{
+	return std::chrono::milliseconds((long long)(3000/(float)cp));
+}
+
 void wuxing::animate()
 {
 	if(athd==NULL)
 	{
 		auto athd_func = [this](){
 			std::unique_lock<std::mutex>* erb;
-			while(!quit())
+			node_stepper* ns;
+			ns = new seq_ns(nodes,this);
+			while(!quit()&&(wannabes.size()>0||!ns->finished()))
 			{
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				
@@ -52,8 +66,9 @@ void wuxing::animate()
 					}
 				}
 				delete erb;
-				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			}
+			delete ns;
 		};
 		athd = new std::thread(athd_func);
 	}
@@ -61,7 +76,10 @@ void wuxing::animate()
 
 wuxing::~wuxing()
 {
+	std::unique_lock<std::mutex>* erb;
+	erb = new std::unique_lock<std::mutex>(nod_mut);
 	koniec=true;
+	delete erb;
 	if(athd)
 	{
 	if(athd->joinable()) athd->join();
@@ -71,13 +89,18 @@ wuxing::~wuxing()
 
 void wuxing::consider_pair(const std::list<node>::const_iterator& lhs,const std::list<node>::const_iterator& rhs)
 {
-	
+	std::unique_lock<std::mutex> prl(nod_mut);
+	{
+		wannabes.push_back(linewannabe(lhs->get_loc(),rhs->get_loc()));
+	}
 }
 
 bool linewannabe::tick()
 {
-	wannabe+=delta;
-	return second.position.x-wannabe.x<=0;
+	second.position+=delta;
+	sf::Vector2f ndelta = {(wannabe.x-second.position.x),(wannabe.y-second.position.y)};
+	
+	return sqrt(ndelta.x*ndelta.x+ndelta.y*ndelta.y)<=5;
 }
 
 linewannabe::linewannabe(const sf::Vector2f& jed, const sf::Vector2f& dwa)
@@ -85,29 +108,30 @@ linewannabe::linewannabe(const sf::Vector2f& jed, const sf::Vector2f& dwa)
 	first.position=jed;
 	first.color=sf::Color::Green;
 	second.color=sf::Color::Green;
-	wannabe=jed;
-	second.position=dwa;
-	delta={(dwa.x-jed.x)/60.f,(dwa.y-jed.y)/60.f};
+	wannabe=dwa;
+	second.position=jed;
+	delta={(dwa.x-jed.x)/20.f,(dwa.y-jed.y)/20.f};
 }
 
 int main()
 {
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"Wuxing");
 	sf::Event ev;
-	rehn.setFramerateLimit(30);
+	rehn.setFramerateLimit(60);
 	std::unique_lock<std::mutex>* erb;
-	std::string napisek="Current points: 12";
+	std::string napisek="INITVALUE";
 	int cp=12;
 	wu = new wuxing(cp,rehn.getSize());
 	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //załadowanie czcionki do obiektu. NIE WOLNO DAĆ TEJ LINIJKI PO LoadResources() 
 	sf::Text status_text(std::string(napisek),*fona,12); //informacja o ładowaniu gry
-	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y-(status_text.getLocalBounds().height+5)); //wycentrowanie napisu na dole
 	
-	auto zrup_napis = [&status_text,&napisek,&cp](){
-		napisek="Current points: ";
+	auto zrup_napis = [&status_text,&napisek,&cp,&rehn](){
+		napisek="Use L ad P to change node count. Press X to animate.\nCurrent points: ";
 		napisek+=std::to_string(cp);
 		status_text.setString(napisek);
+		status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y-(status_text.getLocalBounds().height+5)); //wycentrowanie napisu na dole
 	};
+	zrup_napis();
 	
 	while(rehn.isOpen())
 	{
