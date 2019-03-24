@@ -9,8 +9,6 @@ sf::Font* fona;
 wuxing* wu;
 #endif
 #include "unit_base.hpp"
-#include "tianche.hpp"
-#include "sequential.hpp"
 #include <chrono>
 #include <thread>
 #include <mutex>

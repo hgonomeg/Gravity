@@ -1,11 +1,18 @@
 //silnik animacji do testów algorytmów obsługujących pary
 #include "wuxing.hpp"
+#include "tianche.hpp"
+#include "sequential.hpp"
 
 void wuxing::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	
 		for(auto x: nodes) tgt.draw(x,st);
 		for(auto x: solidne_linie)
+		{
+			sf::Vertex line[2] = {x.first,x.second};
+			tgt.draw(line,2,sf::Lines,st);
+		}
+		for(auto x: wannabes)
 		{
 			sf::Vertex line[2] = {x.first,x.second};
 			tgt.draw(line,2,sf::Lines,st);
@@ -38,7 +45,9 @@ void wuxing::animate()
 	{
 		auto athd_func = [this](){
 			std::unique_lock<std::mutex>* erb;
-			while(!quit())
+			node_stepper* ns;
+			ns = new seq_ns(nodes,this);
+			while(!quit()&&!ns->finished())
 			{
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				
@@ -54,6 +63,7 @@ void wuxing::animate()
 				delete erb;
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			}
+			delete ns;
 		};
 		athd = new std::thread(athd_func);
 	}
@@ -61,7 +71,10 @@ void wuxing::animate()
 
 wuxing::~wuxing()
 {
+	std::unique_lock<std::mutex>* erb;
+	erb = new std::unique_lock<std::mutex>(nod_mut);
 	koniec=true;
+	delete erb;
 	if(athd)
 	{
 	if(athd->joinable()) athd->join();

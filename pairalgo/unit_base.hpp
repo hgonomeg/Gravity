@@ -17,11 +17,17 @@ class node :public sf::Drawable
 
 class node_stepper
 {
+	protected:
 	const std::list<node>& nodes;
 	std::vector<std::thread> thds;
 	wuxing* patris;
+	bool koniec;
+	std::mutex kon_mut;
 	public:
 	node_stepper(const std::list<node>&, wuxing*);
+	virtual void main_action() = 0;
+	bool finished();
+	~node_stepper();
 };
 
 
