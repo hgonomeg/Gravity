@@ -5,6 +5,11 @@ void node::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	tgt.draw(ci,st);
 }
 
+sf::Vector2f node::get_loc() const
+{
+	return ci.getPosition(); 
+}
+
 node::node(const sf::Vector2f& loca)
 {
 	float rad=5;

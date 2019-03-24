@@ -25,14 +25,20 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	athd=NULL;
 }
 
+bool wuxing::quit()
+{
+	std::unique_lock<std::mutex> wulock(kon_mut);
+	{
+	return koniec;
+	}
+}
 void wuxing::animate()
 {
 	if(athd==NULL)
 	{
-		auto test = [this]()->bool{std::unique_lock<std::mutex> wulock(kon_mut);{return !koniec;}};
-		auto athd_func = [this,test](){
+		auto athd_func = [this](){
 			std::unique_lock<std::mutex>* erb;
-			while(test())
+			while(!quit())
 			{
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				

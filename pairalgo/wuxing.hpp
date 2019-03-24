@@ -50,6 +50,7 @@ class wuxing :public sf::Drawable
 	wuxing(int,sf::Vector2u winsi);
 	~wuxing();
 	void animate();
+	bool quit();
 	void consider_pair(const std::list<node>::const_iterator&,const std::list<node>::const_iterator&);
 };
 

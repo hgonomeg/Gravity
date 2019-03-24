@@ -8,6 +8,7 @@ class node :public sf::Drawable
 {
 	sf::CircleShape ci;
 	public:
+	sf::Vector2f get_loc() const;
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	node(const sf::Vector2f&);
 };
@@ -17,7 +18,9 @@ class node :public sf::Drawable
 class node_stepper
 {
 	const std::list<node>& nodes;
+	std::vector<std::thread> thds;
 	wuxing* patris;
+	public:
 	node_stepper(const std::list<node>&, wuxing*);
 };
 
