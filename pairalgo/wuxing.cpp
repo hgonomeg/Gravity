@@ -41,7 +41,7 @@ bool wuxing::quit()
 
 std::chrono::milliseconds wuxing::get_best_interval()
 {
-	return std::chrono::milliseconds((long long)(3000/(float)cp));
+	return std::chrono::milliseconds((long long)(1000/((float)(cp))));
 }
 
 void wuxing::animate()
@@ -51,7 +51,7 @@ void wuxing::animate()
 		auto athd_func = [this](){
 			std::unique_lock<std::mutex>* erb;
 			node_stepper* ns;
-			for(int i=0;i<2;i++)
+			for(int i=0;i<2&&!quit();i++)
 			{
 				switch(i)
 				{
@@ -59,6 +59,7 @@ void wuxing::animate()
 				ns = new seq_ns(nodes,this);
 				break;
 				case 1:
+				std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				solidne_linie.clear();
 				delete erb;
@@ -82,7 +83,7 @@ void wuxing::animate()
 					std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				}
 				delete ns;
-				if(!quit()) std::this_thread::sleep_for(std::chrono::milliseconds(5000));
+				
 			}
 		};
 		athd = new std::thread(athd_func);
