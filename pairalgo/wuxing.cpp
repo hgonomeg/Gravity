@@ -23,6 +23,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	cp=cpx;
 	koniec=false;
 	winsiz=winsi;
+	pairs = 0;
 	sf::Vector2f winshi{(float)winsi.x,(float)winsi.y};
 	for(int i=0;i<cp;i++)
 	{
@@ -37,6 +38,11 @@ bool wuxing::quit()
 	{
 	return koniec;
 	}
+}
+
+int wuxing::get_pairs()
+{
+	return pairs;
 }
 
 std::chrono::milliseconds wuxing::get_best_interval()
@@ -62,6 +68,7 @@ void wuxing::animate()
 				std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				solidne_linie.clear();
+				pairs = 0;
 				delete erb;
 				ns = new tianche(nodes,this);
 				break;
@@ -108,6 +115,7 @@ void wuxing::consider_pair(const std::list<node>::const_iterator& lhs,const std:
 	std::unique_lock<std::mutex> prl(nod_mut);
 	{
 		wannabes.push_back(linewannabe(lhs->get_loc(),rhs->get_loc()));
+		pairs++;
 	}
 }
 
@@ -142,8 +150,9 @@ int main()
 	sf::Text status_text(std::string(napisek),*fona,12); //informacja o ładowaniu gry
 	
 	auto zrup_napis = [&status_text,&napisek,&cp,&rehn](){
-		napisek="Use L ad P to change node count. Press X to animate.\nCurrent points: ";
+		napisek="Use L ad P to change node count. Press X to animate.\nCurrent point count: ";
 		napisek+=std::to_string(cp);
+		napisek+=" Current algorithm's pair count: "+std::to_string(wu->get_pairs());
 		status_text.setString(napisek);
 		status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y-(status_text.getLocalBounds().height+5)); //wycentrowanie napisu na dole
 	};
@@ -192,10 +201,11 @@ int main()
 			}
 			
 			rehn.clear(sf::Color(255,125,125));
-			rehn.draw(status_text);
 			erb = new std::unique_lock<std::mutex>(wu->nod_mut);
+			zrup_napis();
 			rehn.draw(*wu);
 			delete erb;
+			rehn.draw(status_text);
 			rehn.display();
 	}
 	delete wu;

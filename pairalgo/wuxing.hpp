@@ -34,7 +34,7 @@ class linewannabe
 
 class wuxing :public sf::Drawable
 {
-	int cp;
+	int cp, pairs;
 	bool koniec;
 	std::mutex kon_mut;
 	std::thread* athd;
@@ -49,6 +49,7 @@ class wuxing :public sf::Drawable
 	~wuxing();
 	void animate();
 	bool quit();
+	int get_pairs();
 	void consider_pair(const std::list<node>::const_iterator&,const std::list<node>::const_iterator&);
 	std::chrono::milliseconds get_best_interval();
 };
