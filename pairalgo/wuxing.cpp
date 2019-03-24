@@ -140,7 +140,7 @@ linewannabe::linewannabe(const sf::Vector2f& jed, const sf::Vector2f& dwa)
 
 int main()
 {
-	sf::RenderWindow rehn(sf::VideoMode(500,500),"Wuxing");
+	sf::RenderWindow rehn(sf::VideoMode(700,700),"Wuxing");
 	sf::Event ev;
 	rehn.setFramerateLimit(60);
 	std::unique_lock<std::mutex>* erb;
@@ -168,6 +168,11 @@ int main()
 					case sf::Event::Closed:
 					{
 						rehn.close();
+					}
+					case sf::Event::Resized:
+					{
+						rehn.setView(sf::View(sf::FloatRect(0,0,ev.size.width,ev.size.height)));
+						break;
 					}
 					case sf::Event::KeyPressed:
 					{
