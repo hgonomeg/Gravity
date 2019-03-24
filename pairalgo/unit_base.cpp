@@ -26,12 +26,15 @@ node_stepper::node_stepper(const std::list<node>& nds, wuxing* ken)
 {
 	patris=ken;
 	koniec=false;
+	interval = std::chrono::milliseconds(200);
 }
 
 bool node_stepper::finished()
 {
+	bool buf = patris->quit();
 	std::unique_lock<std::mutex> locc(kon_mut);
 	{
+	if(buf) koniec=true;
 	return koniec;
 	}
 }

@@ -4,9 +4,7 @@
 #include "sequential.hpp"
 
 void wuxing::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
-{
-	
-		for(auto x: nodes) tgt.draw(x,st);
+{	
 		for(auto x: solidne_linie)
 		{
 			sf::Vertex line[2] = {x.first,x.second};
@@ -17,6 +15,7 @@ void wuxing::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 			sf::Vertex line[2] = {x.first,x.second};
 			tgt.draw(line,2,sf::Lines,st);
 		}
+		for(auto x: nodes) tgt.draw(x,st);
 }
 
 wuxing::wuxing(int cpx,sf::Vector2u winsi)
@@ -61,7 +60,7 @@ void wuxing::animate()
 					}
 				}
 				delete erb;
-				std::this_thread::sleep_for(std::chrono::milliseconds(20));
+				std::this_thread::sleep_for(std::chrono::milliseconds(50));
 			}
 			delete ns;
 		};
@@ -84,13 +83,18 @@ wuxing::~wuxing()
 
 void wuxing::consider_pair(const std::list<node>::const_iterator& lhs,const std::list<node>::const_iterator& rhs)
 {
-	
+	std::unique_lock<std::mutex> prl(nod_mut);
+	{
+		wannabes.push_back(linewannabe(lhs->get_loc(),rhs->get_loc()));
+	}
 }
 
 bool linewannabe::tick()
 {
-	wannabe+=delta;
-	return second.position.x-wannabe.x<=0;
+	second.position+=delta;
+	sf::Vector2f ndelta = {(wannabe.x-second.position.x),(wannabe.y-second.position.y)};
+	
+	return sqrt(ndelta.x*ndelta.x+ndelta.y*ndelta.y)<=5;
 }
 
 linewannabe::linewannabe(const sf::Vector2f& jed, const sf::Vector2f& dwa)
@@ -98,16 +102,16 @@ linewannabe::linewannabe(const sf::Vector2f& jed, const sf::Vector2f& dwa)
 	first.position=jed;
 	first.color=sf::Color::Green;
 	second.color=sf::Color::Green;
-	wannabe=jed;
-	second.position=dwa;
-	delta={(dwa.x-jed.x)/60.f,(dwa.y-jed.y)/60.f};
+	wannabe=dwa;
+	second.position=jed;
+	delta={(dwa.x-jed.x)/20.f,(dwa.y-jed.y)/20.f};
 }
 
 int main()
 {
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"Wuxing");
 	sf::Event ev;
-	rehn.setFramerateLimit(30);
+	rehn.setFramerateLimit(60);
 	std::unique_lock<std::mutex>* erb;
 	std::string napisek="Current points: 12";
 	int cp=12;

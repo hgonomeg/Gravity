@@ -20,6 +20,7 @@ class node_stepper
 	protected:
 	const std::list<node>& nodes;
 	std::vector<std::thread> thds;
+	std::chrono::milliseconds interval;
 	wuxing* patris;
 	bool koniec;
 	std::mutex kon_mut;
