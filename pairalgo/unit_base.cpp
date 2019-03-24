@@ -15,3 +15,9 @@ node::node(const sf::Vector2f& loca)
 	ci.setOutlineColor(sf::Color::Black);
 	ci.setPosition(loca);
 }
+
+node_stepper::node_stepper(const std::list<node>& nds, wuxing* ken)
+:nodes(nds)
+{
+	patris=ken;
+}

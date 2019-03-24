@@ -1,27 +1,62 @@
+#include "../resources/Arimo-Regular.hpp"
+#include <SFML/Graphics.hpp>
+class wuxing;
+#ifdef EXTERNPLEASE
+extern sf::Font* fona;
+extern wuxing* wu;
+#else
+sf::Font* fona;
+wuxing* wu;
+#endif
 #include "unit_base.hpp"
 #include "tianche.hpp"
 #include "sequential.hpp"
-#include <SFML/Graphics.hpp>
 #include <chrono>
 #include <thread>
 #include <mutex>
 #include <future>
 #include <list>
 #include <vector>
+#include <utility>
 #define _USE_MATH_DEFINES
 #include <cmath>
-#include "../resources/Arimo-Regular.hpp"
-sf::Font* fona;
+
+
+#ifndef WUXING_HPP
+#define WUXING_HPP
+
+class linewannabe
+{
+	friend class wuxing;
+	sf::Vertex first, second;
+	sf::Vector2f delta, wannabe;
+	bool tick();
+	linewannabe(const sf::Vector2f&, const sf::Vector2f&);
+};
 
 class wuxing :public sf::Drawable
 {
 	int cp;
+	bool koniec;
+	std::mutex kon_mut;
+	std::mutex nod_mut;
+	std::thread* athd;
+	std::unique_lock<std::mutex> wulock;
 	sf::Vector2u winsiz;
 	std::list<node> nodes;
+	std::vector<std::pair<sf::Vertex,sf::Vertex>> solidne_linie;
+	std::list<linewannabe> wannabes;
 	public:
+	void draw_lock();
+	void draw_unlock();
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	wuxing(int,sf::Vector2u winsi);
+	~wuxing();
 	void animate();
+	void consider_pair(const std::list<node>::const_iterator&,const std::list<node>::const_iterator&);
 };
 
-wuxing* wu;
+
+
+#endif
+

@@ -1,4 +1,6 @@
 #include <cstdio>
+#ifndef ARIMO_REGULAR_HPP
+#define ARIMO_REGULAR_HPP
 #ifndef EXTERNPLEASE
 struct arf { const char *data; std::size_t size; } arimo = {
   "\x00\x01\x00\x00\x00\x15\x01\x00\x00\x04\x00\x50\x47\x44\x45\x46"
@@ -25692,4 +25694,5 @@ struct arf { const char *data; std::size_t size; } arimo = {
 };
 #else
 extern struct arf { const char *data; std::size_t size; } arimo;
+#endif
 #endif
