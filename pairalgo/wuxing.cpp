@@ -12,19 +12,8 @@ void wuxing::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 		}
 }
 
-void wuxing::draw_lock()
-{
-	wulock.lock();
-}
-
-void wuxing::draw_unlock()
-{
-	wulock.unlock();
-}
-
 wuxing::wuxing(int cpx,sf::Vector2u winsi)
 {
-	wulock = std::unique_lock<std::mutex>(nod_mut,std::defer_lock);
 	cp=cpx;
 	koniec=false;
 	winsiz=winsi;
@@ -44,17 +33,18 @@ void wuxing::animate()
 		auto athd_func = [this,test](){
 			while(test())
 			{
-				draw_lock();
-				for(auto i=wannabes.begin();i!=wannabes.end();i++)
+				std::unique_lock<std::mutex> wulock(nod_mut);
 				{
-					if(i->tick()) 
+					for(auto i=wannabes.begin();i!=wannabes.end();i++)
 					{
-						solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
-						i=wannabes.erase(i);
-						i--;
+						if(i->tick()) 
+						{
+							solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
+							i=wannabes.erase(i);
+							i--;
+						}
 					}
 				}
-				draw_unlock();
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			}
 		};
@@ -98,7 +88,7 @@ int main()
 	sf::RenderWindow rehn(sf::VideoMode(500,500),"Wuxing");
 	sf::Event ev;
 	rehn.setFramerateLimit(30);
-	
+	std::unique_lock<std::mutex>* erb;
 	std::string napisek="Current points: 12";
 	int cp=12;
 	wu = new wuxing(cp,rehn.getSize());
@@ -156,9 +146,9 @@ int main()
 			
 			rehn.clear(sf::Color(255,125,125));
 			rehn.draw(status_text);
-			wu->draw_lock();
+			erb = new std::unique_lock<std::mutex>(wu->nod_mut);
 			rehn.draw(*wu);
-			wu->draw_unlock();
+			delete erb;
 			rehn.display();
 	}
 	delete wu;

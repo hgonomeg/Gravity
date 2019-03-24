@@ -39,16 +39,13 @@ class wuxing :public sf::Drawable
 	int cp;
 	bool koniec;
 	std::mutex kon_mut;
-	std::mutex nod_mut;
 	std::thread* athd;
-	std::unique_lock<std::mutex> wulock;
 	sf::Vector2u winsiz;
 	std::list<node> nodes;
 	std::vector<std::pair<sf::Vertex,sf::Vertex>> solidne_linie;
 	std::list<linewannabe> wannabes;
 	public:
-	void draw_lock();
-	void draw_unlock();
+	std::mutex nod_mut;
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	wuxing(int,sf::Vector2u winsi);
 	~wuxing();
