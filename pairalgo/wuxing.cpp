@@ -31,20 +31,21 @@ void wuxing::animate()
 	{
 		auto test = [this]()->bool{std::unique_lock<std::mutex> wulock(kon_mut);{return !koniec;}};
 		auto athd_func = [this,test](){
+			std::unique_lock<std::mutex>* erb;
 			while(test())
 			{
-				std::unique_lock<std::mutex> wulock(nod_mut);
+				erb = new std::unique_lock<std::mutex>(nod_mut);
+				
+				for(auto i=wannabes.begin();i!=wannabes.end();i++)
 				{
-					for(auto i=wannabes.begin();i!=wannabes.end();i++)
+					if(i->tick()) 
 					{
-						if(i->tick()) 
-						{
-							solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
-							i=wannabes.erase(i);
-							i--;
-						}
+						solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
+						i=wannabes.erase(i);
+						i--;
 					}
 				}
+				delete erb;
 				std::this_thread::sleep_for(std::chrono::milliseconds(20));
 			}
 		};
