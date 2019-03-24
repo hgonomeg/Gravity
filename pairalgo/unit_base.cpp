@@ -44,5 +44,5 @@ node_stepper::~node_stepper()
 	std::unique_lock<std::mutex>* locc = new std::unique_lock<std::mutex>(kon_mut);
 	koniec = true;
 	delete locc;
-	for(auto& x: thds) x.join();
+	for(auto& x: thds) if(x.joinable()) x.join();
 }

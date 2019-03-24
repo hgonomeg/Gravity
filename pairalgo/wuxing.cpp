@@ -51,24 +51,39 @@ void wuxing::animate()
 		auto athd_func = [this](){
 			std::unique_lock<std::mutex>* erb;
 			node_stepper* ns;
-			ns = new seq_ns(nodes,this);
-			while(!quit()&&(wannabes.size()>0||!ns->finished()))
+			for(int i=0;i<2;i++)
 			{
-				erb = new std::unique_lock<std::mutex>(nod_mut);
-				
-				for(auto i=wannabes.begin();i!=wannabes.end();i++)
+				switch(i)
 				{
-					if(i->tick()) 
-					{
-						solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
-						i=wannabes.erase(i);
-						i--;
-					}
-				}
+				case 0:
+				ns = new seq_ns(nodes,this);
+				break;
+				case 1:
+				erb = new std::unique_lock<std::mutex>(nod_mut);
+				solidne_linie.clear();
 				delete erb;
-				std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				ns = new tianche(nodes,this);
+				break;
+				}
+				while(!quit()&&(wannabes.size()>0||!ns->finished()))
+				{
+					erb = new std::unique_lock<std::mutex>(nod_mut);
+					
+					for(auto i=wannabes.begin();i!=wannabes.end();i++)
+					{
+						if(i->tick()) 
+						{
+							solidne_linie.push_back(std::pair<sf::Vertex,sf::Vertex>(i->first,i->second));
+							i=wannabes.erase(i);
+							i--;
+						}
+					}
+					delete erb;
+					std::this_thread::sleep_for(std::chrono::milliseconds(50));
+				}
+				delete ns;
+				if(!quit()) std::this_thread::sleep_for(std::chrono::milliseconds(5000));
 			}
-			delete ns;
 		};
 		athd = new std::thread(athd_func);
 	}
