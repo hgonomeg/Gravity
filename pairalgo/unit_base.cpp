@@ -26,7 +26,7 @@ node_stepper::node_stepper(const std::list<node>& nds, wuxing* ken)
 {
 	patris=ken;
 	koniec=false;
-	interval = std::chrono::milliseconds(200);
+	interval = patris->get_best_interval();
 }
 
 bool node_stepper::finished()

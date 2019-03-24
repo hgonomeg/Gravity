@@ -26,7 +26,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	sf::Vector2f winshi{(float)winsi.x,(float)winsi.y};
 	for(int i=0;i<cp;i++)
 	{
-		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  winshi.y/2.f-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  }));
+		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  (winshi.y/2.f-10.f)-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  }));
 	}
 	athd=NULL;
 }
@@ -38,6 +38,12 @@ bool wuxing::quit()
 	return koniec;
 	}
 }
+
+std::chrono::milliseconds wuxing::get_best_interval()
+{
+	return std::chrono::milliseconds((long long)(3000/(float)cp));
+}
+
 void wuxing::animate()
 {
 	if(athd==NULL)
@@ -46,7 +52,7 @@ void wuxing::animate()
 			std::unique_lock<std::mutex>* erb;
 			node_stepper* ns;
 			ns = new seq_ns(nodes,this);
-			while(!quit()&&!ns->finished())
+			while(!quit()&&(wannabes.size()>0||!ns->finished()))
 			{
 				erb = new std::unique_lock<std::mutex>(nod_mut);
 				
@@ -113,18 +119,19 @@ int main()
 	sf::Event ev;
 	rehn.setFramerateLimit(60);
 	std::unique_lock<std::mutex>* erb;
-	std::string napisek="Current points: 12";
+	std::string napisek="INITVALUE";
 	int cp=12;
 	wu = new wuxing(cp,rehn.getSize());
 	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //załadowanie czcionki do obiektu. NIE WOLNO DAĆ TEJ LINIJKI PO LoadResources() 
 	sf::Text status_text(std::string(napisek),*fona,12); //informacja o ładowaniu gry
-	status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y-(status_text.getLocalBounds().height+5)); //wycentrowanie napisu na dole
 	
-	auto zrup_napis = [&status_text,&napisek,&cp](){
-		napisek="Current points: ";
+	auto zrup_napis = [&status_text,&napisek,&cp,&rehn](){
+		napisek="Use L ad P to change node count. Press X to animate.\nCurrent points: ";
 		napisek+=std::to_string(cp);
 		status_text.setString(napisek);
+		status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y-(status_text.getLocalBounds().height+5)); //wycentrowanie napisu na dole
 	};
+	zrup_napis();
 	
 	while(rehn.isOpen())
 	{

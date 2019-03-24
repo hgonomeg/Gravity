@@ -50,6 +50,7 @@ class wuxing :public sf::Drawable
 	void animate();
 	bool quit();
 	void consider_pair(const std::list<node>::const_iterator&,const std::list<node>::const_iterator&);
+	std::chrono::milliseconds get_best_interval();
 };
 
 
