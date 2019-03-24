@@ -70,6 +70,7 @@ void wuxing::animate()
 				solidne_linie.clear();
 				pairs = 0;
 				delete erb;
+				if(quit()) return;
 				ns = new tianche(nodes,this);
 				break;
 				}
