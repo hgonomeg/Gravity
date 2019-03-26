@@ -3,88 +3,112 @@
 const float Simulator::G = 0.05;
 float Simulator::STEPPPING_RATE = 1.f;
 const unsigned short Simulator::CA_count = 2;
+int Simulator::accuracy_factor = 0;
+unsigned int Simulator::tick_rate = 1;
 
 void Simulator::tick()
 {
 	if(!paused)
 		{
-			auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs){
-			
-			auto &left_loc=lhs->get_loc();
-			auto &left_v=lhs->get_v();
-			auto &left_mass=lhs->get_mass();
-			
-			
-			auto &right_loc=rhs->get_loc();
-			auto &right_v=rhs->get_v();
-			auto &right_mass=rhs->get_mass();
-			
-			float diff_x=left_loc.x-right_loc.x;
-			float diff_y=left_loc.y-right_loc.y;
-			
-			float odleglosc= sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
-		
-			sf::Vector2f sila_graw_vec={diff_x,diff_y};
-			sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
-			
-			left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
-			right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
-			
-			
-			
-			};
-		
-			for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
+			if(predicted_traces)
 			{
-				
-				auto ekaj=j;
-				ekaj++;
-				for(auto i=ekaj; i!=ciala.end(); i++)
+				for(auto u=predicted_traces->begin();u!=predicted_traces->end();u++)
 				{
-					if(Celestial_body::collision_detec(j->get(),i->get()))
+					for(auto i=u->begin();i!=u->end();i++)
 					{
-						switch(ca)
-							{
-							case collision_approach::merge:
-								{
-								//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
-								Celestial_body* ojc=i->release();
-								Celestial_body::collision_handle(j->get(),ojc);	
-								i->reset(ojc);
-								ciala.erase(j); 
-								j=i; j--;
-								break;
-								}
-							case collision_approach::bounce:
-								{
-								Celestial_body::bounce_handle(j->get(),i->get());
-								break;
-								}
-							}
-						if(i==ciala.begin()) break;
+						if(i->color.a>0)
+						{
+							i->color.a--;
+						}
 					}
+					if(u->back().color.a==0) 
+						{
+						u=predicted_traces->erase(u); 
+						if(u==predicted_traces->end()) break;
+						}
 				}
-				
-			
+				if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = NULL; }
 			}
-			
-			for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
+			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
+				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs){
 				
-				auto ekaj=j;
-				ekaj++;
-				for(auto i=ekaj; i!=ciala.end(); i++)
+				auto &left_loc=lhs->get_loc();
+				auto &left_v=lhs->get_v();
+				auto &left_mass=lhs->get_mass();
+				
+				
+				auto &right_loc=rhs->get_loc();
+				auto &right_v=rhs->get_v();
+				auto &right_mass=rhs->get_mass();
+				
+				float diff_x=left_loc.x-right_loc.x;
+				float diff_y=left_loc.y-right_loc.y;
+				
+				float odleglosc= sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
+			
+				sf::Vector2f sila_graw_vec={diff_x,diff_y};
+				sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
+				
+				left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
+				right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
+				
+				
+				
+				};
+			
+				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
 				{
-					obrob_grawitacje(j->get(),i->get());	
+					
+					auto ekaj=j;
+					ekaj++;
+					for(auto i=ekaj; i!=ciala.end(); i++)
+					{
+						if(Celestial_body::collision_detec(j->get(),i->get()))
+						{
+							switch(ca)
+								{
+								case collision_approach::merge:
+									{
+									//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+									Celestial_body* ojc=i->release();
+									Celestial_body::collision_handle(j->get(),ojc);	
+									i->reset(ojc);
+									ciala.erase(j); 
+									j=i; j--;
+									break;
+									}
+								case collision_approach::bounce:
+									{
+									Celestial_body::bounce_handle(j->get(),i->get());
+									break;
+									}
+								}
+							if(i==ciala.begin()) break;
+						}
+					}
+					
+				
 				}
 				
-			
-			}
-			
-			for(auto j=ciala.begin(); j!=ciala.end(); j++)
-			{
-				auto q=j->get();
-				q->get_loc()+=(q->get_v())*STEPPPING_RATE; 
+				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
+				{
+					
+					auto ekaj=j;
+					ekaj++;
+					for(auto i=ekaj; i!=ciala.end(); i++)
+					{
+						obrob_grawitacje(j->get(),i->get());	
+					}
+					
+				
+				}
+				
+				for(auto j=ciala.begin(); j!=ciala.end(); j++)
+				{
+					auto q=j->get();
+					q->get_loc()+=(q->get_v())*STEPPPING_RATE; 
+				}
 			}
 		}
 }
@@ -96,6 +120,10 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 		if(!paused) x.get()->refresh();
 		if(draw_traces) x.get()->draw_trace(tgt,st);
 		
+	}
+	if(predicted_traces)
+	{
+		for(auto& x: (*predicted_traces)) tgt.draw(&x[0],x.size(),sf::LineStrip,st);
 	}
 	for(auto& x: ciala)
 	{
@@ -178,6 +206,11 @@ std::list<std::vector<sf::Vertex>> Simulator::get_traces()
 	return ret;
 }
 
+void Simulator::predict_traces()
+{
+	Simulator przodnik(*this);
+}
+
 Simulator::collision_approach Simulator::cycle_collision_approach()
 {
 	unsigned short u = (unsigned short)ca;
@@ -193,6 +226,7 @@ Simulator::Simulator()  //kostruktor domyślny
 	paused = false;
 	draw_traces = true;
 	ca = collision_approach::merge;
+	predicted_traces=NULL;
 }
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
@@ -201,7 +235,7 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	paused=sim.paused;
 	draw_traces=sim.draw_traces;
 	ca=sim.ca;
-	
+	predicted_traces=NULL;
 	//ciala
 	
 	
