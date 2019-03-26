@@ -17,7 +17,13 @@ struct ResourceBase
 	sf::Texture button_toggle_traces;
 	sf::Texture button_cycle_collision;
 	sf::Texture button_deltraces;
+	sf::Texture button_predtraces;
 	sf::Texture button_gen_mode;
+	sf::Texture button_accuracy_plus;
+	sf::Texture button_accuracy_minus;
+	sf::Texture button_speed_plus;
+	sf::Texture button_speed_minus;
+	sf::Texture button_debug;
 	bool correct;
 };
 

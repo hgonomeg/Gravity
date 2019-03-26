@@ -82,7 +82,8 @@ void Celestial_body::refresh()
 			}
 		}
 		rc++;
-		slad.emplace_back(sf::Vertex(wyglond.getPosition(),tracecolor));
+		if(!is_still&&v.x!=0.f&&v.y!=0.f) slad.emplace_back(sf::Vertex(wyglond.getPosition(),tracecolor));
+		if(is_still) {loc=wyglond.getPosition(); v={0,0};}
 		wyglond.setPosition(loc);
 }
 
@@ -100,12 +101,14 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	rc = 0;
 	tracecolor = sf::Color(255,255,255);
 	purge = 0;
-	radius = sqrt(mass/10.f);
+	is_still = false;
+	radius = sqrt(fabs(mass/10.f));
 	wyglond.setRadius(radius);
 	wyglond.setPointCount(64);
 	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
+	if(mass<0) wyglond.setFillColor(sf::Color(255,200,255));
 	wyglond.setPosition(loc);
 	slad.emplace_back(sf::Vertex(loc,tracecolor));
 	Local_ID=Global_ID; 
@@ -126,6 +129,7 @@ Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
 	wyglond = rhs.wyglond;
 	tex = rhs.tex;
 	slad = rhs.slad;
+	is_still = rhs.is_still;
 	Local_ID=Global_ID; 
 	alloc_diagram.emplace(Local_ID,Local_ID);
 	if(rhs.slady_rodzicow)
@@ -212,6 +216,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 		if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
 		{
 			dziecko=new Star(M_d,matka->get_loc(),V_d);
+			dziecko->is_still=matka->is_still;
 		}
 		else if(asteroida!=NULL)
 		{
@@ -220,6 +225,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 		else //obiekt będzie planetą
 		{
 			dziecko=new Planet(M_d,matka->get_loc(),V_d);
+			dziecko->is_still=matka->is_still;
 		}
 	}	
 	else //tu dziecko przyjmie klase ojca
@@ -230,6 +236,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 		if(planeta==NULL&&asteroida==NULL) // gwiazda
 		{
 			dziecko=new Star(M_d,ojciec->get_loc(),V_d);
+			dziecko->is_still=ojciec->is_still;
 		}
 		else if(asteroida!=NULL)
 		{
@@ -238,6 +245,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 		else //obiekt będzie planetą
 		{
 			dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
+			dziecko->is_still=ojciec->is_still;
 		}	
 	}	
 	dziecko->slady_rodzicow = new std::list<std::vector<sf::Vertex>>();
@@ -252,6 +260,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	
 	alloc_diagram[ojciec->get_id()]=dziecko->get_id();
 	alloc_diagram[matka->get_id()]=dziecko->get_id();
+	
 	
 	delete ojciec; ojciec = dziecko;
 }

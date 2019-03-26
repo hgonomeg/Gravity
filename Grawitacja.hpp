@@ -65,6 +65,9 @@ class UI_state :public sf::Drawable
 	
 	~UI_state();
 	UI_state(Simulator*,sf::RenderWindow*,sf::Text*);
+	
+	bool debug;
+	
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*);
 	void mbp(sf::Event&);
@@ -88,11 +91,13 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	{
 		Planet,
 		Star,
+		StillStar,
 		Asteroid
 	} currently_picked;
 	
 	int current_mass;
 	bool active_state;
+	bool wizja;
 	sf::Vector2f rel_init;
 	sf::Vector2f rel_end;
 	void add_body();
@@ -138,6 +143,13 @@ class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_stat
 	Button b_sel;
 	Button b_traces;
 	Button b_collision;
+	Button b_deltraces;
+	Button b_predtraces;
+	Button b_accuracy_plus;
+	Button b_accuracy_minus;
+	Button b_speed_plus;
+	Button b_speed_minus;
+	Button b_debug;
 	void collision_cycle();
 	protected:
 	

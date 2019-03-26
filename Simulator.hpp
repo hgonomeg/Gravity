@@ -17,12 +17,20 @@ class Simulator :public sf::Drawable
 	static const float G;
 	static const unsigned short CA_count;
 	static float STEPPPING_RATE;
+	static int accuracy_factor;
+	static unsigned int tick_rate;
 	collision_approach ca;
 	bool paused, draw_traces;
 	
 	std::list<std::unique_ptr<Celestial_body>> ciala;
+	std::list<std::vector<sf::Vertex>>* predicted_traces;
+	unsigned int counter;
 	
 	public:
+	static void change_accuracy(bool);
+	static bool change_rate(bool);
+	static float get_accuracy();
+	static unsigned int get_rate();
 	
 	void tick();
 	void pause(bool);
@@ -30,6 +38,8 @@ class Simulator :public sf::Drawable
 	void add_body(Celestial_body*);
 	void toggle_traces();
 	void delete_traces();
+	void predict_traces();
+	unsigned int size();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	Simulator();
 	~Simulator();

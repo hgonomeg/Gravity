@@ -46,16 +46,18 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	UI_state gui(&sim,&rehn,&status_text);
-	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
-	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
-	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));
-	
 	sim.add_body(new Planet(120,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(100,{250,250},{-1.2,2.4}));
 	sim.add_body(new Star(8500,{200,200},{0.1,-0.05}));
 	sim.add_body(new Planet(50,{450,5},{0.6,0.9}));
 	sim.add_body(new Planet(150,{4,250},{-0.4,-1.8}));
+	
+	UI_state gui(&sim,&rehn,&status_text);
+	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
+	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
+	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));
+	
+	
 	
 	hiresclk::duration load_time = hiresclk::now() - init_time;
 	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/1000.d)+" milliseconds"),1000));

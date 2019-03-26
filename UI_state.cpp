@@ -141,9 +141,10 @@ int UI_state::vertoffset_of_last_ht()
 UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
 {
 	status_text=stxt;
+	debug=false;
 	curr = NULL;
-	switch_tool(new CB_gen);
 	sim = sjm;
+	switch_tool(new CB_gen);
 	last_ht_winoffset = 0;
 	status_text->setCharacterSize(15);
 	status_text->setPosition(5.f,5.f);
@@ -184,7 +185,9 @@ void UI_state::switch_tool(UI_tool* ut)
 
 void UI_state::set_status_text()
 {
-	std::string tmp = "FPS: "+std::to_string(fps)+" Current tool: "+curr->name();
+	std::string tmp = "FPS: "+std::to_string(fps)+"  Accuracy: "+std::to_string(Simulator::get_accuracy())+"  Sim. rate: "+std::to_string(Simulator::get_rate())+"  Body count: ";
+	tmp+=std::to_string(sim->size());
+	tmp+="  Current tool: "+curr->name();
 	status_text->setString(tmp);
 }
 

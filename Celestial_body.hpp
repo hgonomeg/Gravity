@@ -31,7 +31,7 @@ class Celestial_body :public sf::Drawable
 	sf::Texture tex;
 	sf::CircleShape wyglond;
 	float radius;
-	
+	bool is_still;
 	
 	public:
 	
