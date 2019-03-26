@@ -31,6 +31,20 @@ bool Simulator::change_rate(bool chg)
 	return true;
 }
 
+float Simulator::get_accuracy()
+{
+	return 1.f/STEPPPING_RATE;
+}
+unsigned int Simulator::get_rate()
+{
+	return tick_rate;
+}
+
+unsigned int Simulator::size()
+{
+	return ciala.size();
+}
+
 void Simulator::tick()
 {
 	if(!paused)
@@ -246,6 +260,7 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 }
 
 Simulator::Simulator()  //kostruktor domyślny
+:ciala()
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -261,6 +276,7 @@ Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 	draw_traces=sim.draw_traces;
 	ca=sim.ca;
 	predicted_traces=NULL;
+	//ciala.clear();
 	//ciala
 	
 	

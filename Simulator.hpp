@@ -24,11 +24,13 @@ class Simulator :public sf::Drawable
 	
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	std::list<std::vector<sf::Vertex>>* predicted_traces;
+	unsigned int counter;
 	
 	public:
 	static void change_accuracy(bool);
 	static bool change_rate(bool);
-	
+	static float get_accuracy();
+	static unsigned int get_rate();
 	
 	void tick();
 	void pause(bool);
@@ -37,6 +39,7 @@ class Simulator :public sf::Drawable
 	void toggle_traces();
 	void delete_traces();
 	void predict_traces();
+	unsigned int size();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	Simulator();
 	~Simulator();
