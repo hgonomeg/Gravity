@@ -15,11 +15,11 @@ bool UI_masterpanel::mbp(sf::Event& ev)
 	if(b_traces.mbp(ev)) {bu=true; patris->getsim()->toggle_traces();}
 	if(b_collision.mbp(ev)) {bu=true; collision_cycle();}
 	if(b_deltraces.mbp(ev)) {bu=true; patris->getsim()->delete_traces(); }
-	if(b_predtraces.mbp(ev)) {bu=true; patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
-	if(b_accuracy_plus.mbp(ev)) {bu=true; patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
-	if(b_accuracy_minus.mbp(ev)) {bu=true; patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
-	if(b_speed_plus.mbp(ev)) {bu=true; patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
-	if(b_speed_minus.mbp(ev)) {bu=true; patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
+	if(b_predtraces.mbp(ev)) {bu=true; patris->getsim()->predict_traces(); patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
+	if(b_accuracy_plus.mbp(ev)) {bu=true; Simulator::change_accuracy(true);}
+	if(b_accuracy_minus.mbp(ev)) {bu=true; Simulator::change_accuracy(false);}
+	if(b_speed_plus.mbp(ev)) {bu=true; Simulator::change_rate(true);}
+	if(b_speed_minus.mbp(ev)) {bu=true; if(!Simulator::change_rate(false)) patris->push_hint_text(UI_state::hint_text("Minimal simulation rate has been reached!",3000));}
 	if(b_debug.mbp(ev)) {bu=true; patris->debug=!patris->debug; b_debug.show(patris->debug); if(patris->debug) patris->push_hint_text(UI_state::hint_text("Debug mode ON",3000)); else patris->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));}
 	return bu;
 }
@@ -63,27 +63,28 @@ void UI_masterpanel::kbp(sf::Event& ev)
 		}
 		case sf::Keyboard::T:
 		{
+			patris->getsim()->predict_traces();
 			patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
 			break;
 		}
 		case sf::Keyboard::Comma:
 		{
-			patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
+			if(!Simulator::change_rate(false)) patris->push_hint_text(UI_state::hint_text("Minimal simulation rate has been reached!",3000));
 			break;
 		}
 		case sf::Keyboard::Period:
 		{
-			patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
+			Simulator::change_rate(true);
 			break;
 		}
 		case sf::Keyboard::U:
 		{
-			patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
+			Simulator::change_accuracy(false);
 			break;
 		}
 		case sf::Keyboard::I:
 		{
-			patris->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
+			Simulator::change_accuracy(true);
 			break;
 		}
 		case sf::Keyboard::LBracket:

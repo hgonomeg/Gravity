@@ -6,6 +6,31 @@ const unsigned short Simulator::CA_count = 2;
 int Simulator::accuracy_factor = 0;
 unsigned int Simulator::tick_rate = 1;
 
+void Simulator::change_accuracy(bool chg)
+{
+	if(chg) accuracy_factor++; else accuracy_factor--;
+	if(accuracy_factor==0) STEPPPING_RATE=1.f;
+	else
+	{
+		if(accuracy_factor<0) STEPPPING_RATE=fabs((float)accuracy_factor);
+		else STEPPPING_RATE=(1/(float)accuracy_factor);
+	}
+}
+
+bool Simulator::change_rate(bool chg)
+{
+	if(chg)
+	{
+		tick_rate++;
+	}
+	else
+	{
+		if(tick_rate==1) return false;
+		tick_rate--;
+	}
+	return true;
+}
+
 void Simulator::tick()
 {
 	if(!paused)

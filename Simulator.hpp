@@ -26,6 +26,9 @@ class Simulator :public sf::Drawable
 	std::list<std::vector<sf::Vertex>>* predicted_traces;
 	
 	public:
+	static void change_accuracy(bool);
+	static bool change_rate(bool);
+	
 	
 	void tick();
 	void pause(bool);
