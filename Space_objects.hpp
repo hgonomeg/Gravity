@@ -42,8 +42,9 @@ class Star :public Celestial_body
 	public:
 	Star(const Celestial_body&);
 	virtual Celestial_body* clone(const Celestial_body&) override;
-	Star(int mass=5000, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
+	Star(int mass=5000, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0},bool still=false);
 };
+
 
 class Asteroid :public Celestial_body
 {

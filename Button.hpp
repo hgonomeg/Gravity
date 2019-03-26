@@ -5,6 +5,7 @@
 class Button :public sf::Drawable
 {
 	sf::RectangleShape frejm;
+	bool shown;
 	unsigned int graycount;
 	public:
 	Button(const sf::Texture&);
@@ -12,4 +13,6 @@ class Button :public sf::Drawable
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	void setPosition(const sf::Vector2f&);
 	void tick();
+	bool is_shown();
+	void show(bool);
 };

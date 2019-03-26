@@ -22,24 +22,29 @@ bool CB_gen::mbp(sf::Event& ev)
 	else 
 	{
 		switch(currently_picked)
+		{
+			case cb_type::Planet:
 			{
-				case cb_type::Planet:
-				{
-					currently_picked = cb_type::Star;
-					break;
-				}
-				case cb_type::Star:
-				{
-					currently_picked = cb_type::Asteroid;
-					break;
-				}
-				case cb_type::Asteroid:
-				{
-					currently_picked = cb_type::Planet;
-					break;
-				}
-				
+				currently_picked = cb_type::Star;
+				break;
 			}
+			case cb_type::Star:
+			{
+				currently_picked = cb_type::StillStar;
+				break;
+			}
+			case cb_type::Asteroid:
+			{
+				currently_picked = cb_type::Planet;
+				break;
+			}
+			case cb_type::StillStar:
+			{
+				currently_picked = cb_type::Asteroid;
+				break;
+			}
+			
+		}
 	}
 	return true;
 }
@@ -70,12 +75,17 @@ void CB_gen::kbp(sf::Event& ev)
 				}
 				case cb_type::Star:
 				{
-					currently_picked = cb_type::Asteroid;
+					currently_picked = cb_type::StillStar;
 					break;
 				}
 				case cb_type::Asteroid:
 				{
 					currently_picked = cb_type::Planet;
+					break;
+				}
+				case cb_type::StillStar:
+				{
+					currently_picked = cb_type::Asteroid;
 					break;
 				}
 				
@@ -84,14 +94,17 @@ void CB_gen::kbp(sf::Event& ev)
 		}
 		case sf::Keyboard::B:
 		{
-			current_mass*=(1.f/1.2f);
-			if(current_mass==0) current_mass=1;
+			if(current_mass>0)current_mass*=(1.f/1.2f);
+			else if(!patris->debug) current_mass=1;
+				else if(current_mass>-6) current_mass=-6;
+					else current_mass*=1.2f;
 			break;
 		}
 		case sf::Keyboard::N:
 		{
-			current_mass*=(1.2f);
-			if(current_mass<5) current_mass++;
+			if(current_mass>0) current_mass*=(1.2f);
+			else current_mass*=(1.f/1.2f);
+			if(current_mass<5&&current_mass>=0) current_mass++;
 			break;
 		}
 		case sf::Keyboard::H:
@@ -135,9 +148,10 @@ void CB_gen::add_body()
 			neu = new ::Planet(current_mass,rel_init,vel);
 			break;
 		}
+		case cb_type::StillStar:
 		case cb_type::Star:
 		{
-			neu = new ::Star(current_mass,rel_init,vel);
+			neu = new ::Star(current_mass,rel_init,vel,wizja);
 			break;
 		}
 		case cb_type::Asteroid:
@@ -159,6 +173,7 @@ CB_gen::CB_gen()
 {
 	lbod = NULL;
 	active_state = false;
+	wizja = true;
 	didrem=false;
 	current_mass=10;
 	currently_picked = cb_type::Planet;
@@ -179,11 +194,18 @@ void CB_gen::tick()
 		case cb_type::Star:
 		{
 			tmp+="STAR";
+			wizja=false;
 			break;
 		}
 		case cb_type::Asteroid:
 		{
 			tmp+="ASTEROID";
+			break;
+		}
+		case cb_type::StillStar:
+		{
+			tmp+="STILL STAR";
+			wizja=true;
 			break;
 		}
 		

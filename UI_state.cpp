@@ -141,6 +141,7 @@ int UI_state::vertoffset_of_last_ht()
 UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
 {
 	status_text=stxt;
+	debug=false;
 	curr = NULL;
 	switch_tool(new CB_gen);
 	sim = sjm;

@@ -3,6 +3,7 @@
 Button::Button(const sf::Texture& tx)
 :frejm({15,15})
 {
+	shown = true;
 	graycount = 0;
 	frejm.setTexture(&tx,false);
 	frejm.setOutlineThickness(2);
@@ -10,6 +11,7 @@ Button::Button(const sf::Texture& tx)
 }
 bool Button::mbp(sf::Event& ev)
 {
+	if(!shown) return false;
 	if(frejm.getGlobalBounds().contains({ev.mouseButton.x,ev.mouseButton.y}))
 		{
 			graycount+=6;
@@ -20,7 +22,7 @@ bool Button::mbp(sf::Event& ev)
 }
 void Button::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	tgt.draw(frejm);
+	if(shown) tgt.draw(frejm);
 }
 void Button::setPosition(const sf::Vector2f& vc)
 {
@@ -29,9 +31,19 @@ void Button::setPosition(const sf::Vector2f& vc)
 
 void Button::tick()
 {
-	if(graycount>0)
+	if(shown&&graycount>0)
 		{
 		graycount--;
 		if(graycount==0) frejm.setOutlineColor(sf::Color::White);
 		}
+}
+
+bool Button::is_shown()
+{
+	return shown;
+}
+
+void Button::show(bool ee)
+{
+	shown = ee;
 }

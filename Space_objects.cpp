@@ -9,10 +9,10 @@ Planet::Planet(int masa_planety,const sf::Vector2f& lokacja,const sf::Vector2f& 
 
 }
 
-Star::Star(int masa_gwiazdy,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
+Star::Star(int masa_gwiazdy,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc, bool still)
 :Celestial_body(masa_gwiazdy,sf::Color::Yellow,lokacja,predkosc)
 {
-
+	is_still=still;
 
 }
 
