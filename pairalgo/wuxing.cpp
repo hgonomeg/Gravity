@@ -34,7 +34,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 
 bool wuxing::quit()
 {
-	std::unique_lock<std::mutex> wulock(kon_mut);
+	std::lock_guard<std::mutex> wulock(kon_mut);
 	{
 	return koniec;
 	}
@@ -55,7 +55,6 @@ void wuxing::animate()
 	if(athd==NULL)
 	{
 		auto athd_func = [this](){
-			std::unique_lock<std::mutex>* erb;
 			node_stepper* ns;
 			for(int i=0;i<2&&!quit();i++)
 			{
@@ -66,17 +65,17 @@ void wuxing::animate()
 				break;
 				case 1:
 				std::this_thread::sleep_for(std::chrono::milliseconds(5000));
-				erb = new std::unique_lock<std::mutex>(nod_mut);
+				nod_mut.lock();
 				solidne_linie.clear();
 				pairs = 0;
-				delete erb;
+				nod_mut.unlock();
 				if(quit()) return;
 				ns = new tianche(nodes,this);
 				break;
 				}
 				while(!quit()&&(wannabes.size()>0||!ns->finished()))
 				{
-					erb = new std::unique_lock<std::mutex>(nod_mut);
+					nod_mut.lock();
 					
 					for(auto i=wannabes.begin();i!=wannabes.end();i++)
 					{
@@ -87,7 +86,7 @@ void wuxing::animate()
 							i--;
 						}
 					}
-					delete erb;
+					nod_mut.unlock();
 					std::this_thread::sleep_for(std::chrono::milliseconds(50));
 				}
 				delete ns;
@@ -100,10 +99,9 @@ void wuxing::animate()
 
 wuxing::~wuxing()
 {
-	std::unique_lock<std::mutex>* erb;
-	erb = new std::unique_lock<std::mutex>(nod_mut);
+	nod_mut.lock();
 	koniec=true;
-	delete erb;
+	nod_mut.unlock();
 	if(athd)
 	{
 	if(athd->joinable()) athd->join();
@@ -113,7 +111,7 @@ wuxing::~wuxing()
 
 void wuxing::consider_pair(const std::list<node>::const_iterator& lhs,const std::list<node>::const_iterator& rhs)
 {
-	std::unique_lock<std::mutex> prl(nod_mut);
+	std::lock_guard<std::mutex> prl(nod_mut);
 	{
 		wannabes.push_back(linewannabe(lhs->get_loc(),rhs->get_loc()));
 		pairs++;
@@ -143,7 +141,6 @@ int main()
 	sf::RenderWindow rehn(sf::VideoMode(700,700),"Wuxing");
 	sf::Event ev;
 	rehn.setFramerateLimit(60);
-	std::unique_lock<std::mutex>* erb;
 	std::string napisek="INITVALUE";
 	int cp=12;
 	wu = new wuxing(cp,rehn.getSize());
@@ -207,10 +204,10 @@ int main()
 			}
 			
 			rehn.clear(sf::Color(255,125,125));
-			erb = new std::unique_lock<std::mutex>(wu->nod_mut);
+			wu->nod_mut.lock();
 			zrup_napis();
 			rehn.draw(*wu);
-			delete erb;
+			wu->nod_mut.unlock();
 			rehn.draw(status_text);
 			rehn.display();
 	}
