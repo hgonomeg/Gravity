@@ -27,7 +27,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	sf::Vector2f winshi{(float)winsi.x,(float)winsi.y};
 	for(int i=0;i<cp;i++)
 	{
-		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  (winshi.y/2.f-10.f)-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  }));
+		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  (winshi.y/2.f-10.f)-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.y*0.45f)  }));
 	}
 	athd=NULL;
 }
