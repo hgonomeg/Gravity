@@ -201,53 +201,62 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	//obliczenia
 	
 	M_d=M_m+M_o;
-	V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(float)M_d;
 	
 	Planet* planeta;
 	Star* gwiazda;
 	Celestial_body* dziecko;
 	Asteroid* asteroida;
-	
-	if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
+	if(M_d==0)
 	{
-		planeta=dynamic_cast<Planet*>(matka);
-		gwiazda=dynamic_cast<Star*>(matka);
-		asteroida=dynamic_cast<Asteroid*>(matka);
-		if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
-		{
-			dziecko=new Star(M_d,matka->get_loc(),V_d);
-			dziecko->is_still=matka->is_still;
-		}
-		else if(asteroida!=NULL)
-		{
-			dziecko=new Asteroid(matka->get_loc(),V_d);
-		}
-		else //obiekt będzie planetą
-		{
-			dziecko=new Planet(M_d,matka->get_loc(),V_d);
-			dziecko->is_still=matka->is_still;
-		}
-	}	
-	else //tu dziecko przyjmie klase ojca
+		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(M_m*2.f);
+		dziecko=new Asteroid(matka->get_loc(),V_d);
+	}
+	else
 	{
-		planeta=dynamic_cast<Planet*>(ojciec);
-		gwiazda=dynamic_cast<Star*>(ojciec);
-		asteroida=dynamic_cast<Asteroid*>(ojciec);
-		if(planeta==NULL&&asteroida==NULL) // gwiazda
+		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(float)M_d;
+
+		if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
 		{
-			dziecko=new Star(M_d,ojciec->get_loc(),V_d);
-			dziecko->is_still=ojciec->is_still;
-		}
-		else if(asteroida!=NULL)
-		{
-			dziecko=new Asteroid(ojciec->get_loc(),V_d);
-		}
-		else //obiekt będzie planetą
-		{
-			dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
-			dziecko->is_still=ojciec->is_still;
+			planeta=dynamic_cast<Planet*>(matka);
+			gwiazda=dynamic_cast<Star*>(matka);
+			asteroida=dynamic_cast<Asteroid*>(matka);
+			if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
+			{
+				dziecko=new Star(M_d,matka->get_loc(),V_d);
+				dziecko->is_still=matka->is_still;
+			}
+			else if(asteroida!=NULL)
+			{
+				dziecko=new Asteroid(matka->get_loc(),V_d);
+			}
+			else //obiekt będzie planetą
+			{
+				dziecko=new Planet(M_d,matka->get_loc(),V_d);
+				dziecko->is_still=matka->is_still;
+			}
 		}	
-	}	
+		else //tu dziecko przyjmie klase ojca
+		{
+			planeta=dynamic_cast<Planet*>(ojciec);
+			gwiazda=dynamic_cast<Star*>(ojciec);
+			asteroida=dynamic_cast<Asteroid*>(ojciec);
+			if(planeta==NULL&&asteroida==NULL) // gwiazda
+			{
+				dziecko=new Star(M_d,ojciec->get_loc(),V_d);
+				dziecko->is_still=ojciec->is_still;
+			}
+			else if(asteroida!=NULL)
+			{
+				dziecko=new Asteroid(ojciec->get_loc(),V_d);
+			}
+			else //obiekt będzie planetą
+			{
+				dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
+				dziecko->is_still=ojciec->is_still;
+			}	
+		}	
+
+	}
 	dziecko->slady_rodzicow = new std::list<std::vector<sf::Vertex>>();
 	for(auto i=S_o.begin();i!=S_o.end();i++)
 	{
