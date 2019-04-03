@@ -10,8 +10,7 @@
 #include <queue>
 #include <vector>
 #include <list>
-#include <type_traits>
-#include <any>
+
 
 template <typename T>
 	class tianche_wrapper
@@ -62,9 +61,11 @@ template <typename T>
 		}
 	}
 template <typename T>
-	void tianche_wrapper<T>::async_pairwise_apply(const fx_type&)
+	void tianche_wrapper<T>::async_pairwise_apply(const fx_type& fu)
 	{
-
+		queue_mutex.lock();
+		for(unsigned int i=0;i<thdx.size();i++) kolejka.push(std::pair(i+1,fu));
+		queue_mutex.unlock();
 	}
 
 template <typename T>
