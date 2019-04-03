@@ -260,7 +260,8 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 }
 
 Simulator::Simulator()  //kostruktor domyślny
-:ciala()
+:ciala(),
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -270,6 +271,8 @@ Simulator::Simulator()  //kostruktor domyślny
 }
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
+:ciala(),
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused=sim.paused;
