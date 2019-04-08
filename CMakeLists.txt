@@ -11,9 +11,7 @@ option(GRAVITY_STATIC "Do you want the final executable to be statically linked?
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
 
-if(GRAVITY_STATIC) 
-	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static")
-endif()
+
 
 include_directories(${SFML_DIR}/include)
 
@@ -23,6 +21,8 @@ set(LIST_OF_CPP ${PROJECT_SOURCE_DIR}/CB_selector.cpp ${PROJECT_SOURCE_DIR}/CB_g
 
 add_executable(Grawitacja ${LIST_OF_CPP})
 
-
+if(GRAVITY_STATIC) 
+	target_link_libraries(Grawitacja -static)
+endif()
 
 target_link_libraries(Grawitacja sfml-graphics)
