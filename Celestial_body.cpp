@@ -305,7 +305,7 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 	
 	//konty wyliczałem z relacji pokazanych w https://stackoverflow.com/questions/1736734/circle-circle-collision
 	
-	float kat_kolizji = 90-(atan(fabs(loc_o.x-loc_m.x)/fabs(loc_o.y-loc_m.y)));
+	float kat_kolizji = atan(fabs(loc_o.x-loc_m.x)/fabs(loc_o.y-loc_m.y));
 	float kat_przed_matki = atan(V_m.y/V_m.x);
 	float kat_przed_ojca = atan(V_o.y/V_o.x);
 	
