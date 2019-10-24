@@ -17,11 +17,11 @@ template <typename T>
 	{
 
 		using fx_type = std::function<void(typename std::list<T>::iterator&,typename std::list<T>::iterator&)>;
-		void watek(unsigned int);
+		void watek(unsigned int); //argumentem jest mnoznik wuxinga
 		std::list<T>& tc;
 		std::condition_variable thread_sleeper;
 		std::vector<std::thread> thdx;
-		std::queue<std::pair<unsigned int,const fx_type&>> kolejka;
+		std::queue<std::pair<unsigned int,const fx_type&>> kolejka; //kolejka nie wiem co tu robi. Konflikt z mnoznikiem wuxinga? Przestudowiac wuxing.
 		std::mutex queue_mutex;
 		std::mutex global_state;
 		bool xtime;
@@ -49,6 +49,7 @@ template <typename T>
 		global_state.lock();
 		xtime = true;
 		global_state.unlock();
+		thread_sleeper.notify_all();
 		for(auto& x: thdx) x.join();
 	}
 
@@ -66,6 +67,7 @@ template <typename T>
 		queue_mutex.lock();
 		for(unsigned int i=0;i<thdx.size();i++) kolejka.push(std::pair(i+1,fu));
 		queue_mutex.unlock();
+		thread_sleeper.notify_all();
 	}
 
 template <typename T>
@@ -73,7 +75,8 @@ template <typename T>
 	{
 		while(not_quit())
 		{
-			std::this_thread::sleep_for(std::chrono::seconds(2));
+			std::this_thread::sleep_for(std::chrono::seconds(2)); //sample action
+			thread_sleeper.wait();
 		}
 	}
 

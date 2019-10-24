@@ -71,7 +71,10 @@ void Simulator::tick()
 			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
 				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs){
-				
+				//cala ta lambda ma byc zwuxingowana jak najszybciej
+				rhs->simultaneity_guardian.lock();
+				lhs->simultaneity_guardian.lock();
+
 				auto &left_loc=lhs->get_loc();
 				auto &left_v=lhs->get_v();
 				auto &left_mass=lhs->get_mass();
@@ -92,7 +95,8 @@ void Simulator::tick()
 				left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
 				right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
 				
-				
+				rhs->simultaneity_guardian.unlock();
+				lhs->simultaneity_guardian.unlock();
 				
 				};
 			
@@ -104,7 +108,7 @@ void Simulator::tick()
 					for(auto i=ekaj; i!=ciala.end(); i++)
 					{
 						if(Celestial_body::collision_detec(j->get(),i->get()))
-						{
+						{ //tego na razie nie wuxingujemy
 							switch(ca)
 								{
 								case collision_approach::merge:
@@ -137,7 +141,7 @@ void Simulator::tick()
 					ekaj++;
 					for(auto i=ekaj; i!=ciala.end(); i++)
 					{
-						obrob_grawitacje(j->get(),i->get());	
+						obrob_grawitacje(j->get(),i->get());	//do wuxingowania
 					}
 					
 				
