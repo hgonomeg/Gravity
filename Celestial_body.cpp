@@ -290,33 +290,23 @@ void Celestial_body::delete_traces()
 
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
 {
-	//liczymy dla pierwszego dla MATKI
+	// 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
+
+	auto poz_matki = matka->get_loc(); //auto to sf::Vector2f
+	auto poz_ojca = ojciec->get_loc();
+
+	// 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
+
+	sf::Vector2f = poz_matki-poz_ojca;
+
+	// 3. Rzutujemy wektor v1 oraz wektor v2 na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
 	
-	//gettery
 	
-	int& M_m=matka->get_mass();
-	int& M_o=ojciec->get_mass();
 	
-	sf::Vector2f& V_m=matka->get_v();
-	sf::Vector2f& V_o=ojciec->get_v();
-	
-	sf::Vector2f& loc_m=matka->get_loc();
-	sf::Vector2f& loc_o=ojciec->get_loc();
-	
-	//konty wyliczałem z relacji pokazanych w https://stackoverflow.com/questions/1736734/circle-circle-collision
-	
-	float kat_kolizji = atan(fabs(loc_o.x-loc_m.x)/fabs(loc_o.y-loc_m.y));
-	float kat_przed_matki = atan(V_m.y/V_m.x);
-	float kat_przed_ojca = atan(V_o.y/V_o.x);
-	
-	//NOWE
-	
-	// zrobione ze wzrotu na https://williamecraver.wixsite.com/elastic-equations
-	
-	V_m.x = ((V_m.x*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.x*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_m.x*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_m.y =	((V_m.y*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.y*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_m.y*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
-	V_o.x = ((V_o.x*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.x*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_o.x*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_o.y = ((V_o.y*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.y*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_o.y*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
+	4. Szukamy prostopadłych do tej prostej składowych wektorów v1 i v2, np. poprzez różnicę wektorową: vp1 = v1 - vC1 ; vp2 = v2-vC2.
+	5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn v1 = vp1 oraz v2 = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
+	6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
+
 	
 }
 
