@@ -34,9 +34,8 @@ int gcd(int p1, int p2)
 template <typename T>
 	class tianche_wrapper
 	{
-
-		using fx_type = std::function<void(typename std::list<T>::iterator&,typename std::list<T>::iterator&)>;
-		using iter_type = std::list<T>::iterator;
+		using iter_type = typename std::list<T>::iterator;
+		using fx_type = std::function<void(iter_type&,iter_type&)>;
 		void watek(); 
 		std::list<T>& tc;
 		std::condition_variable thread_sleeper;
@@ -46,7 +45,7 @@ template <typename T>
 		std::mutex global_state;
 		bool xtime;
 		bool not_quit();
-		void cycle_internal_iterator(std::list<T>::iterator&,unsigned int);
+		void cycle_internal_iterator(iter_type&,unsigned int);
 		public:
 		tianche_wrapper(std::list<T>&);
 		~tianche_wrapper();
@@ -60,7 +59,7 @@ template <typename T>
 		xtime = false;
 		unsigned int aixes = std::thread::hardware_concurrency();
 		if(aixes<4) aixes = 4;
-		for(unsigned i=0;i<aixes;i++) thdx.push_back(std::thread(watek,this,i+1));
+		for(unsigned i=0;i<aixes;i++) thdx.push_back(std::thread(&tianche_wrapper<T>::watek,this));
 	}
 
 
@@ -108,40 +107,38 @@ template <typename T>
 template <typename T>
 	void tianche_wrapper<T>::watek()
 	{
+		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock);
 		while(not_quit())
 		{
-			//std::this_thread::sleep_for(std::chrono::seconds(2)); //sample action
-			/*
-			void tianche::jump_evaluator(unsigned int jmpnum)
+			lok.lock();
+			thread_sleeper.wait(lok,[this]{return !kolejka.empty();});
+			std::pair<unsigned int,const fx_type&> kloc = kolejka.front();
+			kolejka.pop();
+			lok.unlock();
+			unsigned int jmpnum = kloc.first;
+			const fx_type& fu = kloc.second;
+			
+			iter_type curref = tc.begin();
+
+			for(unsigned int razy=0;razy<(unsigned int)gcd((int)nodes.size(),(int)jmpnum);razy++)
 			{
-				std::list<node>::const_iterator curref = nodes.begin();
-				for(unsigned int razy=0;!finished()&&razy<(unsigned int)gcd((int)nodes.size(),(int)jmpnum);razy++)
+				iter_type traveller = curref;
+				cycle_internal_iterator(traveller,jmpnum);
+				iter_type chaser = curref;
+
+				fu(chaser,traveller); 
+				chaser = traveller;
+				cycle_internal_iterator(traveller,jmpnum);
+				if(jmpnum*2==tc.size()) {curref++; continue; }
+
+				do
 				{
-					std::list<node>::const_iterator traveller=curref;
-					cycle_nodes_iterator(traveller,jmpnum);
-					std::list<node>::const_iterator chaser=curref;
-					
-					patris->consider_pair(chaser,traveller);
+					fu(chaser,traveller); 
 					chaser = traveller;
 					cycle_nodes_iterator(traveller,jmpnum);
-					std::this_thread::sleep_for(interval);
-					if(jmpnum*2==nodes.size()) {curref++; continue; }
-					
-					do
-					{
-						patris->consider_pair(chaser,traveller);
-						chaser = traveller;
-						cycle_nodes_iterator(traveller,jmpnum);
-						std::this_thread::sleep_for(interval);
-						//if(jmpnum*2==nodes.size()) break;
-					}while(chaser!=curref&&!finished());
-					curref++;
-				}
+				} while (chaser!=curref);
+				curref++;
 			}
-			*/
-
-			
-			thread_sleeper.wait();
 		}
 	}
 
