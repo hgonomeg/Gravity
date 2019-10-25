@@ -120,7 +120,7 @@ template <typename T>
 			
 			iter_type curref = tc.begin();
 
-			for(unsigned int razy=0;razy<(unsigned int)gcd((int)nodes.size(),(int)jmpnum);razy++)
+			for(unsigned int razy=0;razy<(unsigned int)gcd((int)tc.size(),(int)jmpnum);razy++)
 			{
 				iter_type traveller = curref;
 				cycle_internal_iterator(traveller,jmpnum);
@@ -135,7 +135,7 @@ template <typename T>
 				{
 					fu(chaser,traveller); 
 					chaser = traveller;
-					cycle_nodes_iterator(traveller,jmpnum);
+					cycle_internal_iterator(traveller,jmpnum);
 				} while (chaser!=curref);
 				curref++;
 			}
