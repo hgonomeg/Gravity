@@ -88,19 +88,17 @@ template <typename T>
 		queue_mutex.lock();
 		for(unsigned int i=1;(float)i<=tc.size()/2.f;i++) kolejka.push(std::pair(i,fu));
 		queue_mutex.unlock();
-		thread_sleeper.notify_all();
+		global_state.lock();
+		fin = false;
+		global_state.unlock();
 		do{
+			thread_sleeper.notify_all();
 			std::this_thread::yield();
 		}while([this]{
 			global_state.lock();
 			bool fiin = fin;
 			global_state.unlock();
-
-			queue_mutex.lock();
-			bool pty = kolejka.empty();;
-			queue_mutex.unlock();
-
-			return (pty&&fiin);
+			return !fiin;
 		}());
 		
 	}
@@ -130,9 +128,6 @@ template <typename T>
 
 			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{
 				bool faruk = kolejka.empty();
-				global_state.lock();
-				fin = faruk;
-				global_state.unlock();
 				if(!not_quit()) return true;
 				std::cout<<kolejka.size()<<"\n";
 				return !faruk;
@@ -142,6 +137,7 @@ template <typename T>
 			unsigned int jmpnum = kolejka.front().first;
 			fx_type fu = kolejka.front().second;
 			kolejka.pop();
+			auto kolsiz = kolejka.size();
 			lok.unlock();
 			
 			iter_type curref = tc.begin();
@@ -164,10 +160,12 @@ template <typename T>
 				} while (chaser!=curref);
 				curref++;
 			}
-
-			global_state.lock();
-			fin = true;
-			global_state.unlock();
+			if(kolsiz==0)
+			{
+				global_state.lock();
+				fin = true;
+				global_state.unlock();
+			}
 			std::cout<<"no i guwno\n";
 		}
 	}
