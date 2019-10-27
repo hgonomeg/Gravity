@@ -124,15 +124,11 @@ template <typename T>
 		while(true)
 		{
 			lok.lock();
-			std::cout<<"luppo";
-
 			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{
 				bool faruk = kolejka.empty();
 				if(!not_quit()) return true;
-				std::cout<<kolejka.size()<<"\n";
 				return !faruk;
 				});
-			std::cout<<" ego sum\n";
 			if(!not_quit()) return;
 			unsigned int jmpnum = kolejka.front().first;
 			fx_type fu = kolejka.front().second;
@@ -166,7 +162,6 @@ template <typename T>
 				fin = true;
 				global_state.unlock();
 			}
-			std::cout<<"no i guwno\n";
 		}
 	}
 
