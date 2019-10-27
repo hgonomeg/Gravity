@@ -70,7 +70,7 @@ void Simulator::tick()
 			}
 			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
-				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs){
+				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) mutable {
 				//cala ta lambda ma byc zwuxingowana jak najszybciej
 				rhs->simultaneity_guardian.lock();
 				lhs->simultaneity_guardian.lock();
@@ -134,6 +134,10 @@ void Simulator::tick()
 				
 				}
 				
+				twx.async_pairwise_apply([this,&obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) mutable {
+					obrob_grawitacje(ein->get(),zwei->get());
+				});
+				/*
 				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
 				{
 					
@@ -143,10 +147,8 @@ void Simulator::tick()
 					{
 						obrob_grawitacje(j->get(),i->get());	//do wuxingowania
 					}
-					
-				
 				}
-				
+				*/
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
 				{
 					auto q=j->get();

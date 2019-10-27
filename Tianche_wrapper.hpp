@@ -35,15 +35,15 @@ template <typename T>
 	class tianche_wrapper
 	{
 		using iter_type = typename std::list<T>::iterator;
-		using fx_type = std::function<void(iter_type&,iter_type&)>;
+		using fx_type = std::function<void(const iter_type&,const iter_type&)>;
 		void watek(); 
 		std::list<T>& tc;
 		std::condition_variable thread_sleeper;
 		std::vector<std::thread> thdx;
-		std::queue<std::pair<unsigned int,const fx_type&>> kolejka; //Kolejka kojarzaca funkcje z mnoznikami tianche, ktore nalezy obrobic
+		std::queue<std::pair<unsigned int,fx_type>> kolejka; //Kolejka kojarzaca funkcje z mnoznikami tianche, ktore nalezy obrobic
 		std::mutex queue_mutex;
 		std::mutex global_state;
-		bool xtime;
+		bool xtime, fin;
 		bool not_quit();
 		void cycle_internal_iterator(iter_type&,unsigned int);
 		public:
@@ -57,6 +57,7 @@ template <typename T>
 	:tc(li)
 	{
 		xtime = false;
+		fin = true;
 		unsigned int aixes = std::thread::hardware_concurrency();
 		if(aixes<4) aixes = 4;
 		for(unsigned i=0;i<aixes;i++) thdx.push_back(std::thread(&tianche_wrapper<T>::watek,this));
@@ -88,6 +89,20 @@ template <typename T>
 		for(unsigned int i=0;i<thdx.size();i++) kolejka.push(std::pair(i+1,fu));
 		queue_mutex.unlock();
 		thread_sleeper.notify_all();
+		do{
+			std::this_thread::yield();
+		}while([this]{
+			global_state.lock();
+			bool fiin = fin;
+			global_state.unlock();
+
+			queue_mutex.lock();
+			bool pty = kolejka.empty();;
+			queue_mutex.unlock();
+
+			return (pty&&fiin);
+		}());
+		
 	}
 
 template <typename T>
@@ -108,18 +123,28 @@ template <typename T>
 	void tianche_wrapper<T>::watek()
 	{
 		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock);
-		while(not_quit())
+		while(true)
 		{
 			lok.lock();
-			thread_sleeper.wait(lok,[this]{return !kolejka.empty();});
-			std::pair<unsigned int,const fx_type&> kloc = kolejka.front();
+			std::cout<<"luppo";
+
+			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{
+				bool faruk = kolejka.empty();
+				global_state.lock();
+				fin = faruk;
+				global_state.unlock();
+				if(!not_quit()) return true;
+				std::cout<<kolejka.size()<<"\n";
+				return !faruk;
+				});
+			std::cout<<" ego sum\n";
+			if(!not_quit()) return;
+			unsigned int jmpnum = kolejka.front().first;
+			fx_type fu = kolejka.front().second;
 			kolejka.pop();
 			lok.unlock();
-			unsigned int jmpnum = kloc.first;
-			const fx_type& fu = kloc.second;
 			
 			iter_type curref = tc.begin();
-
 			for(unsigned int razy=0;razy<(unsigned int)gcd((int)tc.size(),(int)jmpnum);razy++)
 			{
 				iter_type traveller = curref;
@@ -139,6 +164,11 @@ template <typename T>
 				} while (chaser!=curref);
 				curref++;
 			}
+
+			global_state.lock();
+			fin = true;
+			global_state.unlock();
+			std::cout<<"no i guwno\n";
 		}
 	}
 
