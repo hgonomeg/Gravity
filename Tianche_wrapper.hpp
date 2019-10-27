@@ -86,7 +86,7 @@ template <typename T>
 	void tianche_wrapper<T>::async_pairwise_apply(const fx_type& fu)
 	{
 		queue_mutex.lock();
-		for(unsigned int i=0;i<thdx.size();i++) kolejka.push(std::pair(i+1,fu));
+		for(unsigned int i=1;(float)i<=tc.size()/2.f;i++) kolejka.push(std::pair(i,fu));
 		queue_mutex.unlock();
 		thread_sleeper.notify_all();
 		do{
