@@ -95,10 +95,8 @@ template <typename T>
 			thread_sleeper.notify_all();
 			std::this_thread::yield();
 		}while([this]{
-			global_state.lock();
-			bool fiin = fin;
-			global_state.unlock();
-			return !fiin;
+			std::lock_guard<std::mutex> loko(global_state);
+			return !fin;
 		}());
 		
 	}
@@ -125,8 +123,8 @@ template <typename T>
 		{
 			lok.lock();
 			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{
-				bool faruk = kolejka.empty();
 				if(!not_quit()) return true;
+				bool faruk = kolejka.empty();
 				return !faruk;
 				});
 			if(!not_quit()) return;
