@@ -290,69 +290,51 @@ void Celestial_body::delete_traces()
 
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
 {
-	// 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
-
-	auto poz_matki = matka->get_loc(); //auto to sf::Vector2f
-	auto poz_ojca = ojciec->get_loc();
-	sf::Vector2f& V1 = matka->get_v(); //referencja bo to będziemy zmieniać
-	sf::Vector2f& V2 = ojciec->get_v();
-	int m1 = matka->get_mass();
-	int m2 = ojciec->get_mass();
-
-	// 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
-
-<<<<<<< HEAD
-	sf::Vector2f S1S2 = poz_matki-poz_ojca;
-	sf::Vector2f S2S1 = poz_ojca-poz_matki;
+	 // 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
+ 
+    auto poz_matki = matka->get_loc(); //auto to sf::Vector2f
+    auto poz_ojca = ojciec->get_loc();
+    sf::Vector2f& V1 = matka->get_v(); //referencja bo to będziemy zmieniać
+    sf::Vector2f& V2 = ojciec->get_v();
+    int m1 = matka->get_mass();
+    int m2 = ojciec->get_mass();
+ 
+    // 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
+ 
+    sf::Vector2f S1S2 = poz_matki-poz_ojca;
+    sf::Vector2f S2S1 = poz_ojca-poz_matki;
+ 
+    auto vec_dot_product = [](sf::Vector2f pierwszy, sf::Vector2f drugi) -> float {return (pierwszy.x*drugi.x)+(pierwszy.y*drugi.y);}; //iloczyn skalarny
+ 
+    auto vec_length = [](sf::Vector2f vec) -> float {return sqrt(pow(vec.x,2.0)+pow(vec.y,2.0));}; //długość wektora
 	
-
 	// 3. Rzutujemy wektor v1 oraz wektor v2 na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
-	
 
-
-	auto vec_dot_product = [](sf::Vector2f pierwszy, sf::Vector2f drugi) -> float {return (pierwszy.x*drugi.x)+(pierwszy.y*drugi.y);}; //iloczyn skalarny
-
-	auto vec_length = [](sf::Vector2f vec) -> float {return sqrt(pow(vec.x,2.0)+pow(vec.y,2.0));}; //długość wektora
-
-	auto vec_projection = [&](sf::Vector2f pierwszy, sf::Vector2f drugi) -> sf::Vector2f {return static_cast<float>(vec_dot_product(pierwszy,drugi)/pow(vec_length(drugi),2.0))*drugi;}; //pierwszy rzucamy na drugi
-
-
-	//rzut V1 i V2
-	sf::Vector2f V1c = vec_projection(V1,S1S2);
-	sf::Vector2f V2c = vec_projection(V2,S2S1);
-
-	//4. Szukamy prostopadłych do tej prostej składowych wektorów v1 i v2, np. poprzez różnicę wektorową: vp1 = v1 - vC1 ; vp2 = v2-vC2.
-
-	sf::Vector2f V1p = V1-V1c;
-	sf::Vector2f V2p = V2-V2c;
-
-	//5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn v1 = vp1 oraz v2 = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
-	//transformacja V1c i V2c na U1c i U2c
-
-	sf::Vector2f U1c = static_cast<float>((m1-m2)/(m1+m2))*V1c + static_cast<float>((2*m2)/(m1+m2))*V2c; //z wzorów na zderzenie centralne sprężyste
-	sf::Vector2f U2c = static_cast<float>((2*m1)/(m1+m2))*V1c + static_cast<float>((m2-m1)/(m1+m2))*V2c;
-
-	//6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
-
-	sf::Vector2f U1 = U1c + V1p;
-	sf::Vector2f U2 = U2c + V2p;
-
-	V1 = U1; //ostateczne przypisabue
-	V2 = U2;
-
-=======
-	sf::Vector2f vect_differentiam = poz_matki-poz_ojca;
-
-	// 3. Rzutujemy wektor v1 oraz wektor v2 na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
-	
-	
-	/*
-	4. Szukamy prostopadłych do tej prostej składowych wektorów v1 i v2, np. poprzez różnicę wektorową: vp1 = v1 - vC1 ; vp2 = v2-vC2.
-	5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn v1 = vp1 oraz v2 = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
-	6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
-	*/
->>>>>>> 88f5e782ec1fabb0ce4416a15b415594a4b9e2a5
-	
+    auto vec_projection = [&](sf::Vector2f pierwszy, sf::Vector2f drugi) -> sf::Vector2f {return static_cast<float>(vec_dot_product(pierwszy,drugi)/pow(vec_length(drugi),2.0))*drugi;}; //pierwszy rzucamy na drugi
+ 
+ 
+    //rzut V1 i V2
+    sf::Vector2f V1c = vec_projection(V1,S1S2);
+    sf::Vector2f V2c = vec_projection(V2,S2S1);
+ 
+    //4. Szukamy prostopadłych do tej prostej składowych wektorów v1 i v2, np. poprzez różnicę wektorową: vp1 = v1 - vC1 ; vp2 = v2-vC2.
+ 
+    sf::Vector2f V1p = V1-V1c;
+    sf::Vector2f V2p = V2-V2c;
+ 
+    //5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn v1 = vp1 oraz v2 = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
+    //transformacja V1c i V2c na U1c i U2c
+ 
+    sf::Vector2f U1c = static_cast<float>((m1-m2)/(m1+m2))*V1c + static_cast<float>((2*m2)/(m1+m2))*V2c; //z wzorów na zderzenie centralne sprężyste
+    sf::Vector2f U2c = static_cast<float>((2*m1)/(m1+m2))*V1c + static_cast<float>((m2-m1)/(m1+m2))*V2c;
+ 
+    //6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
+ 
+    sf::Vector2f U1 = U1c + V1p;
+    sf::Vector2f U2 = U2c + V2p;
+ 
+    V1 = U1; //ostateczne przypisabue
+    V2 = U2;
 }
 
 sf::FloatRect Celestial_body::getGlobalBounds()
