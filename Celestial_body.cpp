@@ -330,11 +330,9 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
  
     //6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
  
-    sf::Vector2f U1 = U1c + V1p;
-    sf::Vector2f U2 = U2c + V2p;
- 
-    V1 = U1; //ostateczne przypisabue
-    V2 = U2;
+    V1 = U1c + V1p;
+	V2 = U2c + V2p;
+
 }
 
 sf::FloatRect Celestial_body::getGlobalBounds()
