@@ -298,7 +298,7 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
     sf::Vector2f& V2 = ojciec->get_v();
     int m1 = matka->get_mass();
     int m2 = ojciec->get_mass();
- 
+	
     // 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
  
     sf::Vector2f S1S2 = poz_matki-poz_ojca;

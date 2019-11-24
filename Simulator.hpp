@@ -10,12 +10,14 @@ class Simulator :public sf::Drawable
 	enum class collision_approach :unsigned short
 	{
 		merge = 1,
-		bounce
+		bounce,
+		mixed
 	};
 	private:
 	
 	static const float G;
 	static const unsigned short CA_count;
+	static const float tolerancja_nachodzenia;
 	static float STEPPPING_RATE;
 	static int accuracy_factor;
 	static unsigned int tick_rate;

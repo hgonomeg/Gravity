@@ -2,7 +2,8 @@
 
 const float Simulator::G = 0.05;
 float Simulator::STEPPPING_RATE = 1.f;
-const unsigned short Simulator::CA_count = 2;
+const unsigned short Simulator::CA_count = 3;
+const float Simulator::tolerancja_nachodzenia = 0.5; //ciała mogą nachodzić na siebie w 50%
 int Simulator::accuracy_factor = 0;
 unsigned int Simulator::tick_rate = 1;
 
@@ -121,6 +122,18 @@ void Simulator::tick()
 									{
 									Celestial_body::bounce_handle(j->get(),i->get());
 									break;
+									}
+								case collision_approach::mixed:
+									{
+										if(Celestial_body::distance_from(j->get(),i->get())<(j->get()->get_radius())+(i->get()->get_radius())) //odległośc<suma promieni
+										{
+
+										} 
+										else
+										{
+											
+										}
+										break;
 									}
 								}
 							if(i==ciala.begin()) break;
@@ -254,7 +267,7 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 {
 	unsigned short u = (unsigned short)ca;
 	u++;
-	if(u>CA_count) u=1;
+	if(u>CA_count) u=1;	//ca caunt = 3
 	ca = (collision_approach)u;
 	return ca;
 }
