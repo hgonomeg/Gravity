@@ -1,4 +1,6 @@
 #include "Grawitacja.hpp"
+#include <sstream>
+#include <iomanip>
 
 const std::string UI_masterpanel::nam="UI default main panel";
 
@@ -40,7 +42,13 @@ void UI_masterpanel::collision_cycle()
 		}
 		case Simulator::collision_approach::bounce:
 		{
-			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: bounce [EXPERIMENTAL]",3000));
+			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: bounce",3000));
+			break;
+		}
+		case Simulator::collision_approach::mixed:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: mixed",3000));
+			patris->push_hint_text(UI_state::hint_text("Current superimposing tolerance:"+[this](float liczba){ std::stringstream po; po<<std::setprecision(3)<<liczba; return po.str();}(patris->getsim()->get_superimposing_tolerance()),3000)); //wyświetla jaką mamy obecnie tolerancje nachodzenia
 			break;
 		}
 	}

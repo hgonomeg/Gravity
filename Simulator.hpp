@@ -32,6 +32,7 @@ class Simulator :public sf::Drawable
 	static void change_accuracy(bool);
 	static bool change_rate(bool);
 	static float get_accuracy();
+	static float get_superimposing_tolerance();
 	static unsigned int get_rate();
 	
 	void tick();

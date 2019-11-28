@@ -36,6 +36,11 @@ float Simulator::get_accuracy()
 {
 	return 1.f/STEPPPING_RATE;
 }
+float Simulator::get_superimposing_tolerance()
+{
+	return tolerancja_nachodzenia;
+}
+
 unsigned int Simulator::get_rate()
 {
 	return tick_rate;
@@ -110,13 +115,13 @@ void Simulator::tick()
 								{
 								case collision_approach::merge:
 									{
-									//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
-									Celestial_body* ojc=i->release();
-									Celestial_body::collision_handle(j->get(),ojc);	
-									i->reset(ojc);
-									ciala.erase(j); 
-									j=i; j--;
-									break;
+										//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+										Celestial_body* ojc=i->release();
+										Celestial_body::collision_handle(j->get(),ojc); //ojciec się staje dzieckiem	
+										i->reset(ojc); // i już tutaj przejmuje dziecko
+										ciala.erase(j); 
+										j=i; j--;
+										break;
 									}
 								case collision_approach::bounce:
 									{
@@ -125,15 +130,21 @@ void Simulator::tick()
 									}
 								case collision_approach::mixed:
 									{
-										if(Celestial_body::distance_from(j->get(),i->get())<(j->get()->get_radius())+(i->get()->get_radius())) //odległośc<suma promieni
+										if(Celestial_body::distance_from(j->get(),i->get())<((1-tolerancja_nachodzenia)*(j->get()->get_radius())+(i->get()->get_radius()))) //odległośc<suma promieni
 										{
-
-										} 
+											//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+											Celestial_body* ojc=i->release();
+											Celestial_body::collision_handle(j->get(),ojc);	
+											i->reset(ojc);
+											ciala.erase(j); 
+											j=i; j--;
+											break;
+										}
 										else
 										{
-											
+											Celestial_body::bounce_handle(j->get(),i->get());
+											break;
 										}
-										break;
 									}
 								}
 							if(i==ciala.begin()) break;
