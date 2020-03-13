@@ -12,8 +12,8 @@ void Simulator::change_accuracy(bool chg)
 	if(accuracy_factor==0) STEPPPING_RATE=1.f;
 	else
 	{
-		if(accuracy_factor<0) STEPPPING_RATE=fabs((float)accuracy_factor);
-		else STEPPPING_RATE=(1/(float)accuracy_factor);
+		if(accuracy_factor<0) STEPPPING_RATE=fabs(static_cast<float>(accuracy_factor));
+		else STEPPPING_RATE=1/static_cast<float>(accuracy_factor);
 	}
 }
 
@@ -40,7 +40,7 @@ unsigned int Simulator::get_rate()
 	return tick_rate;
 }
 
-unsigned int Simulator::size()
+std::size_t Simulator::size()
 {
 	return ciala.size();
 }
@@ -71,7 +71,6 @@ void Simulator::tick()
 			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
 				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) mutable {
-				//cala ta lambda ma byc zwuxingowana jak najszybciej
 				
 				
 				lhs->simultaneity_guardian.lock();
@@ -142,18 +141,7 @@ void Simulator::tick()
 				twx.async_pairwise_apply([this,&obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) mutable {
 					obrob_grawitacje(ein->get(),zwei->get());
 				});
-				/*
-				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
-				{
-					
-					auto ekaj=j;
-					ekaj++;
-					for(auto i=ekaj; i!=ciala.end(); i++)
-					{
-						obrob_grawitacje(j->get(),i->get());	//do wuxingowania
-					}
-				}
-				*/
+				
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
 				{
 					auto q=j->get();
@@ -167,18 +155,15 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	for(auto& x: ciala)
 	{
-		if(!paused) x.get()->refresh();
-		if(draw_traces) x.get()->draw_trace(tgt,st);
-		
+		if(!paused) 
+			x->refresh(); //refresh the state of the graphical part of the object
+		if(draw_traces) 
+			x->draw_trace(tgt,st);
+		x->draw(tgt,st);
 	}
 	if(predicted_traces)
 	{
 		for(auto& x: (*predicted_traces)) tgt.draw(&x[0],x.size(),sf::LineStrip,st);
-	}
-	for(auto& x: ciala)
-	{
-		x.get()->draw(tgt,st);
-		
 	}
 }
 

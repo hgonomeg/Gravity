@@ -15,9 +15,9 @@ class Simulator :public sf::Drawable
 	};
 	private:
 	
-	static const float G;
+	static const float G; //the gravity constant
 	static const unsigned short CA_count;
-	static float STEPPPING_RATE;
+	static float STEPPPING_RATE; //depends upon accuracy factor
 	static int accuracy_factor;
 	static unsigned int tick_rate;
 	collision_approach ca;
@@ -25,8 +25,8 @@ class Simulator :public sf::Drawable
 	tianche_wrapper<std::unique_ptr<Celestial_body>> twx;
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	std::list<std::vector<sf::Vertex>>* predicted_traces;
-	unsigned int counter;
-	
+	sf::IntRect draw_area;
+
 	public:
 	static void change_accuracy(bool);
 	static bool change_rate(bool);
@@ -40,7 +40,7 @@ class Simulator :public sf::Drawable
 	void toggle_traces();
 	void delete_traces();
 	void predict_traces();
-	unsigned int size();
+	std::size_t size();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	Simulator();
 	~Simulator();
