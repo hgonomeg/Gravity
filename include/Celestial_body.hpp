@@ -9,6 +9,7 @@
 #include <utility>
 #include <algorithm>
 #include <iostream>
+#include <mutex>
 #include <stack>
 
 class Celestial_body :public sf::Drawable
@@ -23,6 +24,7 @@ class Celestial_body :public sf::Drawable
 	std::vector<sf::Vertex> slad;
 	std::list<std::vector<sf::Vertex>>* slady_rodzicow;
 	
+
 	protected:
 	
 	sf::Color tracecolor;
@@ -61,7 +63,7 @@ class Celestial_body :public sf::Drawable
 	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
 	static void pushstax();
 	static void popstax();
-	
+	std::mutex simultaneity_guardian;
 	
 	
 };

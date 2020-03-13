@@ -2,6 +2,7 @@
 #include <list>
 #include <math.h>
 #include "Celestial_body.hpp"
+#include "Tianche_wrapper.hpp"
 #include <memory>
 
 class Simulator :public sf::Drawable
@@ -21,7 +22,7 @@ class Simulator :public sf::Drawable
 	static unsigned int tick_rate;
 	collision_approach ca;
 	bool paused, draw_traces;
-	
+	tianche_wrapper<std::unique_ptr<Celestial_body>> twx;
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	std::list<std::vector<sf::Vertex>>* predicted_traces;
 	unsigned int counter;

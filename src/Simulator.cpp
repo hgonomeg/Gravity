@@ -70,17 +70,22 @@ void Simulator::tick()
 			}
 			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
-				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs){
+				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) mutable {
+				//cala ta lambda ma byc zwuxingowana jak najszybciej
 				
-				auto &left_loc=lhs->get_loc();
+				
+				lhs->simultaneity_guardian.lock();
+				auto left_loc=lhs->get_loc();
 				auto &left_v=lhs->get_v();
-				auto &left_mass=lhs->get_mass();
+				auto left_mass=lhs->get_mass();
+				lhs->simultaneity_guardian.unlock();
 				
-				
-				auto &right_loc=rhs->get_loc();
+				rhs->simultaneity_guardian.lock();
+				auto right_loc=rhs->get_loc();
 				auto &right_v=rhs->get_v();
-				auto &right_mass=rhs->get_mass();
-				
+				auto right_mass=rhs->get_mass();
+				rhs->simultaneity_guardian.unlock();
+
 				float diff_x=left_loc.x-right_loc.x;
 				float diff_y=left_loc.y-right_loc.y;
 				
@@ -89,9 +94,13 @@ void Simulator::tick()
 				sf::Vector2f sila_graw_vec={diff_x,diff_y};
 				sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 				
+				lhs->simultaneity_guardian.lock();
 				left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
+				lhs->simultaneity_guardian.unlock();
+
+				rhs->simultaneity_guardian.lock();
 				right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
-				
+				rhs->simultaneity_guardian.unlock();
 				
 				
 				};
@@ -104,7 +113,7 @@ void Simulator::tick()
 					for(auto i=ekaj; i!=ciala.end(); i++)
 					{
 						if(Celestial_body::collision_detec(j->get(),i->get()))
-						{
+						{ //tego na razie nie wuxingujemy
 							switch(ca)
 								{
 								case collision_approach::merge:
@@ -130,6 +139,10 @@ void Simulator::tick()
 				
 				}
 				
+				twx.async_pairwise_apply([this,&obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) mutable {
+					obrob_grawitacje(ein->get(),zwei->get());
+				});
+				/*
 				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
 				{
 					
@@ -137,12 +150,10 @@ void Simulator::tick()
 					ekaj++;
 					for(auto i=ekaj; i!=ciala.end(); i++)
 					{
-						obrob_grawitacje(j->get(),i->get());	
+						obrob_grawitacje(j->get(),i->get());	//do wuxingowania
 					}
-					
-				
 				}
-				
+				*/
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
 				{
 					auto q=j->get();
@@ -260,7 +271,8 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 }
 
 Simulator::Simulator()  //kostruktor domyślny
-:ciala()
+:ciala(),
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -270,6 +282,8 @@ Simulator::Simulator()  //kostruktor domyślny
 }
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
+:ciala(),
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused=sim.paused;
