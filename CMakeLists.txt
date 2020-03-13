@@ -23,8 +23,9 @@ endif()
 include_directories(${SFML_DIR}/include)
 
 include_directories(${PROJECT_SOURCE_DIR}/include)
+include_directories(${PROJECT_SOURCE_DIR})
 
-set(LIST_OF_CPP ${PROJECT_SOURCE_DIR}/src/*.cpp)
+file(GLOB LIST_OF_CPP ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(Gravity ${LIST_OF_CPP})
 
