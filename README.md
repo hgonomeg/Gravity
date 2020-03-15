@@ -1,21 +1,19 @@
-# Grawitacja
+# Gravity
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
 SFML, C++11.
 
-The whole description will be available in English soon and it will entirely replace the Polish text. 
-Polska wersja opisu zostanie niebawem usunięta na korzyść angielskiej. 
-## Cel projektu
-* Ćwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w języku C++, w tym metod wirtualnych, dziedziczenia.
-* Ćwiczenia korzystania z kontenerów biblioteki standardowej języka C++.
-* Upłynnienie posługiwania się inteligentnymi wskaźnikami (`std::unique_ptr<>`).
-* Ćwiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
-* Stworzenie prostej zabawki pomagającej zrozumieć działanie mechaniki orbitalnej.
-* Zdobycie doświadczenia w zakresie rysowania treści graficznych i kontroli okna w bibliotece SFML
-* Bliższe zapoznanie się z mechaniką Git oraz GitHub; ćwiczenia w kooperacji wieloosobowej.
-* Nauka optymalizowania
-* Ćwiczenia posługiwania się szablonami
-* Styczność z optymalizacją poprzez wydajne programowanie wielowątkowe
-## Zadania i możliwosci programu
+## Purpose of the project
+* Gaining experience in practial usage of object-oriented programming in C++, including virtual methods and inheritance.
+* Excercise in using C++'s `std::` containers.
+* Fluency in working with smart pointers (`std::unique_ptr<>`).
+* Learning how to create simple & interactive GUI applications in SFML.
+* Creating a simple toy which helps to understand how orbital mechanics works.
+* Gaining experience in drawing graphics and managing windows in the SFML library.
+* Getting familiar with Git and GitHub; excercise cooperation.
+* Learning how to optimize
+* Excercise C++ generic programming
+* Optimization via efficient multithreaded programming
+## Goals and capabilities of the program
 * Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
 * Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
 * Scalanie ciał niebieskich w razie kolizji.
@@ -23,11 +21,11 @@ Polska wersja opisu zostanie niebawem usunięta na korzyść angielskiej.
 * Rozróżnianie miedzy róznymi typami spektralnymi gwiazd oraz różnymi typami planet
 * Kontrola tempa i dokładności symulacji
 * Rozrywkowy tryb polegający na kontroli statku kosmicznego
-## Opis techniczny
+## Implementation notes
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
 Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedziczy z `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
 Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Okno programu będzie posiadało specjalny obiekt przechowujący i sterujący stanem interfejsu graficznego (`UI_state`). Występujące w oknie zdarzenia sterujące programem są przekierowywane do specjalnych funkcji obiektu sterującego. Pewnym klawiszom zostaną przypisane funkcje przełączajace tzw. narzędzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzedzi UI, w tym m.in. generator ciał niebieskich, selektor i usuwacz.
-## Obecny stan implementacji
+## Current completion status
 * Kompletna mechanika klasy `Celestial_body`
 * Zarys klas `Planet` oraz `Star`
 * Klasa `Asteroid`
@@ -58,7 +56,7 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Zmiana tempa i jakości symulacji
 	* Manipulowanie intensywnością obliczeniową symulacji (liczba ticków symulatora / odświeżenie okna)
 	* Manipulowanie dokładnością ticków symulacji
-## Do zrobienia
+## To do
 * Odpowiednie teksturowanie ciał niebieskich
 * Przewidywanie sladów ciał niebieskich
 * Dalszy rozwój `CB_selector`, `CB_gen` i `UI_masterpanel`
@@ -77,8 +75,8 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 ## Wuxing
 W folderze `pairalgo` znajduje się silnik animacji działania algorytmów rozważających indywidualne pary o nazwie Wuxing. Został on napisany jako pomoc w projektowaniu wydajnych algorytmów dla rozważenia sił grawitacji między każdą parą ciał niebieskich.
 
-## Jak skompilować?
+## Building instructions
 Aby skompilować projekt, należy skompilować wszystkie dostępne w folderze głównym repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należy dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
-Wymagany standard C++11 wraz z RTTI.
-## Do rozważenia
+Wymagany standard C++17 wraz z RTTI.
+## To consider
 
