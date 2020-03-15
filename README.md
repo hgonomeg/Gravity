@@ -1,4 +1,4 @@
-Goals and capabilities of the p# Gravity
+# Gravity
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
 SFML, C++11.
 
