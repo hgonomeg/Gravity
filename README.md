@@ -1,4 +1,4 @@
-# Gravity
+Goals and capabilities of the p# Gravity
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
 SFML, C++11.
 
@@ -73,7 +73,9 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 * Zmienić algorytm ewaluacji indywidualnych par ciał niebieskich na wielowątkowy TIANCHE (przykład działania w `pairalgo/tianche. cpp` i `wuxing.cpp`)
 * Optymalizacja renderowania
 ## Wuxing
-W folderze `pairalgo` znajduje się silnik animacji działania algorytmów rozważających indywidualne pary o nazwie Wuxing. Został on napisany jako pomoc w projektowaniu wydajnych algorytmów dla rozważenia sił grawitacji między każdą parą ciał niebieskich.
+In the `pairalgo` folder, there is a little animation engine called Wuxing. It visualizes how individual-unique-pair iteration algorithms work. It was written to serve as a helper in designing efficient algorithms for calculating the force of gravity between every unique pair of celestial bodies.
+
+It helped in developing the Tianche algorithm.
 
 ## Building instructions
 Aby skompilować projekt, należy skompilować wszystkie dostępne w folderze głównym repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należy dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
