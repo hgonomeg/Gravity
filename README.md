@@ -14,6 +14,8 @@ SFML, C++11.
 * Control of both the pace and accuracy of the simulation
 * A special mode made for entertainment purposes: controlling a spaceship
 
+![Demo](comments/demo.png)
+
 ## Building instructions
 ### Library dependencies
 * SFML (graphics, window and system modules)
