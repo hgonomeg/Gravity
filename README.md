@@ -78,7 +78,23 @@ In the `pairalgo` folder, there is a little animation engine called Wuxing. It v
 It helped in developing the Tianche algorithm.
 
 ## Building instructions
-Aby skompilować projekt, należy skompilować wszystkie dostępne w folderze głównym repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należy dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
-Wymagany standard C++17 wraz z RTTI.
+### Library dependencies
+* SFML (graphics, window and system modules)
+### Tools required
+* Cmake
+* C++17 compiler with RTTI
+### Instruction
+In order to compile the program, please ensure that the SFML library is installed in your system and that you have all the necessary tools like Cmake and a compiler.
+
+Run cmake to generate the build files for your setup (I personally recommend using Cmake GUI).
+Please note that static linking will not be available in all setups.
+
+After obtaining the build files, use your toolchain of choice to compile the program.
+(eg. run `make` if you are using Unix Makefiles or MinGW Makefiles)
+
+An executable called "Gravity" will appear in the root directory of the project
+
+### Note
+I'd be very welcome if you could report any problems with the Cmake script that you encounter.
 ## To consider
 
