@@ -2,18 +2,17 @@
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
 SFML, C++11.
 
-## Purpose of the project
-* Gaining experience in practial usage of object-oriented programming in C++, including virtual methods and inheritance.
-* Excercise in using C++'s `std::` containers.
-* Fluency in working with smart pointers (`std::unique_ptr<>`).
-* Learning how to create simple & interactive GUI applications in SFML.
-* Creating a simple toy which helps to understand how orbital mechanics works.
-* Gaining experience in drawing graphics and managing windows in the SFML library.
-* Getting familiar with Git and GitHub; excercise cooperation.
-* Learning how to optimize
-* Excercise C++ generic programming
-* Optimization via efficient multithreaded programming
-* Gaining some experience with cmake-scripts
+## Goals and capabilities of the program
+* Realtime simulation of celestial bodies in a multi-bodied system, including stars, planets and asteroids
+* Adding new celestial bodies, ad hoc, with spatial and dynamic properties given by mouse clicks.
+* Handling collisions of celestial bodies:
+	* merging
+	* bouncing
+	* hybrid
+* Deletion of celestial bodies
+* Differentiating between different planet types and different star spectral types
+* Control of both the pace and accuracy of the simulation
+* A special mode made for entertainment purposes: controlling a spaceship
 
 ## Building instructions
 ### Library dependencies
@@ -35,17 +34,19 @@ An executable called "Gravity" will appear in the root directory of the project
 ### Note
 I'd be very welcome if you could report any problems with the Cmake script that you encounter.
 
-## Goals and capabilities of the program
-* Realtime simulation of celestial bodies in a multi-bodied system, including stars, planets and asteroids
-* Adding new celestial bodies, ad hoc, with spatial and dynamic properties given by mouse clicks.
-* Handling collisions of celestial bodies:
-	* merging
-	* bouncing
-	* hybrid
-* Deletion of celestial bodies
-* Differentiating between different planet types and different star spectral types
-* Control of both the pace and accuracy of the simulation
-* A special mode made for entertainment purposes: controlling a spaceship
+## Purpose of the project
+* Gaining experience in practial usage of object-oriented programming in C++, including virtual methods and inheritance.
+* Excercise in using C++'s `std::` containers.
+* Fluency in working with smart pointers (`std::unique_ptr<>`).
+* Learning how to create simple & interactive GUI applications in SFML.
+* Creating a simple toy which helps to understand how orbital mechanics works.
+* Gaining experience in drawing graphics and managing windows in the SFML library.
+* Getting familiar with Git and GitHub; excercise cooperation.
+* Learning how to optimize
+* Excercise C++ generic programming
+* Optimization via efficient multithreaded programming
+* Gaining some experience with cmake-scripts
+
 ## Implementation notes
 Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
 Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedziczy z `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
