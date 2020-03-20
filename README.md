@@ -13,6 +13,27 @@ SFML, C++11.
 * Learning how to optimize
 * Excercise C++ generic programming
 * Optimization via efficient multithreaded programming
+
+## Building instructions
+### Library dependencies
+* SFML (graphics, window and system modules)
+### Tools required
+* Cmake
+* C++17 compiler with RTTI
+### Instruction
+In order to compile the program, please ensure that the SFML library is installed in your system and that you have all the necessary tools like Cmake and a compiler.
+
+Run cmake to generate the build files for your setup (I personally recommend using Cmake GUI).
+Please note that static linking will not be available in all setups.
+
+After obtaining the build files, use your toolchain of choice to compile the program.
+(eg. run `make` if you are using Unix Makefiles or MinGW Makefiles)
+
+An executable called "Gravity" will appear in the root directory of the project
+
+### Note
+I'd be very welcome if you could report any problems with the Cmake script that you encounter.
+
 ## Goals and capabilities of the program
 * Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
 * Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
@@ -57,44 +78,25 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 	* Manipulowanie intensywnością obliczeniową symulacji (liczba ticków symulatora / odświeżenie okna)
 	* Manipulowanie dokładnością ticków symulacji
 ## To do
-* Odpowiednie teksturowanie ciał niebieskich
-* Przewidywanie sladów ciał niebieskich
-* Dalszy rozwój `CB_selector`, `CB_gen` i `UI_masterpanel`
-	* Zwiększenie ilości funkcji i udogodnień podpiętych pod wciśnięcie danego klawisza
-	* Stworzenie `Textbox` do wybierania masy tworzonego ciała
-	* Okodowanie serii przycisków do wyboru typu tworzonego ciała
-	* Modyfikacja parametrów ciał niebieskich
-	* Więcej danych w trybie debug
-* Ładowanie tekstur z plików w funkcji `LoadResources()`
-* Rozplanować i dodać tryb sterowalnego statku kosmicznego 
-* Śledzenie widokiem danego ciała niebieskiego
-* Zapis i odczyt z pliku przez moduł XML
-* System szybkich zapisów i odtworzeń obecnego stanu symulatora w pamięci
-* Zmienić algorytm ewaluacji indywidualnych par ciał niebieskich na wielowątkowy TIANCHE (przykład działania w `pairalgo/tianche. cpp` i `wuxing.cpp`)
-* Optymalizacja renderowania
+* Proper texturing of celestial bodies
+* Celestial body track prediction
+* Further improve `CB_selector`, `CB_gen` and `UI_masterpanel`
+	* More key-bindings
+	* Implement a `Textbox` to enter numbers like a celestial body's mass
+	* Add dedicated buttons to choose between the types of celestial bodies
+	* Implement edition of celestial bodies
+	* Print more data in the debug mode
+* Implement loading textures in the global resources manager
+* Design and implement maneuverable spaceship mode
+* Tracing celestial bodies with the camera
+* Read/Save the simulator state via a dedicated XML/JSON module
+* Quick-saves and restores of the simulator state
+* Optimize rendering
 ## Wuxing
 In the `pairalgo` folder, there is a little animation engine called Wuxing. It visualizes how individual-unique-pair iteration algorithms work. It was written to serve as a helper in designing efficient algorithms for calculating the force of gravity between every unique pair of celestial bodies.
 
 It helped in developing the Tianche algorithm.
 
-## Building instructions
-### Library dependencies
-* SFML (graphics, window and system modules)
-### Tools required
-* Cmake
-* C++17 compiler with RTTI
-### Instruction
-In order to compile the program, please ensure that the SFML library is installed in your system and that you have all the necessary tools like Cmake and a compiler.
 
-Run cmake to generate the build files for your setup (I personally recommend using Cmake GUI).
-Please note that static linking will not be available in all setups.
-
-After obtaining the build files, use your toolchain of choice to compile the program.
-(eg. run `make` if you are using Unix Makefiles or MinGW Makefiles)
-
-An executable called "Gravity" will appear in the root directory of the project
-
-### Note
-I'd be very welcome if you could report any problems with the Cmake script that you encounter.
 ## To consider
 
