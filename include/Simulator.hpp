@@ -17,7 +17,7 @@ class Simulator :public sf::Drawable
 	
 	static const float G; //the gravity constant
 	static const unsigned short CA_count;
-	static float STEPPPING_RATE; //depends upon accuracy factor
+	static float STEPPING_RATE; //depends upon accuracy factor
 	static int accuracy_factor;
 	static unsigned int tick_rate;
 	collision_approach ca;

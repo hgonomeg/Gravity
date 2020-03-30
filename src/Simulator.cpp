@@ -1,7 +1,7 @@
 #include "Simulator.hpp"
 
 const float Simulator::G = 0.05;
-float Simulator::STEPPPING_RATE = 1.f;
+float Simulator::STEPPING_RATE = 1.f;
 const unsigned short Simulator::CA_count = 2;
 int Simulator::accuracy_factor = 0;
 unsigned int Simulator::tick_rate = 1;
@@ -9,11 +9,11 @@ unsigned int Simulator::tick_rate = 1;
 void Simulator::change_accuracy(bool chg)
 {
 	if(chg) accuracy_factor++; else accuracy_factor--;
-	if(accuracy_factor==0) STEPPPING_RATE=1.f;
+	if(accuracy_factor==0) STEPPING_RATE=1.f;
 	else
 	{
-		if(accuracy_factor<0) STEPPPING_RATE=fabs(static_cast<float>(accuracy_factor));
-		else STEPPPING_RATE=1/static_cast<float>(accuracy_factor);
+		if(accuracy_factor<0) STEPPING_RATE=fabs(static_cast<float>(accuracy_factor));
+		else STEPPING_RATE=1/static_cast<float>(accuracy_factor);
 	}
 }
 
@@ -33,7 +33,7 @@ bool Simulator::change_rate(bool chg)
 
 float Simulator::get_accuracy()
 {
-	return 1.f/STEPPPING_RATE;
+	return 1.f/STEPPING_RATE;
 }
 unsigned int Simulator::get_rate()
 {
@@ -70,7 +70,7 @@ void Simulator::tick()
 			}
 			for(unsigned uk=0;uk<tick_rate;uk++)
 			{
-				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) mutable {
+				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
 				
 				
 				lhs->simultaneity_guardian.lock();
@@ -94,11 +94,11 @@ void Simulator::tick()
 				sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 				
 				lhs->simultaneity_guardian.lock();
-				left_v-=sila_graw_vec/(float)left_mass*STEPPPING_RATE;
+				left_v-=sila_graw_vec/(float)left_mass*STEPPING_RATE;
 				lhs->simultaneity_guardian.unlock();
 
 				rhs->simultaneity_guardian.lock();
-				right_v+=sila_graw_vec/(float)right_mass*STEPPPING_RATE;
+				right_v+=sila_graw_vec/(float)right_mass*STEPPING_RATE;
 				rhs->simultaneity_guardian.unlock();
 				
 				
@@ -145,7 +145,7 @@ void Simulator::tick()
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
 				{
 					auto q=j->get();
-					q->get_loc()+=(q->get_v())*STEPPPING_RATE; 
+					q->get_loc()+=(q->get_v())*STEPPING_RATE; 
 				}
 			}
 		}
