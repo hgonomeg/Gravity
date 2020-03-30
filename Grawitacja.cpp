@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 	Simulator sim;
 	
 	sf::Event ev;
-	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.4.0");
+	sf::RenderWindow rehn(sf::VideoMode(960,500),"Gravity v0.4.0");
 	win = &rehn;
 	rehn.setFramerateLimit(60);
 	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 	{
 		std::string except_text=zasoby->except_text;
 		delete zasoby;
-		status_text.setString(std::string("Failed loading resources!\n"+except_text));
+		status_text.setString(std::string("Failed to load resources!\n"+except_text));
 		status_text.setPosition(rehn.getSize().x/2.f-status_text.getLocalBounds().width/2.f,rehn.getSize().y/2.f-status_text.getLocalBounds().height/2.f);
 		for(unsigned i=0;i<500;i++)
 		{
