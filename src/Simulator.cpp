@@ -72,45 +72,47 @@ void Simulator::tick()
 			{
 				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
 				
+					
 					lhs->simultaneity_guardian.lock();
-					auto left_loc=lhs->get_loc();
-					auto &left_v=lhs->get_v();
+					auto left_loc=lhs->get_location();
+					auto left_v=lhs->get_velocity();
 					auto left_mass=lhs->get_mass();
 					lhs->simultaneity_guardian.unlock();
 					
 					rhs->simultaneity_guardian.lock();
-					auto right_loc=rhs->get_loc();
-					auto &right_v=rhs->get_v();
+					auto right_loc=rhs->get_location();
+					auto right_v=rhs->get_velocity();
 					auto right_mass=rhs->get_mass();
 					rhs->simultaneity_guardian.unlock();
 
 					float diff_x=left_loc.x-right_loc.x;
 					float diff_y=left_loc.y-right_loc.y;
 					
-					float odleglosc= sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
+					float odleglosc = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
 				
 					sf::Vector2f sila_graw_vec={diff_x,diff_y};
 					sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 					
 					lhs->simultaneity_guardian.lock();
-					left_v-=sila_graw_vec/(float)left_mass*STEPPING_RATE;
+					lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
 					lhs->simultaneity_guardian.unlock();
 
 					rhs->simultaneity_guardian.lock();
-					right_v+=sila_graw_vec/(float)right_mass*STEPPING_RATE;
+					rhs->set_velocity(right_v+sila_graw_vec/(float)right_mass*STEPPING_RATE);
 					rhs->simultaneity_guardian.unlock();
 					
 				};
 				
 
-				auto detect_collisions = [this](std::vector<std::pair<Celestial_body*,Celestial_body*>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs){
+				auto detect_collisions = [this](std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>>& detected, std::mutex& detected_mutex,std::list<std::unique_ptr<Celestial_body>>::iterator lhs,std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+				{
 
 					
-					if(Celestial_body::collision_detec(lhs->get(),rhs->get()))
+					if(Celestial_body::collision_detection(lhs->get(),rhs->get()))
 					{
 						std::lock_guard<std::mutex> my_lock(detected_mutex);
 						{
-							detected.push_back(std::make_pair(lhs->get(),rhs->get()));
+							detected.push_back({lhs,rhs});
 						}
 					}
 				};
@@ -160,15 +162,17 @@ void Simulator::tick()
 				});
 
 
-				std::vector<std::pair<Celestial_body*,Celestial_body*>> detected_pairs;
+				std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>> detected_pairs;
 				std::mutex detected_mutex;
-				twx.async_pairwise_apply(std::bind(detect_collisions,detected_pairs, detected_mutex,std::placeholders::_1,std::placeholders::_2));
+				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs), std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
+
+
 				//set velocity
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
 				{
 					auto q=j->get();
-					q->get_loc()+=(q->get_v())*STEPPING_RATE; 
+					q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
 				}
 			}
 		}

@@ -21,21 +21,41 @@ void Celestial_body::draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const
 	}
 }
 
-int& Celestial_body::get_mass() 
+int Celestial_body::get_mass() const
 {
 	return mass;
 }
-float& Celestial_body::get_radius() 
+float Celestial_body::get_radius() const
 {
 	return radius;
 }
-sf::Vector2f& Celestial_body::get_loc()
+sf::Vector2f Celestial_body::get_location() const
 {
 	return loc;
 }
-sf::Vector2f& Celestial_body::get_v()
+sf::Vector2f Celestial_body::get_velocity() const
 {
 	return v;
+}
+
+void Celestial_body::set_mass(int m)
+{
+	mass = m;
+}
+
+void Celestial_body::set_radius(float rad)
+{
+	radius = rad;
+}
+
+void Celestial_body::set_location(sf::Vector2f lc)
+{
+	loc = lc;
+}
+
+void Celestial_body::set_velocity(sf::Vector2f vel) 
+{
+	v = vel;
 }
 
 void Celestial_body::refresh()
@@ -88,7 +108,7 @@ void Celestial_body::refresh()
 }
 
 
-unsigned int Celestial_body::get_id()
+unsigned int Celestial_body::get_id() const
 {
 	return Local_ID;
 }
@@ -192,11 +212,11 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	
 	//gettery
 	
-	int& M_m=matka->get_mass();
-	int& M_o=ojciec->get_mass();
+	int M_m=matka->get_mass();
+	int M_o=ojciec->get_mass();
 	
-	auto& V_m=matka->get_v();
-	auto& V_o=ojciec->get_v();
+	auto V_m=matka->get_velocity();
+	auto V_o=ojciec->get_velocity();
 	
 	//obliczenia
 	
@@ -209,7 +229,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	if(M_d==0)
 	{
 		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(M_m*2.f);
-		dziecko=new Asteroid(matka->get_loc(),V_d);
+		dziecko=new Asteroid(matka->get_location(),V_d);
 	}
 	else
 	{
@@ -222,16 +242,16 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 			asteroida=dynamic_cast<Asteroid*>(matka);
 			if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
 			{
-				dziecko=new Star(M_d,matka->get_loc(),V_d);
+				dziecko=new Star(M_d,matka->get_location(),V_d);
 				dziecko->is_still=matka->is_still;
 			}
 			else if(asteroida!=NULL)
 			{
-				dziecko=new Asteroid(matka->get_loc(),V_d);
+				dziecko=new Asteroid(matka->get_location(),V_d);
 			}
 			else //obiekt będzie planetą
 			{
-				dziecko=new Planet(M_d,matka->get_loc(),V_d);
+				dziecko=new Planet(M_d,matka->get_location(),V_d);
 				dziecko->is_still=matka->is_still;
 			}
 		}	
@@ -242,16 +262,16 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 			asteroida=dynamic_cast<Asteroid*>(ojciec);
 			if(planeta==NULL&&asteroida==NULL) // gwiazda
 			{
-				dziecko=new Star(M_d,ojciec->get_loc(),V_d);
+				dziecko=new Star(M_d,ojciec->get_location(),V_d);
 				dziecko->is_still=ojciec->is_still;
 			}
 			else if(asteroida!=NULL)
 			{
-				dziecko=new Asteroid(ojciec->get_loc(),V_d);
+				dziecko=new Asteroid(ojciec->get_location(),V_d);
 			}
 			else //obiekt będzie planetą
 			{
-				dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
+				dziecko=new Planet(M_d,ojciec->get_location(),V_d);
 				dziecko->is_still=ojciec->is_still;
 			}	
 		}	
@@ -274,11 +294,15 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	delete ojciec; ojciec = dziecko;
 }
 
-float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
+float Celestial_body::distance_from(Celestial_body& ext) 
 {
-		auto &left_loc=CB1->get_loc();
+		this->simultaneity_guardian.lock();
+		auto left_loc=this->get_location();
+		this->simultaneity_guardian.unlock();
 
-		auto &right_loc=CB2->get_loc();
+		ext.simultaneity_guardian.lock();
+		auto right_loc=ext.get_location();
+		ext.simultaneity_guardian.unlock();
 
 		float diff_x=left_loc.x-right_loc.x;
 		float diff_y=left_loc.y-right_loc.y;
@@ -303,14 +327,14 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 	
 	//gettery
 	
-	int& M_m=matka->get_mass();
-	int& M_o=ojciec->get_mass();
+	int M_m=matka->get_mass();
+	int M_o=ojciec->get_mass();
 	
-	sf::Vector2f& V_m=matka->get_v();
-	sf::Vector2f& V_o=ojciec->get_v();
+	sf::Vector2f V_m=matka->get_velocity();
+	sf::Vector2f V_o=ojciec->get_velocity();
 	
-	sf::Vector2f& loc_m=matka->get_loc();
-	sf::Vector2f& loc_o=ojciec->get_loc();
+	sf::Vector2f loc_m=matka->get_location();
+	sf::Vector2f loc_o=ojciec->get_location();
 	
 	//konty wyliczałem z relacji pokazanych w https://stackoverflow.com/questions/1736734/circle-circle-collision
 	
@@ -324,9 +348,10 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 	
 	V_m.x = ((V_m.x*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.x*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_m.x*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
 	V_m.y =	((V_m.y*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.y*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_m.y*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
+	matka->set_velocity({V_m.x,V_m.y});
 	V_o.x = ((V_o.x*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.x*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_o.x*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
 	V_o.y = ((V_o.y*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.y*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_o.y*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
-	
+	ojciec->set_velocity({V_o.x,V_o.y});
 }
 
 sf::FloatRect Celestial_body::getGlobalBounds()
@@ -335,8 +360,13 @@ sf::FloatRect Celestial_body::getGlobalBounds()
 }
 
 
-bool Celestial_body::collision_detec(Celestial_body* CB1, Celestial_body* CB2)
+bool Celestial_body::collision_detection(Celestial_body* CB1, Celestial_body* CB2)
 {
-
-	return (distance_from(CB1,CB2)-(CB1->get_radius()+CB2->get_radius())<=0);
+	CB1->simultaneity_guardian.lock();
+	auto radius1 = CB1->get_radius();
+	CB1->simultaneity_guardian.unlock();
+	CB2->simultaneity_guardian.lock();
+	auto radius2 = CB1->get_radius();
+	CB2->simultaneity_guardian.unlock();
+	return (CB1->distance_from(*CB2)-(radius1+radius2)<=0);
 }

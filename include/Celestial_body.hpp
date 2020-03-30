@@ -44,20 +44,27 @@ class Celestial_body :public sf::Drawable
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override; // "override" upewnienie się nadpisania metody z klasy od której dziedziczymy
 	virtual void draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const;
 	
-	int& get_mass();
-	float& get_radius();
-	sf::Vector2f& get_loc();
-	sf::Vector2f& get_v();
-	unsigned int get_id();
+	int get_mass() const;
+	float get_radius() const;
+	sf::Vector2f get_location() const;
+	sf::Vector2f get_velocity() const;
+	unsigned int get_id() const;
+
+	void set_mass(int);
+	void set_radius(float);
+	void set_location(sf::Vector2f);
+	void set_velocity(sf::Vector2f);
+
 	void refresh();
 	sf::FloatRect getGlobalBounds();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	void delete_traces();
+	float distance_from(Celestial_body&); //not const because of thread-safety; //liczenie odległości między dwoma obiektami
 	//ZMIENNE STATYCZNE
 	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
 	//FUNKCJE STATYCZNE
-	static float distance_from(Celestial_body* CB1, Celestial_body* CB2); //liczenie odległości między dwoma obiektami, jako argumenty przyjmuje wskaźniki do obiektów
-	static bool collision_detec(Celestial_body* CB1, Celestial_body* CB2); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
+	
+	static bool collision_detection(Celestial_body*,Celestial_body*); //not const because of thread-safety //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	static const std::map<unsigned int, unsigned int>& get_alloc_diagram();
 	static void collision_handle(Celestial_body*, Celestial_body*&); //dlaczego tu jest referancja przy jednym wskaźniku a przy drugim nie? // kolizje perfekcyjnie nieelastyczne
 	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
