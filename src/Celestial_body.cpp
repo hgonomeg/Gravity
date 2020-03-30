@@ -110,6 +110,7 @@ void Celestial_body::refresh()
 
 unsigned int Celestial_body::get_id() const
 {
+	std::lock_guard<std::mutex> mlock(simultaneity_guardian);
 	return Local_ID;
 }
 

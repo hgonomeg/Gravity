@@ -4,6 +4,7 @@
 #include "Celestial_body.hpp"
 #include "Tianche_wrapper.hpp"
 #include <memory>
+#include <set>
 
 class Simulator :public sf::Drawable
 {

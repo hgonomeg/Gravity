@@ -103,51 +103,58 @@ void Simulator::tick()
 					
 				};
 				
+				struct collision_member {
+					std::list<std::unique_ptr<Celestial_body>>::iterator iterator;
+					unsigned int ID;
+				};
 
-				auto detect_collisions = [this](std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+				auto detect_collisions = [this](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
 				{
-					/*
-					if(Celestial_body::collision_detection(lhs->get(),rhs->get()))
+					if(Celestial_body::collision_detection(*lhs->get(),*rhs->get()))
 					{
 						std::lock_guard<std::mutex> my_lock(detected_mutex);
 						{
-							detected.push_back({lhs,rhs});
+							detected.push_back({{lhs,lhs->get()->get_id()},{rhs,rhs->get()->get_id()}});
 						}
 					}
-					*/
 				};
 
 				twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
 					obrob_grawitacje(ein->get(),zwei->get());
 				});
 
+				
 
-				std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>> detected_pairs;
+				std::vector<std::pair<collision_member,collision_member>> detected_pairs;
+				std::set<unsigned int> deleted_bodies;
 				std::mutex detected_mutex;
+
 				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs), std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
 				for(auto& x: detected_pairs) 
 				{
-					/*
-					switch(ca)
+					if(deleted_bodies.find(x.first.ID)==deleted_bodies.end()&&deleted_bodies.find(x.second.ID)==deleted_bodies.end())
 					{
-					case collision_approach::merge:
+						switch(ca)
 						{
-						//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
-						Celestial_body* ojc=i->release();
-						Celestial_body::collision_handle(j->get(),ojc);	
-						i->reset(ojc);
-						ciala.erase(j); 
-						j=i; j--;
-						break;
-						}
-					case collision_approach::bounce:
-						{
-						Celestial_body::bounce_handle(j->get(),i->get());
-						break;
+						case collision_approach::merge:
+							{
+							//first jako ojciec, jest zawsze nadpisywane dzieckiem. second usuwamy samemu
+							Celestial_body* father=x.first.iterator->release();
+							deleted_bodies.insert(x.first.ID);
+							Celestial_body::collision_handle(x.second.iterator->get(),father);	
+							x.first.iterator->reset(father);
+							deleted_bodies.insert(x.second.ID);
+							ciala.erase(x.second.iterator); //I suppose a possible memory leak when the same body collides with more bodies
+							break;
+							}
+						case collision_approach::bounce:
+							{
+							Celestial_body::bounce_handle(x.second.iterator->get(),x.first.iterator->get());
+							break;
+							}
 						}
 					}
-					*/
 				}
 
 				//set velocity
