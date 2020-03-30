@@ -44,6 +44,8 @@ class Celestial_body :public sf::Drawable
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override; // "override" upewnienie się nadpisania metody z klasy od której dziedziczymy
 	virtual void draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const;
 	
+	mutable std::mutex simultaneity_guardian;
+
 	int get_mass() const;
 	float get_radius() const;
 	sf::Vector2f get_location() const;
@@ -59,18 +61,18 @@ class Celestial_body :public sf::Drawable
 	sf::FloatRect getGlobalBounds();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	void delete_traces();
-	float distance_from(Celestial_body&); //not const because of thread-safety; //liczenie odległości między dwoma obiektami
+	float distance_from(const Celestial_body&) const; //liczenie odległości między dwoma obiektami
 	//ZMIENNE STATYCZNE
 	static unsigned int znikacz_sladu; // zmienna do której porównujemy rc
 	//FUNKCJE STATYCZNE
 	
-	static bool collision_detection(Celestial_body*,Celestial_body*); //not const because of thread-safety //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
+	static bool collision_detection(const Celestial_body&,const Celestial_body&); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
 	static const std::map<unsigned int, unsigned int>& get_alloc_diagram();
-	static void collision_handle(Celestial_body*, Celestial_body*&); //dlaczego tu jest referancja przy jednym wskaźniku a przy drugim nie? // kolizje perfekcyjnie nieelastyczne
+	static void collision_handle(Celestial_body*, Celestial_body*&); // kolizje perfekcyjnie nieelastyczne
 	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
 	static void pushstax();
 	static void popstax();
-	std::mutex simultaneity_guardian;
+	
 	
 	
 };

@@ -104,10 +104,9 @@ void Simulator::tick()
 				};
 				
 
-				auto detect_collisions = [this](std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>>& detected, std::mutex& detected_mutex,std::list<std::unique_ptr<Celestial_body>>::iterator lhs,std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+				auto detect_collisions = [this](std::vector<std::pair<std::list<std::unique_ptr<Celestial_body>>::iterator,std::list<std::unique_ptr<Celestial_body>>::iterator>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
 				{
-
-					
+					/*
 					if(Celestial_body::collision_detection(lhs->get(),rhs->get()))
 					{
 						std::lock_guard<std::mutex> my_lock(detected_mutex);
@@ -115,9 +114,10 @@ void Simulator::tick()
 							detected.push_back({lhs,rhs});
 						}
 					}
+					*/
 				};
 
-				twx.async_pairwise_apply([this,&obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) mutable {
+				twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
 					obrob_grawitacje(ein->get(),zwei->get());
 				});
 

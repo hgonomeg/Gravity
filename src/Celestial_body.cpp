@@ -294,7 +294,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	delete ojciec; ojciec = dziecko;
 }
 
-float Celestial_body::distance_from(Celestial_body& ext) 
+float Celestial_body::distance_from(const Celestial_body& ext) const
 {
 		this->simultaneity_guardian.lock();
 		auto left_loc=this->get_location();
@@ -360,13 +360,13 @@ sf::FloatRect Celestial_body::getGlobalBounds()
 }
 
 
-bool Celestial_body::collision_detection(Celestial_body* CB1, Celestial_body* CB2)
+bool Celestial_body::collision_detection(const Celestial_body& CB1, const Celestial_body& CB2)
 {
-	CB1->simultaneity_guardian.lock();
-	auto radius1 = CB1->get_radius();
-	CB1->simultaneity_guardian.unlock();
-	CB2->simultaneity_guardian.lock();
-	auto radius2 = CB1->get_radius();
-	CB2->simultaneity_guardian.unlock();
-	return (CB1->distance_from(*CB2)-(radius1+radius2)<=0);
+	CB1.simultaneity_guardian.lock();
+	auto radius1 = CB1.get_radius();
+	CB1.simultaneity_guardian.unlock();
+	CB2.simultaneity_guardian.lock();
+	auto radius2 = CB1.get_radius();
+	CB2.simultaneity_guardian.unlock();
+	return (CB1.distance_from(CB2)-(radius1+radius2)<=0);
 }
