@@ -77,10 +77,10 @@ template <typename T>
 template <typename T>
 	bool tianche_wrapper<T>::not_quit()
 	{
-	std::lock_guard lol(global_state);
-		{
-			return !xtime;
-		}
+		std::lock_guard lol(global_state);
+			{
+				return !xtime;
+			}
 	}
 template <typename T>
 	void tianche_wrapper<T>::async_pairwise_apply(const fx_type& fu)
@@ -122,12 +122,13 @@ template <typename T>
 		while(true)
 		{
 			lok.lock();
-			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{
+
+			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{ //thread_sleeper.wait(lok,true) <- nie idzie spać
 				if(!not_quit()) return true;
-				bool faruk = kolejka.empty();
-				return !faruk;
+				return !kolejka.empty(); //domniemany else
 				});
 			if(!not_quit()) return;
+
 			unsigned int jmpnum = kolejka.front().first;
 			fx_type fu = kolejka.front().second;
 			kolejka.pop();
