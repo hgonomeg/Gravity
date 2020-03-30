@@ -117,46 +117,6 @@ void Simulator::tick()
 					}
 				};
 
-
-
-				/*
-				for(auto j=ciala.begin(); j!=(--ciala.end()); j++)
-				{
-					
-					auto ekaj=j;
-					ekaj++;
-
-
-
-					for(auto i=ekaj; i!=ciala.end(); i++)
-					{
-						if(Celestial_body::collision_detec(j->get(),i->get()))
-						{ //tego na razie nie wuxingujemy
-							switch(ca)
-								{
-								case collision_approach::merge:
-									{
-									//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
-									Celestial_body* ojc=i->release();
-									Celestial_body::collision_handle(j->get(),ojc);	
-									i->reset(ojc);
-									ciala.erase(j); 
-									j=i; j--;
-									break;
-									}
-								case collision_approach::bounce:
-									{
-									Celestial_body::bounce_handle(j->get(),i->get());
-									break;
-									}
-								}
-							if(i==ciala.begin()) break;
-						}
-					}
-					
-				
-				}
-				*/
 				twx.async_pairwise_apply([this,&obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) mutable {
 					obrob_grawitacje(ein->get(),zwei->get());
 				});
@@ -166,7 +126,29 @@ void Simulator::tick()
 				std::mutex detected_mutex;
 				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs), std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
-
+				for(auto& x: detected_pairs) 
+				{
+					/*
+					switch(ca)
+					{
+					case collision_approach::merge:
+						{
+						//i jako ojciec, jest zawsze nadpisywane dzieckiem. j usuwamy samemu
+						Celestial_body* ojc=i->release();
+						Celestial_body::collision_handle(j->get(),ojc);	
+						i->reset(ojc);
+						ciala.erase(j); 
+						j=i; j--;
+						break;
+						}
+					case collision_approach::bounce:
+						{
+						Celestial_body::bounce_handle(j->get(),i->get());
+						break;
+						}
+					}
+					*/
+				}
 
 				//set velocity
 				for(auto j=ciala.begin(); j!=ciala.end(); j++)
