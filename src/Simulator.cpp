@@ -108,7 +108,7 @@ void Simulator::tick()
 					unsigned int ID;
 				};
 
-				auto detect_collisions = [](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+				auto detect_collisions = [](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator& lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator& rhs)
 				{
 					auto* lhs_ptr = lhs->get();
 					auto* rhs_ptr = rhs->get();
@@ -132,11 +132,13 @@ void Simulator::tick()
 				std::set<unsigned int> deleted_bodies;
 				std::mutex detected_mutex;
 
-				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs), std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
+				twx.async_pairwise_apply([detect_collisions,&detected_mutex,&detected_pairs](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei){
+					detect_collisions(detected_pairs,detected_mutex,ein,zwei);
+				});
 				
 				for(auto& x: detected_pairs) 
 				{
-					if(deleted_bodies.find(x.first.ID)==deleted_bodies.end()&&deleted_bodies.find(x.second.ID)==deleted_bodies.end())
+					if(deleted_bodies.find(x.first.ID)==deleted_bodies.end() && deleted_bodies.find(x.second.ID)==deleted_bodies.end())
 					{
 						switch(ca)
 						{
