@@ -103,12 +103,16 @@ void Simulator::tick()
 					
 				};
 				
+				twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
+					obrob_grawitacje(ein->get(),zwei->get());
+				});
+
 				struct collision_member {
 					std::list<std::unique_ptr<Celestial_body>>::iterator iterator;
 					unsigned int ID;
 				};
 
-				auto detect_collisions = [](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator& lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator& rhs)
+				auto detect_collisions = [](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
 				{
 					auto* lhs_ptr = lhs->get();
 					auto* rhs_ptr = rhs->get();
@@ -122,19 +126,12 @@ void Simulator::tick()
 					
 				};
 
-				twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
-					obrob_grawitacje(ein->get(),zwei->get());
-				});
-
-				
 
 				std::vector<std::pair<collision_member,collision_member>> detected_pairs;
 				std::set<unsigned int> deleted_bodies;
 				std::mutex detected_mutex;
 
-				twx.async_pairwise_apply([detect_collisions,&detected_mutex,&detected_pairs](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei){
-					detect_collisions(detected_pairs,detected_mutex,ein,zwei);
-				});
+				twx2.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
 				for(auto& x: detected_pairs) 
 				{
@@ -278,7 +275,8 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 
 Simulator::Simulator()  //kostruktor domyślny
 :ciala(),
-twx(ciala)
+twx(ciala),
+twx2(ciala)
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -289,7 +287,8 @@ twx(ciala)
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 :ciala(),
-twx(ciala)
+twx(ciala),
+twx2(ciala)
 {
 	Celestial_body::pushstax();
 	paused=sim.paused;
