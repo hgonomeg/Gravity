@@ -371,5 +371,5 @@ bool Celestial_body::collision_detection(const Celestial_body& CB1, const Celest
 	CB2.simultaneity_guardian.lock();
 	auto radius2 = CB1.get_radius();
 	CB2.simultaneity_guardian.unlock();
-	return (CB1.distance_from(CB2)-(radius1+radius2)<=0);
+	return (CB1.distance_from(CB2)-(radius1+radius2))<=static_cast<float>(0);
 }
