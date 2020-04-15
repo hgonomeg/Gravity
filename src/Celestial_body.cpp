@@ -225,8 +225,10 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	
 	Planet* planeta;
 	Star* gwiazda;
-	Celestial_body* dziecko;
 	Asteroid* asteroida;
+	
+	Celestial_body* dziecko;
+	
 	if(M_d==0)
 	{
 		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(M_m*2.f);

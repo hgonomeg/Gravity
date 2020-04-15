@@ -128,8 +128,9 @@ void Simulator::tick()
 
 
 				std::vector<std::pair<collision_member,collision_member>> detected_pairs;
-				std::set<unsigned int> deleted_bodies;
 				std::mutex detected_mutex;
+				std::set<unsigned int> deleted_bodies;
+				
 
 				twx2.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
@@ -143,10 +144,10 @@ void Simulator::tick()
 							{
 							//first jako ojciec, jest zawsze nadpisywane dzieckiem. second usuwamy samemu
 							Celestial_body* father=x.first.iterator->release();
-							deleted_bodies.insert(x.first.ID);
-							Celestial_body::collision_handle(x.second.iterator->get(),father);	
-							x.first.iterator->reset(father);
-							deleted_bodies.insert(x.second.ID);
+							deleted_bodies.insert(x.first.ID); //mark the father as a deleted body because it will be overwritten
+							deleted_bodies.insert(x.second.ID); //this one gets deleted too
+							Celestial_body::collision_handle(x.second.iterator->get(),father);	//father is being overwritten (becomes child)
+							x.first.iterator->reset(father); //father is now the child
 							ciala.erase(x.second.iterator); //I suppose a possible memory leak when the same body collides with more bodies
 							break;
 							}
