@@ -43,7 +43,8 @@ template <typename T>
 		std::queue<std::pair<unsigned int,fx_type>> kolejka; //Kolejka kojarzaca funkcje z mnoznikami tianche, ktore nalezy obrobic
 		std::mutex queue_mutex;
 		std::mutex global_state;
-		bool xtime, fin;
+		bool xtime; //time to deconstruct the object
+		bool current_computation_ready;
 		bool not_quit();
 		void cycle_internal_iterator(iter_type&,unsigned int);
 		public:
@@ -57,10 +58,10 @@ template <typename T>
 	:tc(li)
 	{
 		xtime = false;
-		fin = true;
-		unsigned int aixes = std::thread::hardware_concurrency();
-		if(aixes<4) aixes = 4;
-		for(unsigned i=0;i<aixes;i++) thdx.push_back(std::thread(&tianche_wrapper<T>::watek,this));
+		current_computation_ready = true;
+		unsigned int thread_count = std::thread::hardware_concurrency();
+		if(thread_count<2) thread_count = 2;
+		for(unsigned i=0;i<thread_count;i++) thdx.push_back(std::thread(&tianche_wrapper<T>::watek,this));
 	}
 
 
@@ -89,14 +90,16 @@ template <typename T>
 		for(unsigned int i=1;(float)i<=tc.size()/2.f;i++) kolejka.push(std::pair(i,fu));
 		queue_mutex.unlock();
 		global_state.lock();
-		fin = false;
+		current_computation_ready = false;
 		global_state.unlock();
 		do{
 			thread_sleeper.notify_all();
 			std::this_thread::yield();
+			std::this_thread::yield();
+			std::this_thread::yield();
 		}while([this]{
 			std::lock_guard<std::mutex> loko(global_state);
-			return !fin;
+			return !current_computation_ready;
 		}());
 		
 	}
@@ -158,7 +161,7 @@ template <typename T>
 			if(kolsiz==0)
 			{
 				global_state.lock();
-				fin = true;
+				current_computation_ready = true;
 				global_state.unlock();
 			}
 		}

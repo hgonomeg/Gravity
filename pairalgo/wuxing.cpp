@@ -144,7 +144,7 @@ int main()
 	std::string napisek="INITVALUE";
 	int cp=12;
 	wu = new wuxing(cp,rehn.getSize());
-	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); //załadowanie czcionki do obiektu. NIE WOLNO DAĆ TEJ LINIJKI PO LoadResources() 
+	fona = new sf::Font; fona->loadFromMemory(arimo.data,arimo.size); 
 	sf::Text status_text(std::string(napisek),*fona,12); //informacja o ładowaniu gry
 	
 	auto zrup_napis = [&status_text,&napisek,&cp,&rehn](){
