@@ -36,16 +36,20 @@ template <typename T>
 	{
 		using iter_type = typename std::list<T>::iterator;
 		using fx_type = std::function<void(const iter_type&,const iter_type&)>;
-		void watek(); 
-		std::list<T>& tc;
+		
+		std::list<T>& subject_list;
 		std::condition_variable thread_sleeper;
-		std::vector<std::thread> thdx;
-		std::queue<std::pair<unsigned int,fx_type>> kolejka; //Kolejka kojarzaca funkcje z mnoznikami tianche, ktore nalezy obrobic
+		std::vector<std::thread> thread_pool;
+		std::queue<std::pair<unsigned int,fx_type>> work_queue; //A queue that holds the tianche multipliers and the function to be applied to each unique pair of objects
 		std::mutex queue_mutex;
-		std::mutex global_state;
-		bool xtime; //time to deconstruct the object
+		
+		bool destruction_pending; 
 		bool current_computation_ready;
+        std::mutex global_state;
+        
+        void work_thread(); 
 		bool not_quit();
+        
 		void cycle_internal_iterator(iter_type&,unsigned int);
 		public:
 		tianche_wrapper(std::list<T>&);
@@ -55,13 +59,13 @@ template <typename T>
 
 template <typename T>
 	tianche_wrapper<T>::tianche_wrapper(std::list<T>& li)
-	:tc(li)
+	:subject_list(li)
 	{
-		xtime = false;
+		destruction_pending = false;
 		current_computation_ready = true;
 		unsigned int thread_count = std::thread::hardware_concurrency();
 		if(thread_count<2) thread_count = 2;
-		for(unsigned i=0;i<thread_count;i++) thdx.push_back(std::thread(&tianche_wrapper<T>::watek,this));
+		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&tianche_wrapper<T>::work_thread,this));
 	}
 
 
@@ -69,35 +73,35 @@ template <typename T>
 	tianche_wrapper<T>::~tianche_wrapper()
 	{
 		global_state.lock();
-		xtime = true;
+		destruction_pending = true;
 		global_state.unlock();
 		thread_sleeper.notify_all();
-		for(auto& x: thdx) x.join();
+		for(auto& x: thread_pool) x.join();
 	}
 
 template <typename T>
-	bool tianche_wrapper<T>::not_quit()
+	bool tianche_wrapper<T>::not_quit() //whether the work threads should finish and join
 	{
-		std::lock_guard lol(global_state);
-			{
-				return !xtime;
-			}
+		std::lock_guard<std::mutex> lol(global_state);
+        {
+            return !destruction_pending;
+        }
 	}
 template <typename T>
 	void tianche_wrapper<T>::async_pairwise_apply(const fx_type& fu)
 	{
 		queue_mutex.lock();
-		for(unsigned int i=1;(float)i<=tc.size()/2.f;i++) kolejka.push(std::pair(i,fu));
+		for(unsigned int i=1;(float)i<=subject_list.size()/2.f;i++) work_queue.push(std::pair(i,fu));
 		queue_mutex.unlock();
 		global_state.lock();
 		current_computation_ready = false;
 		global_state.unlock();
 		do{
-			thread_sleeper.notify_all();
+			thread_sleeper.notify_all(); //prompt the thread pool to start processing the queue
 			std::this_thread::yield();
 			std::this_thread::yield();
 			std::this_thread::yield();
-		}while([this]{
+		}while([this]{ //while not done
 			std::lock_guard<std::mutex> loko(global_state);
 			return !current_computation_ready;
 		}());
@@ -111,35 +115,35 @@ template <typename T>
 		{
 			for(unsigned int i=0;i<delta;i++)
 			{
-				if(xe==tc.end()) xe=tc.begin();
+				if(xe==subject_list.end()) xe=subject_list.begin();
 				xe++;
 			}
 		}
-		if(xe==tc.end()) xe=tc.begin();
+		if(xe==subject_list.end()) xe=subject_list.begin();
 	}
 
 template <typename T>
-	void tianche_wrapper<T>::watek()
+	void tianche_wrapper<T>::work_thread()
 	{
-		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock);
+		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock); //prevents deadlock
 		while(true)
 		{
 			lok.lock();
 
-			if(kolejka.empty()) thread_sleeper.wait(lok,[this]{ //thread_sleeper.wait(lok,true) <- nie idzie spać
-				if(!not_quit()) return true;
-				return !kolejka.empty(); //domniemany else
+			if(work_queue.empty()) thread_sleeper.wait(lok,[this]{ //thread_sleeper.wait(lok,true) <- does not wait
+				if(!not_quit()) return true; //don't pause the thread when it is necessary to deconstruct the object
+				return !work_queue.empty(); //only pause when the queue is empty
 				});
-			if(!not_quit()) return;
+			if(!not_quit()) return; //return from the thread if deconstruction is required
 
-			unsigned int jmpnum = kolejka.front().first;
-			fx_type fu = kolejka.front().second;
-			kolejka.pop();
-			auto kolsiz = kolejka.size();
-			lok.unlock();
+			unsigned int jmpnum = work_queue.front().first;
+			fx_type fu = work_queue.front().second;
+			work_queue.pop();
+			auto queue_size = work_queue.size();
+			lok.unlock(); //allow other threads to access the queue
 			
-			iter_type curref = tc.begin();
-			for(unsigned int razy=0;razy<(unsigned int)gcd((int)tc.size(),(int)jmpnum);razy++)
+			iter_type curref = subject_list.begin();
+			for(unsigned int jmpcount=0;jmpcount<(unsigned int)gcd((int)subject_list.size(),(int)jmpnum);jmpcount++)
 			{
 				iter_type traveller = curref;
 				cycle_internal_iterator(traveller,jmpnum);
@@ -148,7 +152,7 @@ template <typename T>
 				fu(chaser,traveller); 
 				chaser = traveller;
 				cycle_internal_iterator(traveller,jmpnum);
-				if(jmpnum*2==tc.size()) {curref++; continue; }
+				if(jmpnum*2==subject_list.size()) {curref++; continue; }
 
 				do
 				{
@@ -158,7 +162,7 @@ template <typename T>
 				} while (chaser!=curref);
 				curref++;
 			}
-			if(kolsiz==0)
+			if(queue_size==0)
 			{
 				global_state.lock();
 				current_computation_ready = true;
