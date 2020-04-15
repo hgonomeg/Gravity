@@ -24,6 +24,7 @@ class Simulator :public sf::Drawable
 	collision_approach ca;
 	bool paused, draw_traces;
 	tianche_wrapper<std::unique_ptr<Celestial_body>> twx;
+	tianche_wrapper<std::unique_ptr<Celestial_body>> twx2;
 	std::list<std::unique_ptr<Celestial_body>> ciala;
 	std::list<std::vector<sf::Vertex>>* predicted_traces;
 	sf::IntRect draw_area;
