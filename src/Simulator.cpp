@@ -107,12 +107,8 @@ void Simulator::tick()
 					obrob_grawitacje(ein->get(),zwei->get());
 				});
 
-				struct collision_member {
-					std::list<std::unique_ptr<Celestial_body>>::iterator iterator;
-					unsigned int ID;
-				};
 
-				auto detect_collisions = [](std::vector<std::pair<collision_member,collision_member>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+				auto detect_collisions = [](std::vector<std::pair<unsigned int,unsigned int>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
 				{
 					auto* lhs_ptr = lhs->get();
 					auto* rhs_ptr = rhs->get();
@@ -120,14 +116,14 @@ void Simulator::tick()
 					{
 						std::lock_guard<std::mutex> my_lock(detected_mutex);
 						{
-							detected.push_back({{lhs,lhs_ptr->get_id()},{rhs,rhs_ptr->get_id()}});
+							detected.push_back({lhs_ptr->get_id(),rhs_ptr->get_id()});
 						}
 					}
 					
 				};
 
 
-				std::vector<std::pair<collision_member,collision_member>> detected_pairs;
+				std::vector<std::pair<unsigned int,unsigned int>> detected_pairs;
 				std::mutex detected_mutex;
 				std::set<unsigned int> deleted_bodies;
 				
@@ -136,24 +132,27 @@ void Simulator::tick()
 				
 				for(auto& x: detected_pairs) 
 				{
-					if(deleted_bodies.find(x.first.ID)==deleted_bodies.end() && deleted_bodies.find(x.second.ID)==deleted_bodies.end())
+					if(deleted_bodies.find(x.first)==deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
 					{
 						switch(ca)
 						{
 						case collision_approach::merge:
 							{
 							//first jako ojciec, jest zawsze nadpisywane dzieckiem. second usuwamy samemu
-							Celestial_body* father=x.first.iterator->release();
-							deleted_bodies.insert(x.first.ID); //mark the father as a deleted body because it will be overwritten
-							deleted_bodies.insert(x.second.ID); //this one gets deleted too
-							Celestial_body::collision_handle(x.second.iterator->get(),father);	//father is being overwritten (becomes child)
-							x.first.iterator->reset(father); //father is now the child
-							ciala.erase(x.second.iterator); //I suppose a possible memory leak when the same body collides with more bodies
+							auto father_iterator = iterator_of(x.first);
+							auto mother_iterator = iterator_of(x.second);
+							Celestial_body* father = father_iterator->release();
+							deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
+							deleted_bodies.insert(x.second);//this one gets deleted too
+							Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
+							father_iterator->reset(father); //father is now the child
+							
+							ciala.erase(mother_iterator); //I suppose a possible memory leak when the same body collides with more bodies
 							break;
 							}
 						case collision_approach::bounce:
 							{
-							Celestial_body::bounce_handle(x.second.iterator->get(),x.first.iterator->get());
+							Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
 							break;
 							}
 						}

@@ -186,8 +186,8 @@ const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 
 Celestial_body::~Celestial_body()
 {
-	//alloc_diagram[Local_ID]=false;
 	if(slady_rodzicow) delete slady_rodzicow;
+	
 }
 
 std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
@@ -226,7 +226,7 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	Planet* planeta;
 	Star* gwiazda;
 	Asteroid* asteroida;
-	
+
 	Celestial_body* dziecko;
 	
 	if(M_d==0)
@@ -369,7 +369,7 @@ bool Celestial_body::collision_detection(const Celestial_body& CB1, const Celest
 	auto radius1 = CB1.get_radius();
 	CB1.simultaneity_guardian.unlock();
 	CB2.simultaneity_guardian.lock();
-	auto radius2 = CB1.get_radius();
+	auto radius2 = CB2.get_radius();
 	CB2.simultaneity_guardian.unlock();
 	return (CB1.distance_from(CB2)-(radius1+radius2))<=static_cast<float>(0);
 }
