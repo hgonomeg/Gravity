@@ -94,7 +94,7 @@ void Simulator::tick()
 					if(odleglosc!=0) 
 						sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
 					else
-						sila_graw_vec=0;
+						sila_graw_vec= {0,0};
 					lhs->simultaneity_guardian.lock();
 					lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
 					lhs->simultaneity_guardian.unlock();
