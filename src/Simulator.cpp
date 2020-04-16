@@ -91,8 +91,10 @@ void Simulator::tick()
 					float odleglosc = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
 				
 					sf::Vector2f sila_graw_vec={diff_x,diff_y};
-					sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
-					
+					if(odleglosc!=0) 
+						sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
+					else
+						sila_graw_vec=0;
 					lhs->simultaneity_guardian.lock();
 					lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
 					lhs->simultaneity_guardian.unlock();
