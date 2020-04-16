@@ -130,7 +130,7 @@ void Simulator::tick()
 				std::set<unsigned int> deleted_bodies;
 				
 
-				twx2.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
+				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 				
 				for(auto& x: detected_pairs) 
 				{
@@ -179,6 +179,10 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 			x->refresh(); //refresh the state of the graphical part of the object
 		if(draw_traces) 
 			x->draw_trace(tgt,st);
+		
+	}
+	for(auto& x: ciala) //has to be drawn in a separate loop no to overlap with the traces
+	{
 		x->draw(tgt,st);
 	}
 	if(predicted_traces)
@@ -277,8 +281,7 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 
 Simulator::Simulator()  //kostruktor domyślny
 :ciala(),
-twx(ciala),
-twx2(ciala)
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -289,8 +292,7 @@ twx2(ciala)
 
 Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
 :ciala(),
-twx(ciala),
-twx2(ciala)
+twx(ciala)
 {
 	Celestial_body::pushstax();
 	paused=sim.paused;
