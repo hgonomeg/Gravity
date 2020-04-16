@@ -132,9 +132,15 @@ template <typename T>
 		{
 			lok.lock();
 
-			if(work_queue.empty()) thread_sleeper.wait(lok,[this]{ //thread_sleeper.wait(lok,true) <- does not wait
+			if(work_queue.empty()) thread_sleeper.wait(lok,[this,threadnum]{ //thread_sleeper.wait(lok,true) <- does not wait
 				if(!not_quit()) return true; //don't pause the thread when it is necessary to deconstruct the object
-				return !work_queue.empty(); //only pause when the queue is empty
+				bool queue_empty = work_queue.empty(); 
+				if(queue_empty) { //if the queue is empty, the thread needs to notify the object that it has completed its job
+					global_state.lock();
+					computation_ready[threadnum] = true;
+					global_state.unlock();
+				}
+				return !queue_empty; //only pause when the queue is empty
 				});
 			if(!not_quit()) return; //return from the thread if deconstruction is required
 
