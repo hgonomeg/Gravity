@@ -2,6 +2,7 @@
 #define TIANCHE_WRAPPER_HPP
 #include <thread>
 #include <mutex>
+#include <algorithm>
 #include <future>
 #include <condition_variable>
 #include <functional>
@@ -44,10 +45,10 @@ template <typename T>
 		std::mutex queue_mutex;
 		
 		bool destruction_pending; 
-		bool current_computation_ready;
+		std::vector<bool> computation_ready; //corresponds to individual threads
         std::mutex global_state;
         
-        void work_thread(); 
+        void work_thread(unsigned int); 
 		bool not_quit();
         
 		void cycle_internal_iterator(iter_type&,unsigned int);
@@ -62,10 +63,10 @@ template <typename T>
 	:subject_list(li)
 	{
 		destruction_pending = false;
-		current_computation_ready = true;
 		unsigned int thread_count = std::thread::hardware_concurrency();
 		if(thread_count<2) thread_count = 2;
-		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&tianche_wrapper<T>::work_thread,this));
+		for(unsigned i=0;i<thread_count;i++) computation_ready.push_back(true);
+		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&tianche_wrapper<T>::work_thread,this,i));
 	}
 
 
@@ -94,7 +95,8 @@ template <typename T>
 		for(unsigned int i=1;(float)i<=subject_list.size()/2.f;i++) work_queue.push(std::pair(i,fu));
 		queue_mutex.unlock();
 		global_state.lock();
-		current_computation_ready = false;
+		for(auto i = computation_ready.begin();i!=computation_ready.end();i++)
+			*i = false;
 		global_state.unlock();
 		do{
 			thread_sleeper.notify_all(); //prompt the thread pool to start processing the queue
@@ -103,7 +105,7 @@ template <typename T>
 			std::this_thread::yield();
 		}while([this]{ //while not done
 			std::lock_guard<std::mutex> loko(global_state);
-			return !current_computation_ready;
+			return !std::all_of(computation_ready.begin(),computation_ready.end(),[](bool x){ return x==true;});
 		}());
 		
 	}
@@ -123,7 +125,7 @@ template <typename T>
 	}
 
 template <typename T>
-	void tianche_wrapper<T>::work_thread()
+	void tianche_wrapper<T>::work_thread(unsigned int threadnum)
 	{
 		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock); //prevents deadlock
 		while(true)
@@ -165,7 +167,7 @@ template <typename T>
 			if(queue_size==0)
 			{
 				global_state.lock();
-				current_computation_ready = true;
+				computation_ready[threadnum] = true;
 				global_state.unlock();
 			}
 		}
