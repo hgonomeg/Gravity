@@ -7,7 +7,7 @@
 #include <condition_variable>
 #include <functional>
 #include <utility>
-#include <tuple>
+#include <chrono>
 #include <queue>
 #include <vector>
 #include <list>
@@ -91,13 +91,29 @@ template <typename T>
 template <typename T>
 	void tianche_wrapper<T>::async_pairwise_apply(const fx_type& fu)
 	{
-		queue_mutex.lock();
-		for(unsigned int i=1;(float)i<=subject_list.size()/2.f;i++) work_queue.push(std::pair(i,fu));
-		queue_mutex.unlock();
-		global_state.lock();
-		for(auto i = computation_ready.begin();i!=computation_ready.end();i++)
-			*i = false;
-		global_state.unlock();
+		auto fut = std::async(std::launch::async,[this,fu]{
+			
+			for(unsigned int i=1;(float)i<=subject_list.size()/2.f;i++) 
+				{
+				queue_mutex.lock();
+				work_queue.push(std::pair(i,fu));
+				queue_mutex.unlock();
+				}
+			
+			global_state.lock();
+			for(auto i = computation_ready.begin();i!=computation_ready.end();i++)
+				*i = false;
+			global_state.unlock();
+		});
+
+		do{
+			thread_sleeper.notify_all(); //prompt the thread pool to start processing the queue
+			std::this_thread::yield();
+			std::this_thread::yield();
+			std::this_thread::yield();
+		}while(fut.wait_for(std::chrono::microseconds(100))!=std::future_status::ready);
+		fut.get();
+
 		do{
 			thread_sleeper.notify_all(); //prompt the thread pool to start processing the queue
 			std::this_thread::yield();
