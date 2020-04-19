@@ -3,7 +3,7 @@
 const float Simulator::G = 0.05;
 float Simulator::STEPPING_RATE = 1.f;
 const unsigned short Simulator::CA_count = 3;
-const float Simulator::overlap_tolerance = 0.5; //bodies can overlap up to 50%
+const float Simulator::overlap_tolerance = 0.1; //bodies can overlap up to 10%
 int Simulator::accuracy_factor = 0;
 unsigned int Simulator::tick_rate = 1;
 
@@ -176,7 +176,7 @@ void Simulator::tick()
 						{
 							auto father_iterator = iterator_of(x.first);
 							auto mother_iterator = iterator_of(x.second);
-							if(mother_iterator->get()->distance_from(*father_iterator->get()) < (1-overlap_tolerance) * (father_iterator->get()->get_radius() + mother_iterator->get()->get_radius())) // distance < (1 - overlap_tolerance) * sum of radii
+							if(mother_iterator->get()->distance_from(*father_iterator->get()) < father_iterator->get()->get_radius() + mother_iterator->get()->get_radius() - overlap_tolerance * std::min(father_iterator->get()->get_radius(),mother_iterator->get()->get_radius())) // distance < sum of radii - overlap_tolerance * smallest radius
 							{
 								//first, being a father, always gets overwritten by the child. second is to be deleted manually
 								Celestial_body* father = father_iterator->release();
@@ -196,7 +196,7 @@ void Simulator::tick()
 					}
 				}
 			}
-			
+
 			//set velocity
 			for(auto j=ciala.begin(); j!=ciala.end(); j++)
 			{
