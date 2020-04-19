@@ -121,16 +121,36 @@ template <typename T>
 				}
 				return !queue_empty; //only pause when the queue is empty
 				});
+
+			if(!not_quit()) return; //return from the thread if deconstruction is required
 			
+			unsigned int num_of_work = work_queue.front().first+1;
+			fx_type function = work_queue.front().second;
+			work_queue.pop();
+			size_t queue_size = work_queue.size();
 
+			lok.unlock();
 
-            auto determine_pairs = []()
+            auto determine_pairs = [subject_list&,function&](unsigned int l) ->void
             {
+				iter_type starting_iter = subject_list.begin(); 
+				std::advance(starting_iter,(l-1)); 	//l - position
 
-            }
-            
+				iter_type it = starting_iter;
+				std::advance(it,1);
 
+				for(; it!=subject_list.end(); ++it)
+				{
+					function(starting_iter,it);					
+				}
+            };
+			
+			determine_pairs(num_of_work);
 
+			unsigned concurrency = subject_list.size()/2;
+			num_of_work = (2*concurrency)-num_of_work+1;
+
+			determine_pairs(num_of_work);
 
 			if(queue_size==0)
 			{
