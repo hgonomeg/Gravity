@@ -10,7 +10,17 @@
 #include <future>
 #include <chrono>
 #include <list>
+#include <sstream>
+#include <iomanip>
 #include "Button.hpp"
+
+enum rendering_quality {  //no. sides in polygons to approximate circles
+	minimalist,			//12
+	low,				//24
+	medium,				//32
+	high,				//48
+	ultra				//64
+};
 
 class UI_state;
 
@@ -51,7 +61,10 @@ class UI_state :public sf::Drawable
 	private:
 	
 	sysclck::time_point last_tick;
+	sysclck::time_point rendering_finished_time;
 	int fps;
+	float draw_vs_total_time_ratio;
+
 	void set_status_text();
 	
 	std::list<hint_text> hint_texts;
@@ -61,6 +74,7 @@ class UI_state :public sf::Drawable
 	sf::Text* status_text;
 	Simulator* sim;
 	sf::RenderWindow* target;
+
  	public:
 	
 	~UI_state();
@@ -75,6 +89,7 @@ class UI_state :public sf::Drawable
 	void kbp(sf::Event&);
 	void push_hint_text(hint_text&&);
 	void tick();
+	void notify_rendered();
 	int vertoffset_of_last_ht();
 	Simulator* getsim();
 	const UI_tool* getcurr();
@@ -150,7 +165,9 @@ class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_stat
 	Button b_speed_plus;
 	Button b_speed_minus;
 	Button b_debug;
+	rendering_quality quality;
 	void collision_cycle();
+	void quality_cycle();
 	protected:
 	
 	public:

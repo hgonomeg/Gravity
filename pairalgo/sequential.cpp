@@ -21,7 +21,7 @@ void seq_ns::main_action()
 			
 		
 		}
-	std::unique_lock<std::mutex>* locc = new std::unique_lock<std::mutex>(kon_mut);
+	kon_mut.lock();
 	koniec = true;
-	delete locc;
+	kon_mut.unlock();
 }

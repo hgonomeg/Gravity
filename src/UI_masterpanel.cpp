@@ -54,14 +54,67 @@ void UI_masterpanel::collision_cycle()
 	}
 }
 
+void UI_masterpanel::quality_cycle()
+{
+	switch(quality)
+	{
+		case rendering_quality::minimalist:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current rendering quality: low",1500));
+			quality = rendering_quality::low;
+			patris->getsim()->set_circle_approx_polygon(24);
+			break;
+		}
+		case rendering_quality::low:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current rendering quality: medium",1500));
+			quality = rendering_quality::medium;
+			patris->getsim()->set_circle_approx_polygon(32);
+			break;
+		}
+		case rendering_quality::medium:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current rendering quality: high",1500));
+			quality = rendering_quality::high;
+			patris->getsim()->set_circle_approx_polygon(48);
+			break;
+		}
+		case rendering_quality::high:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current rendering quality: ultra",1500));
+			quality = rendering_quality::ultra;
+			patris->getsim()->set_circle_approx_polygon(64);
+			break;
+		}
+		case rendering_quality::ultra:
+		{
+			patris->push_hint_text(UI_state::hint_text("Current rendering quality: minimalist",1500));
+			quality = rendering_quality::minimalist;
+			patris->getsim()->set_circle_approx_polygon(12);
+			break;
+		}
+	}
+}
+
 void UI_masterpanel::kbp(sf::Event& ev)
 {
 	switch(ev.key.code)
 	{
 		case sf::Keyboard::L:
 		{
-			if(!ev.key.control) patris->getsim()->toggle_traces();
-			else patris->getsim()->delete_traces();
+			if(!ev.key.control) 
+			{
+				patris->getsim()->toggle_traces();
+				if(patris->getsim()->are_traces_drawn())
+					patris->push_hint_text(UI_state::hint_text("Traces enabled",1500));
+				else
+					patris->push_hint_text(UI_state::hint_text("Traces disabled",1500));
+			}
+			else 
+			{
+				patris->getsim()->delete_traces();
+				patris->push_hint_text(UI_state::hint_text("Traces deleted",3000));
+			}
 			break;
 		}
 		case sf::Keyboard::R:
@@ -104,6 +157,8 @@ void UI_masterpanel::kbp(sf::Event& ev)
 				if(patris->debug) patris->push_hint_text(UI_state::hint_text("Debug mode ON",3000));
 				else patris->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));
 			}
+			else 
+				quality_cycle();
 			break;
 		}
 		case sf::Keyboard::H:
@@ -116,6 +171,7 @@ void UI_masterpanel::kbp(sf::Event& ev)
 			patris->push_hint_text(UI_state::hint_text("I - Increase the simulation accuracy [also slows down]",25000));
 			patris->push_hint_text(UI_state::hint_text("< - Decrease the simulation rate [Less computations and lower speed]",25000));
 			patris->push_hint_text(UI_state::hint_text("> - Increase the simulation rate [More computations and more speed]",25000));
+			patris->push_hint_text(UI_state::hint_text("[ - cycle through rendering quality modes",25000));
 			break;
 		}
 	}
@@ -164,16 +220,17 @@ b_speed_minus(zasoby->button_speed_minus),
 b_debug(zasoby->button_debug)
 {
 	b_debug.show(false);
-	float inex = 5;
-	b_gen.setPosition({inex,30}); inex+=20.f;
-	b_sel.setPosition({inex,30}); inex+=40.f;
-	b_traces.setPosition({inex,30}); inex+=20.f;
-	b_collision.setPosition({inex,30}); inex+=20.f;
-	b_deltraces.setPosition({inex,30}); inex+=20.f;
-	b_predtraces.setPosition({inex,30}); inex+=40.f;
-	b_accuracy_plus.setPosition({inex,30}); inex+=20.f;
-	b_accuracy_minus.setPosition({inex,30}); inex+=20.f;
-	b_speed_plus.setPosition({inex,30}); inex+=20.f;
-	b_speed_minus.setPosition({inex,30}); inex+=40.f;
-	b_debug.setPosition({inex,30}); inex+=20.f;
+	float x_offset = 5;
+	quality = rendering_quality::ultra;
+	b_gen.setPosition({x_offset,30}); x_offset+=20.f;
+	b_sel.setPosition({x_offset,30}); x_offset+=40.f;
+	b_traces.setPosition({x_offset,30}); x_offset+=20.f;
+	b_collision.setPosition({x_offset,30}); x_offset+=20.f;
+	b_deltraces.setPosition({x_offset,30}); x_offset+=20.f;
+	b_predtraces.setPosition({x_offset,30}); x_offset+=40.f;
+	b_accuracy_plus.setPosition({x_offset,30}); x_offset+=20.f;
+	b_accuracy_minus.setPosition({x_offset,30}); x_offset+=20.f;
+	b_speed_plus.setPosition({x_offset,30}); x_offset+=20.f;
+	b_speed_minus.setPosition({x_offset,30}); x_offset+=40.f;
+	b_debug.setPosition({x_offset,30}); x_offset+=20.f;
 }

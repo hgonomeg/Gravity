@@ -3,6 +3,7 @@
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
+unsigned int Celestial_body::num_of_polygon_sides=64;
 std::map<unsigned int, unsigned int> Celestial_body::alloc_diagram = std::map<unsigned int, unsigned int>();
 std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>> Celestial_body::alloc_diagram_stack = std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>>();
 
@@ -21,21 +22,41 @@ void Celestial_body::draw_trace(sf::RenderTarget& tgt,sf::RenderStates st) const
 	}
 }
 
-int& Celestial_body::get_mass() 
+int Celestial_body::get_mass() const
 {
 	return mass;
 }
-float& Celestial_body::get_radius() 
+float Celestial_body::get_radius() const
 {
 	return radius;
 }
-sf::Vector2f& Celestial_body::get_loc()
+sf::Vector2f Celestial_body::get_location() const
 {
 	return loc;
 }
-sf::Vector2f& Celestial_body::get_v()
+sf::Vector2f Celestial_body::get_velocity() const
 {
 	return v;
+}
+
+void Celestial_body::set_mass(int m)
+{
+	mass = m;
+}
+
+void Celestial_body::set_radius(float rad)
+{
+	radius = rad;
+}
+
+void Celestial_body::set_location(sf::Vector2f lc)
+{
+	loc = lc;
+}
+
+void Celestial_body::set_velocity(sf::Vector2f vel) 
+{
+	v = vel;
 }
 
 void Celestial_body::refresh()
@@ -88,8 +109,9 @@ void Celestial_body::refresh()
 }
 
 
-unsigned int Celestial_body::get_id()
+unsigned int Celestial_body::get_id() const
 {
+	std::lock_guard<std::mutex> mlock(simultaneity_guardian);
 	return Local_ID;
 }
 
@@ -104,7 +126,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	is_still = false;
 	radius = sqrt(fabs(mass/10.f));
 	wyglond.setRadius(radius);
-	wyglond.setPointCount(64);
+	wyglond.setPointCount(num_of_polygon_sides);
 	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
@@ -158,6 +180,35 @@ void Celestial_body::pushstax()
 	alloc_diagram_stack.push(pya);
 }
 
+void Celestial_body::set_global_num_of_polygon_sides(unsigned int sides)
+{
+	num_of_polygon_sides = sides;
+}
+void Celestial_body::set_num_of_polygon_sides(unsigned int sides)
+{
+	wyglond.setPointCount(sides);
+}
+
+bool Celestial_body::change_trace_length(bool dir)
+{
+	if(dir)
+	{
+		znikacz_sladu++;
+		return true;
+	}
+	else
+	{
+		if(znikacz_sladu==0) return false;
+		znikacz_sladu--;
+		return true;
+	}
+}
+
+unsigned int Celestial_body::get_trace_length()
+{
+	return znikacz_sladu;
+}
+
 const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 {
 	return alloc_diagram;
@@ -165,8 +216,8 @@ const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 
 Celestial_body::~Celestial_body()
 {
-	//alloc_diagram[Local_ID]=false;
 	if(slady_rodzicow) delete slady_rodzicow;
+	
 }
 
 std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
@@ -192,62 +243,73 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	
 	//gettery
 	
-	int& M_m=matka->get_mass();
-	int& M_o=ojciec->get_mass();
+	int M_m=matka->get_mass();
+	int M_o=ojciec->get_mass();
 	
-	auto& V_m=matka->get_v();
-	auto& V_o=ojciec->get_v();
+	auto V_m=matka->get_velocity();
+	auto V_o=ojciec->get_velocity();
 	
 	//obliczenia
 	
 	M_d=M_m+M_o;
-	V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(float)M_d;
 	
 	Planet* planeta;
 	Star* gwiazda;
-	Celestial_body* dziecko;
 	Asteroid* asteroida;
+
+	Celestial_body* dziecko;
 	
-	if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
+	if(M_d==0)
 	{
-		planeta=dynamic_cast<Planet*>(matka);
-		gwiazda=dynamic_cast<Star*>(matka);
-		asteroida=dynamic_cast<Asteroid*>(matka);
-		if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
-		{
-			dziecko=new Star(M_d,matka->get_loc(),V_d);
-			dziecko->is_still=matka->is_still;
-		}
-		else if(asteroida!=NULL)
-		{
-			dziecko=new Asteroid(matka->get_loc(),V_d);
-		}
-		else //obiekt będzie planetą
-		{
-			dziecko=new Planet(M_d,matka->get_loc(),V_d);
-			dziecko->is_still=matka->is_still;
-		}
-	}	
-	else //tu dziecko przyjmie klase ojca
+		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(M_m*2.f);
+		dziecko=new Asteroid(matka->get_location(),V_d);
+	}
+	else
 	{
-		planeta=dynamic_cast<Planet*>(ojciec);
-		gwiazda=dynamic_cast<Star*>(ojciec);
-		asteroida=dynamic_cast<Asteroid*>(ojciec);
-		if(planeta==NULL&&asteroida==NULL) // gwiazda
+		V_d=(((float)M_m*V_m)+((float)M_o*V_o))/(float)M_d;
+
+		if(M_m>=M_o) //tu dziecko przyjmnie klase matki // sprawdzamy jaką matka i ojciec są klasą
 		{
-			dziecko=new Star(M_d,ojciec->get_loc(),V_d);
-			dziecko->is_still=ojciec->is_still;
-		}
-		else if(asteroida!=NULL)
-		{
-			dziecko=new Asteroid(ojciec->get_loc(),V_d);
-		}
-		else //obiekt będzie planetą
-		{
-			dziecko=new Planet(M_d,ojciec->get_loc(),V_d);
-			dziecko->is_still=ojciec->is_still;
+			planeta=dynamic_cast<Planet*>(matka);
+			gwiazda=dynamic_cast<Star*>(matka);
+			asteroida=dynamic_cast<Asteroid*>(matka);
+			if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
+			{
+				dziecko=new Star(M_d,matka->get_location(),V_d);
+				dziecko->is_still=matka->is_still;
+			}
+			else if(asteroida!=NULL)
+			{
+				dziecko=new Asteroid(matka->get_location(),V_d);
+			}
+			else //obiekt będzie planetą
+			{
+				dziecko=new Planet(M_d,matka->get_location(),V_d);
+				dziecko->is_still=matka->is_still;
+			}
 		}	
-	}	
+		else //tu dziecko przyjmie klase ojca
+		{
+			planeta=dynamic_cast<Planet*>(ojciec);
+			gwiazda=dynamic_cast<Star*>(ojciec);
+			asteroida=dynamic_cast<Asteroid*>(ojciec);
+			if(planeta==NULL&&asteroida==NULL) // gwiazda
+			{
+				dziecko=new Star(M_d,ojciec->get_location(),V_d);
+				dziecko->is_still=ojciec->is_still;
+			}
+			else if(asteroida!=NULL)
+			{
+				dziecko=new Asteroid(ojciec->get_location(),V_d);
+			}
+			else //obiekt będzie planetą
+			{
+				dziecko=new Planet(M_d,ojciec->get_location(),V_d);
+				dziecko->is_still=ojciec->is_still;
+			}	
+		}	
+
+	}
 	dziecko->slady_rodzicow = new std::list<std::vector<sf::Vertex>>();
 	for(auto i=S_o.begin();i!=S_o.end();i++)
 	{
@@ -265,11 +327,15 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 	delete ojciec; ojciec = dziecko;
 }
 
-float Celestial_body::distance_from(Celestial_body* CB1, Celestial_body* CB2)
+float Celestial_body::distance_from(const Celestial_body& ext) const
 {
-		auto &left_loc=CB1->get_loc();
+		this->simultaneity_guardian.lock();
+		auto left_loc=this->get_location();
+		this->simultaneity_guardian.unlock();
 
-		auto &right_loc=CB2->get_loc();
+		ext.simultaneity_guardian.lock();
+		auto right_loc=ext.get_location();
+		ext.simultaneity_guardian.unlock();
 
 		float diff_x=left_loc.x-right_loc.x;
 		float diff_y=left_loc.y-right_loc.y;
@@ -292,46 +358,49 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 {
 	 // 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
  
-    auto poz_matki = matka->get_loc(); //auto to sf::Vector2f
-    auto poz_ojca = ojciec->get_loc();
-    sf::Vector2f& V1 = matka->get_v(); //referencja bo to będziemy zmieniać
-    sf::Vector2f& V2 = ojciec->get_v();
-    int m1 = matka->get_mass();
-    int m2 = ojciec->get_mass();
+    int M_m=matka->get_mass();
+	int M_o=ojciec->get_mass();
+	
+	sf::Vector2f V_m=matka->get_velocity();
+	sf::Vector2f V_o=ojciec->get_velocity();
+	
+	sf::Vector2f loc_m=matka->get_location();
+	sf::Vector2f loc_o=ojciec->get_location();
 	
     // 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
  
-    sf::Vector2f S1S2 = poz_matki-poz_ojca;
-    sf::Vector2f S2S1 = poz_ojca-poz_matki;
+    sf::Vector2f S1S2 = loc_m-loc_o;
+    sf::Vector2f S2S1 = loc_o-loc_m;
  
     auto vec_dot_product = [](sf::Vector2f pierwszy, sf::Vector2f drugi) -> float {return (pierwszy.x*drugi.x)+(pierwszy.y*drugi.y);}; //iloczyn skalarny
  
     auto powered_vec_length = [](sf::Vector2f vec) -> float {return vec.x*vec.x+vec.y*vec.y;}; //długość wektora
 	
-	// 3. Rzutujemy wektor v1 oraz wektor v2 na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
+	// 3. Rzutujemy wektor V_m oraz wektor V_o na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
 
     auto vec_projection = [&](sf::Vector2f pierwszy, sf::Vector2f drugi) -> sf::Vector2f {return static_cast<float>(vec_dot_product(pierwszy,drugi)/powered_vec_length(drugi))*drugi;}; //pierwszy rzucamy na drugi
  
  
-    //rzut V1 i V2
-    sf::Vector2f V1c = vec_projection(V1,S1S2);
-    sf::Vector2f V2c = vec_projection(V2,S2S1);
+    //rzut V_m i V_o
+    sf::Vector2f V_mc = vec_projection(V_m,S1S2);
+    sf::Vector2f V_oc = vec_projection(V_o,S2S1);
  
-    //4. Szukamy prostopadłych do tej prostej składowych wektorów v1 i v2, np. poprzez różnicę wektorową: vp1 = v1 - vC1 ; vp2 = v2-vC2.
+    //4. Szukamy prostopadłych do tej prostej składowych wektorów V_m i V_o, np. poprzez różnicę wektorową: vp1 = V_m - vC1 ; vp2 = V_o-vC2.
  
-    sf::Vector2f V1p = V1-V1c;
-    sf::Vector2f V2p = V2-V2c;
+    sf::Vector2f V_mp = V_m-V_mc;
+    sf::Vector2f V_op = V_o-V_oc;
  
-    //5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn v1 = vp1 oraz v2 = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
-    //transformacja V1c i V2c na U1c i U2c
+    //5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn V_m = vp1 oraz V_o = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
+    //transformacja V_mc i V_oc na U1c i U2c
  
-    sf::Vector2f U1c = static_cast<float>((m1-m2)/(m1+m2))*V1c + static_cast<float>((2*m2)/(m1+m2))*V2c; //z wzorów na zderzenie centralne sprężyste
-    sf::Vector2f U2c = static_cast<float>((2*m1)/(m1+m2))*V1c + static_cast<float>((m2-m1)/(m1+m2))*V2c;
+    sf::Vector2f U1c = static_cast<float>((M_m-M_o)/(M_m+M_o))*V_mc + static_cast<float>((2*M_o)/(M_m+M_o))*V_oc; //z wzorów na zderzenie centralne sprężyste
+    sf::Vector2f U2c = static_cast<float>((2*M_m)/(M_m+M_o))*V_mc + static_cast<float>((M_o-M_m)/(M_m+M_o))*V_oc;
  
     //6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
  
-    V1 = U1c + V1p;
-	V2 = U2c + V2p;
+    V_m = U1c + V_mp;
+	V_o = U2c + V_op;
+
 
 }
 
@@ -341,8 +410,13 @@ sf::FloatRect Celestial_body::getGlobalBounds()
 }
 
 
-bool Celestial_body::collision_detec(Celestial_body* CB1, Celestial_body* CB2)
+bool Celestial_body::collision_detection(const Celestial_body& CB1, const Celestial_body& CB2)
 {
-
-	return (distance_from(CB1,CB2)-(CB1->get_radius()+CB2->get_radius())<=0);
+	CB1.simultaneity_guardian.lock();
+	auto radius1 = CB1.get_radius();
+	CB1.simultaneity_guardian.unlock();
+	CB2.simultaneity_guardian.lock();
+	auto radius2 = CB2.get_radius();
+	CB2.simultaneity_guardian.unlock();
+	return (CB1.distance_from(CB2)-(radius1+radius2))<=static_cast<float>(0);
 }

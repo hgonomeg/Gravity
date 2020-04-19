@@ -78,6 +78,8 @@ Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Ok
 W folderze `pairalgo` znajduje się silnik animacji działania algorytmów rozważających indywidualne pary o nazwie Wuxing. Został on napisany jako pomoc w projektowaniu wydajnych algorytmów dla rozważenia sił grawitacji między każdą parą ciał niebieskich.
 
 ## Jak skompilować?
+There's a cmake script to compile the program although due to my poor cmake skills, GCC is the only officially supported compiler.
+
 Aby skompilować projekt, należy skompilować wszystkie dostępne w folderze głównym repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należy dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
 Wymagany standard C++11 wraz z RTTI.
 ## Do rozważenia
