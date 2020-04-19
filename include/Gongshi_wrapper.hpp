@@ -43,7 +43,7 @@ template <typename T>
 		unsigned int thread_count = std::thread::hardware_concurrency();
 		if(thread_count<2) thread_count = 2;
 		for(unsigned i=0;i<thread_count;i++) computation_ready.push_back(true);
-		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&tianche_wrapper<T>::work_thread,this,i));
+		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&Gongshi_wrapper<T>::work_thread,this,i));
 	}
 
 template <typename T>
@@ -124,14 +124,14 @@ template <typename T>
 
 			if(!not_quit()) return; //return from the thread if deconstruction is required
 			
-			unsigned int num_of_work = work_queue.front().first+1;
+			unsigned int num_of_work = work_queue.front().first;
 			fx_type function = work_queue.front().second;
 			work_queue.pop();
 			size_t queue_size = work_queue.size();
 
 			lok.unlock();
 
-            auto determine_pairs = [subject_list&,function&](unsigned int l) ->void
+            auto determine_pairs = [this,&function](unsigned int l) ->void
             {
 				iter_type starting_iter = subject_list.begin(); 
 				std::advance(starting_iter,(l-1)); 	//l - position
