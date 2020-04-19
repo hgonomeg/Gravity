@@ -48,7 +48,7 @@ void UI_masterpanel::collision_cycle()
 		case Simulator::collision_approach::mixed:
 		{
 			patris->push_hint_text(UI_state::hint_text("Current collision handling approach: mixed",3000));
-			patris->push_hint_text(UI_state::hint_text("Current overlap tolerance:"+std::to_string(patris->getsim()->get_overlap_tolerance()),3000)); 
+			patris->push_hint_text(UI_state::hint_text("Current overlap tolerance: "+std::to_string(patris->getsim()->get_overlap_tolerance()),3000)); 
 			break;
 		}
 	}
