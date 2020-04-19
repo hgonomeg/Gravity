@@ -2,7 +2,7 @@
 
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	//ma byc puste
+	//meant to be empty
 }
 
 void UI_state::mbp(sf::Event& ev)
