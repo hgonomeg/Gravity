@@ -12,7 +12,7 @@ Button::Button(const sf::Texture& tx)
 bool Button::mbp(sf::Event& ev)
 {
 	if(!shown) return false;
-	if(frejm.getGlobalBounds().contains({ev.mouseButton.x,ev.mouseButton.y}))
+	if(frejm.getGlobalBounds().contains({static_cast<float>(ev.mouseButton.x),static_cast<float>(ev.mouseButton.y)}))
 		{
 			graycount+=6;
 			frejm.setOutlineColor(sf::Color(125,125,125));

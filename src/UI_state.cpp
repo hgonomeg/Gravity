@@ -88,7 +88,7 @@ void UI_state::tick()
 	if(curr) curr->tick();
 	masterpanel -> tick();
 	std::chrono::microseconds interval = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
-	fps = (int)(1/((double)interval.count()/1000000.d));
+	fps = (int)(1/((double)interval.count()/(double)1000000));
 	set_status_text();
 	last_tick = sysclck::now();
 }

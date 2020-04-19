@@ -86,7 +86,8 @@ void Simulator::tick()
 		for(unsigned uk=0;uk<tick_rate;uk++)
 		{
 			auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
-			
+				if(lhs == nullptr || rhs == nullptr)
+					throw std::runtime_error("Tried to compute gravity with a null-pointer.");
 				
 				lhs->simultaneity_guardian.lock();
 				auto left_loc=lhs->get_location();
@@ -129,6 +130,9 @@ void Simulator::tick()
 			{
 				auto* lhs_ptr = lhs->get();
 				auto* rhs_ptr = rhs->get();
+				if(lhs_ptr == nullptr || rhs_ptr == nullptr)
+					throw std::runtime_error("Tried to compute gravity with a null-pointer.");
+				
 				if(Celestial_body::collision_detection(*lhs_ptr,*rhs_ptr))
 				{
 					std::lock_guard<std::mutex> my_lock(detected_mutex);
@@ -151,31 +155,29 @@ void Simulator::tick()
 			{
 				if(deleted_bodies.find(x.first)==deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
 				{
+					auto father_iterator = iterator_of(x.first);
+					auto mother_iterator = iterator_of(x.second);
 					switch(ca)
 					{
-					case collision_approach::merge:
+						case collision_approach::merge:
 						{
-						//first, being a father, always gets overwritten by the child. second is to be deleted manually
-						auto father_iterator = iterator_of(x.first);
-						auto mother_iterator = iterator_of(x.second);
-						Celestial_body* father = father_iterator->release();
-						deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
-						deleted_bodies.insert(x.second);//this one gets deleted too
-						Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
-						father_iterator->reset(father); //father is now the child
-						
-						ciala.erase(mother_iterator); 
-						break;
+							//first, being a father, always gets overwritten by the child. second is to be deleted manually
+							Celestial_body* father = father_iterator->release();
+							deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
+							deleted_bodies.insert(x.second);//this one gets deleted too
+							Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
+							father_iterator->reset(father); //father is now the child
+							
+							ciala.erase(mother_iterator); 
+							break;
 						}
-					case collision_approach::bounce:
+						case collision_approach::bounce:
 						{
-						Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
-						break;
+							Celestial_body::bounce_handle(mother_iterator->get(),father_iterator->get());
+							break;
 						}
-					case collision_approach::mixed:
+						case collision_approach::mixed:
 						{
-							auto father_iterator = iterator_of(x.first);
-							auto mother_iterator = iterator_of(x.second);
 							if(mother_iterator->get()->distance_from(*father_iterator->get()) < father_iterator->get()->get_radius() + mother_iterator->get()->get_radius() - overlap_tolerance * std::min(father_iterator->get()->get_radius(),mother_iterator->get()->get_radius())) // distance < sum of radii - overlap_tolerance * smallest radius
 							{
 								//first, being a father, always gets overwritten by the child. second is to be deleted manually
@@ -189,7 +191,7 @@ void Simulator::tick()
 							}
 							else
 							{
-								Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
+								Celestial_body::bounce_handle(mother_iterator->get(),father_iterator->get());
 							}
 							break;
 						}
@@ -256,7 +258,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::iterator_of(unsi
 	{
 		if(i->get()->get_id()==ajdi) return i;
 	}
-	return ciala.end();
+	throw std::runtime_error("Requested iterator of non-existent object with ID: "+std::to_string(ajdi));
 }
 
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf::Vector2f& here)

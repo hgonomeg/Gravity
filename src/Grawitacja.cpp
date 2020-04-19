@@ -61,7 +61,7 @@ int main(int argc, char** argv)
 	
 	
 	hiresclk::duration load_time = hiresclk::now() - init_time;
-	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/1000.d)+" milliseconds"),1000));
+	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/(double)1000)+" milliseconds"),1000));
 	
 	bool pauza=false;
 	
