@@ -21,7 +21,7 @@ void UI_state::kbp(sf::Event& ev)
 		{
 			if(dynamic_cast<CB_gen*>(curr)==NULL)
 			{
-			push_hint_text(hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
+			push_hint_text(UI_state::hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
 			switch_tool(new CB_gen);
 			}
 			break;
@@ -30,7 +30,7 @@ void UI_state::kbp(sf::Event& ev)
 		{
 			if(dynamic_cast<CB_selector*>(curr)==NULL)
 			{
-			push_hint_text(hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
+			push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
 			switch_tool(new CB_selector);
 			}
 			break;
@@ -41,13 +41,20 @@ void UI_state::kbp(sf::Event& ev)
 	
 }
 
+void UI_state::notify_rendered()
+{
+	std::chrono::microseconds since_last_draw = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - rendering_finished_time);
+	std::chrono::microseconds rendering_time = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
+	rendering_finished_time = sysclck::now();
+	draw_vs_total_time_ratio = static_cast<float>(rendering_time.count())/since_last_draw.count();
+}
+
 void UI_state::tick()
 {
 	const int separ = 20;
 	int tmp_ht_h = last_ht_winoffset;
 	int orto_ht_h = [this](){
 		int orto = (int)((-1.f)*(float)separ*(float)hint_texts.size()/2.f);
-		//std::cout<<orto<<'\n';
 		return orto;
 		
 	}();
@@ -140,6 +147,8 @@ int UI_state::vertoffset_of_last_ht()
 
 UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
 {
+	rendering_finished_time = sysclck::now();
+	last_tick = sysclck::now();
 	status_text=stxt;
 	debug=false;
 	curr = NULL;
@@ -149,6 +158,7 @@ UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
 	status_text->setCharacterSize(15);
 	status_text->setPosition(5.f,5.f);
 	fps = 0;
+	draw_vs_total_time_ratio = 1.f;
 	target = xt;
 	masterpanel = new UI_masterpanel;
 	masterpanel -> patris = this;
@@ -185,9 +195,8 @@ void UI_state::switch_tool(UI_tool* ut)
 
 void UI_state::set_status_text()
 {
-	std::string tmp = "FPS: "+std::to_string(fps)+"  Accuracy: "+std::to_string(Simulator::get_accuracy())+"  Sim. rate: "+std::to_string(Simulator::get_rate())+"  Body count: ";
-	tmp+=std::to_string(sim->size());
-	tmp+="  Current tool: "+curr->name();
-	status_text->setString(tmp);
+	std::stringstream tmp;
+	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<sim->size()<<"  Current tool: "<<curr->name();
+	status_text->setString(tmp.str());
 }
 

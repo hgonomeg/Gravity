@@ -3,6 +3,7 @@
 
 unsigned int Celestial_body::Global_ID=0;
 unsigned int Celestial_body::znikacz_sladu=5;
+unsigned int Celestial_body::num_of_polygon_sides=64;
 std::map<unsigned int, unsigned int> Celestial_body::alloc_diagram = std::map<unsigned int, unsigned int>();
 std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>> Celestial_body::alloc_diagram_stack = std::stack<std::pair<std::map<unsigned int, unsigned int>,unsigned int>>();
 
@@ -125,7 +126,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	is_still = false;
 	radius = sqrt(fabs(mass/10.f));
 	wyglond.setRadius(radius);
-	wyglond.setPointCount(64);
+	wyglond.setPointCount(num_of_polygon_sides);
 	wyglond.setOrigin(radius,radius);
 	wyglond.setOutlineThickness(0);
 	wyglond.setFillColor(kolorek);
@@ -177,6 +178,35 @@ void Celestial_body::pushstax()
 	pya.second=Global_ID;
 	pya.first=alloc_diagram;
 	alloc_diagram_stack.push(pya);
+}
+
+void Celestial_body::set_global_num_of_polygon_sides(unsigned int sides)
+{
+	num_of_polygon_sides = sides;
+}
+void Celestial_body::set_num_of_polygon_sides(unsigned int sides)
+{
+	wyglond.setPointCount(sides);
+}
+
+bool Celestial_body::change_trace_length(bool dir)
+{
+	if(dir)
+	{
+		znikacz_sladu++;
+		return true;
+	}
+	else
+	{
+		if(znikacz_sladu==0) return false;
+		znikacz_sladu--;
+		return true;
+	}
+}
+
+unsigned int Celestial_body::get_trace_length()
+{
+	return znikacz_sladu;
 }
 
 const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()

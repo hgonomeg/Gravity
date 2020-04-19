@@ -10,7 +10,8 @@ int main(int argc, char** argv)
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.3.0");
 	win = &rehn;
-	rehn.setFramerateLimit(60);
+	rehn.setFramerateLimit(144);
+	rehn.setVerticalSyncEnabled(true);
 	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
 	
 	sf::Vector2f whatlook(0,0);
@@ -152,17 +153,16 @@ int main(int argc, char** argv)
 					}
 					case sf::Keyboard::K: //zmniejszenie znikacza
 					{
-						if(Celestial_body::znikacz_sladu==1)
-						{
+						if(!Celestial_body::change_trace_length(false))
 							gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",3000));
-						}
 						else
-						Celestial_body::znikacz_sladu--;
+							gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
 						break;
 					}
 					case sf::Keyboard::O: //zwiekszenie znikacza
 					{
-						Celestial_body::znikacz_sladu++;
+						Celestial_body::change_trace_length(true);
+						gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
 						break;
 					}
 					case sf::Keyboard::H: //zwiekszenie znikacza
@@ -226,8 +226,9 @@ int main(int argc, char** argv)
 		rehn.clear();
 		rehn.draw(sim);
 		rehn.draw(gui);
+		gui.notify_rendered();
 		rehn.display();
-		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
+		sim.tick();
 	}
 	
 	delete zasoby;

@@ -40,7 +40,16 @@ unsigned int Simulator::get_rate()
 	return tick_rate;
 }
 
-std::size_t Simulator::size()
+void Simulator::set_circle_approx_polygon(unsigned int sides)
+{
+	Celestial_body::set_global_num_of_polygon_sides(sides);
+	for(auto& x: ciala)
+	{
+		x->set_num_of_polygon_sides(sides);
+	}
+}
+
+std::size_t Simulator::size() const
 {
 	return ciala.size();
 }
@@ -206,7 +215,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const
 	return ciala.erase(el);
 }
 
-std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end()
+std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end() const
 {
 	return ciala.cend();
 }
@@ -243,7 +252,7 @@ void Simulator::pause(bool rzejak)
 	paused=rzejak;
 }
 
-bool Simulator::pause()
+bool Simulator::pause() const
 {
 	return paused;
 }
@@ -256,6 +265,11 @@ void Simulator::toggle_traces()
 void Simulator::delete_traces()
 {
 	for(auto& x: ciala) x->delete_traces();
+}
+
+bool Simulator::are_traces_drawn() const
+{
+	return draw_traces;
 }
 
 std::list<std::vector<sf::Vertex>> Simulator::get_traces()

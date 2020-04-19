@@ -10,7 +10,7 @@
 #include <list>
 
 template <typename T>
-    class Gongshi_wrapper
+    class gongshi_wrapper
     {
         using iter_type = typename std::list<T>::iterator;
         using fx_type = std::function<void(const iter_type&,const iter_type&)>;
@@ -30,24 +30,24 @@ template <typename T>
         
 		void cycle_internal_iterator(iter_type&,unsigned int);
 		public:
-		Gongshi_wrapper(std::list<T>&);
-		~Gongshi_wrapper();
+		gongshi_wrapper(std::list<T>&);
+		~gongshi_wrapper();
 		void async_pairwise_apply(const fx_type&);
     };
 
 template <typename T>
-	Gongshi_wrapper<T>::Gongshi_wrapper(std::list<T>& li)
+	gongshi_wrapper<T>::gongshi_wrapper(std::list<T>& li)
 	:subject_list(li)
 	{
 		destruction_pending = false;
 		unsigned int thread_count = std::thread::hardware_concurrency();
 		if(thread_count<2) thread_count = 2;
 		for(unsigned i=0;i<thread_count;i++) computation_ready.push_back(true);
-		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&Gongshi_wrapper<T>::work_thread,this,i));
+		for(unsigned i=0;i<thread_count;i++) thread_pool.push_back(std::thread(&gongshi_wrapper<T>::work_thread,this,i));
 	}
 
 template <typename T>
-	Gongshi_wrapper<T>::~Gongshi_wrapper()
+	gongshi_wrapper<T>::~gongshi_wrapper()
 	{
 		global_state.lock();
 		destruction_pending = true;
@@ -57,7 +57,7 @@ template <typename T>
 	}
 
 template <typename T>
-	bool Gongshi_wrapper<T>::not_quit() //whether the work threads should finish and join
+	bool gongshi_wrapper<T>::not_quit() //whether the work threads should finish and join
 	{
 		std::lock_guard<std::mutex> lol(global_state);
         {
@@ -66,7 +66,7 @@ template <typename T>
     }
 
 template <typename T>
-	void Gongshi_wrapper<T>::async_pairwise_apply(const fx_type& fu)
+	void gongshi_wrapper<T>::async_pairwise_apply(const fx_type& fu)
 	{
 		auto fut = std::async(std::launch::async,[this,fu]{
 			
@@ -104,7 +104,7 @@ template <typename T>
 	}
 
 template <typename T>
-	void Gongshi_wrapper<T>::work_thread(unsigned int threadnum)
+	void gongshi_wrapper<T>::work_thread(unsigned int threadnum)
 	{
 		std::unique_lock<std::mutex> lok(queue_mutex,std::defer_lock); //prevents deadlock
 		while(true)
