@@ -18,7 +18,7 @@ class Textbox :public sf::Drawable
 	void mbp(sf::Event&);
 	void kbp(sf::Event&);
 	void txe(sf::Event&);
-	const std::string& getContent();
+	std::string getContent();
 	void setFilter(const std::function<bool(char)>&);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	void setFillColor(const sf::Color&);

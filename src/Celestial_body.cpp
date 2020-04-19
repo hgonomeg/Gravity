@@ -356,11 +356,9 @@ void Celestial_body::delete_traces()
 
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)
 {
-	//liczymy dla pierwszego dla MATKI
-	
-	//gettery
-	
-	int M_m=matka->get_mass();
+	 // 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
+ 
+    int M_m=matka->get_mass();
 	int M_o=ojciec->get_mass();
 	
 	sf::Vector2f V_m=matka->get_velocity();
@@ -369,22 +367,41 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
 	sf::Vector2f loc_m=matka->get_location();
 	sf::Vector2f loc_o=ojciec->get_location();
 	
-	//konty wyliczałem z relacji pokazanych w https://stackoverflow.com/questions/1736734/circle-circle-collision
+    // 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
+ 
+    sf::Vector2f S1S2 = loc_m-loc_o;
+    sf::Vector2f S2S1 = loc_o-loc_m;
+ 
+    auto vec_dot_product = [](sf::Vector2f pierwszy, sf::Vector2f drugi) -> float {return (pierwszy.x*drugi.x)+(pierwszy.y*drugi.y);}; //iloczyn skalarny
+ 
+    auto powered_vec_length = [](sf::Vector2f vec) -> float {return vec.x*vec.x+vec.y*vec.y;}; //długość wektora
 	
-	float kat_kolizji = 90-(atan(fabs(loc_o.x-loc_m.x)/fabs(loc_o.y-loc_m.y)));
-	float kat_przed_matki = atan(V_m.y/V_m.x);
-	float kat_przed_ojca = atan(V_o.y/V_o.x);
-	
-	//NOWE
-	
-	// zrobione ze wzrotu na https://williamecraver.wixsite.com/elastic-equations
-	
-	V_m.x = ((V_m.x*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.x*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_m.x*sin(kat_przed_matki-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_m.y =	((V_m.y*cos(kat_przed_matki-kat_kolizji)*((float)M_m-(float)M_o))+2*(float)M_o*V_o.y*cos(kat_przed_ojca-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_m.y*sin(kat_przed_matki-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
-	matka->set_velocity({V_m.x,V_m.y});
-	V_o.x = ((V_o.x*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.x*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*cos(kat_kolizji)+(V_o.x*sin(kat_przed_ojca-kat_kolizji)*cos(kat_kolizji+((float)M_PI/2)));
-	V_o.y = ((V_o.y*cos(kat_przed_ojca-kat_kolizji)*((float)M_o-(float)M_m))+2*(float)M_m*V_m.y*cos(kat_przed_matki-kat_kolizji)/((float)M_m+(float)M_o))*sin(kat_kolizji)+(V_o.y*sin(kat_przed_ojca-kat_kolizji)*sin(kat_kolizji+((float)M_PI/2)));
-	ojciec->set_velocity({V_o.x,V_o.y});
+	// 3. Rzutujemy wektor V_m oraz wektor V_o na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
+
+    auto vec_projection = [&](sf::Vector2f pierwszy, sf::Vector2f drugi) -> sf::Vector2f {return static_cast<float>(vec_dot_product(pierwszy,drugi)/powered_vec_length(drugi))*drugi;}; //pierwszy rzucamy na drugi
+ 
+ 
+    //rzut V_m i V_o
+    sf::Vector2f V_mc = vec_projection(V_m,S1S2);
+    sf::Vector2f V_oc = vec_projection(V_o,S2S1);
+ 
+    //4. Szukamy prostopadłych do tej prostej składowych wektorów V_m i V_o, np. poprzez różnicę wektorową: vp1 = V_m - vC1 ; vp2 = V_o-vC2.
+ 
+    sf::Vector2f V_mp = V_m-V_mc;
+    sf::Vector2f V_op = V_o-V_oc;
+ 
+    //5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn V_m = vp1 oraz V_o = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
+    //transformacja V_mc i V_oc na U1c i U2c
+ 
+    sf::Vector2f U1c = static_cast<float>((M_m-M_o)/(M_m+M_o))*V_mc + static_cast<float>((2*M_o)/(M_m+M_o))*V_oc; //z wzorów na zderzenie centralne sprężyste
+    sf::Vector2f U2c = static_cast<float>((2*M_m)/(M_m+M_o))*V_mc + static_cast<float>((M_o-M_m)/(M_m+M_o))*V_oc;
+ 
+    //6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
+ 
+    V_m = U1c + V_mp;
+	V_o = U2c + V_op;
+
+
 }
 
 sf::FloatRect Celestial_body::getGlobalBounds()

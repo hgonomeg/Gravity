@@ -2,7 +2,8 @@
 
 const float Simulator::G = 0.05;
 float Simulator::STEPPING_RATE = 1.f;
-const unsigned short Simulator::CA_count = 2;
+const unsigned short Simulator::CA_count = 3;
+const float Simulator::overlap_tolerance = 0.5; //bodies can overlap up to 50%
 int Simulator::accuracy_factor = 0;
 unsigned int Simulator::tick_rate = 1;
 
@@ -35,6 +36,11 @@ float Simulator::get_accuracy()
 {
 	return 1.f/STEPPING_RATE;
 }
+float Simulator::get_overlap_tolerance()
+{
+	return overlap_tolerance;
+}
+
 unsigned int Simulator::get_rate()
 {
 	return tick_rate;
@@ -57,128 +63,150 @@ std::size_t Simulator::size() const
 void Simulator::tick()
 {
 	if(!paused)
+	{
+		if(predicted_traces)
 		{
-			if(predicted_traces)
+			for(auto u=predicted_traces->begin();u!=predicted_traces->end();u++)
 			{
-				for(auto u=predicted_traces->begin();u!=predicted_traces->end();u++)
+				for(auto i=u->begin();i!=u->end();i++)
 				{
-					for(auto i=u->begin();i!=u->end();i++)
+					if(i->color.a>0)
 					{
-						if(i->color.a>0)
-						{
-							i->color.a--;
-						}
+						i->color.a--;
 					}
-					if(u->back().color.a==0) 
-						{
-						u=predicted_traces->erase(u); 
-						if(u==predicted_traces->end()) break;
-						}
 				}
-				if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = NULL; }
-			}
-			for(unsigned uk=0;uk<tick_rate;uk++)
-			{
-				auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
-				
-					
-					lhs->simultaneity_guardian.lock();
-					auto left_loc=lhs->get_location();
-					auto left_v=lhs->get_velocity();
-					auto left_mass=lhs->get_mass();
-					lhs->simultaneity_guardian.unlock();
-					
-					rhs->simultaneity_guardian.lock();
-					auto right_loc=rhs->get_location();
-					auto right_v=rhs->get_velocity();
-					auto right_mass=rhs->get_mass();
-					rhs->simultaneity_guardian.unlock();
-
-					float diff_x=left_loc.x-right_loc.x;
-					float diff_y=left_loc.y-right_loc.y;
-					
-					float odleglosc = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
-				
-					sf::Vector2f sila_graw_vec={diff_x,diff_y};
-					if(odleglosc!=0) 
-						sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
-					else
-						sila_graw_vec= {0,0};
-					lhs->simultaneity_guardian.lock();
-					lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
-					lhs->simultaneity_guardian.unlock();
-
-					rhs->simultaneity_guardian.lock();
-					rhs->set_velocity(right_v+sila_graw_vec/(float)right_mass*STEPPING_RATE);
-					rhs->simultaneity_guardian.unlock();
-					
-				};
-				
-				twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
-					obrob_grawitacje(ein->get(),zwei->get());
-				});
-
-
-				auto detect_collisions = [](std::vector<std::pair<unsigned int,unsigned int>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
-				{
-					auto* lhs_ptr = lhs->get();
-					auto* rhs_ptr = rhs->get();
-					if(Celestial_body::collision_detection(*lhs_ptr,*rhs_ptr))
+				if(u->back().color.a==0) 
 					{
-						std::lock_guard<std::mutex> my_lock(detected_mutex);
-						{
-							detected.push_back({lhs_ptr->get_id(),rhs_ptr->get_id()});
-						}
+					u=predicted_traces->erase(u); 
+					if(u==predicted_traces->end()) break;
 					}
-					
-				};
-
-
-				std::vector<std::pair<unsigned int,unsigned int>> detected_pairs;
-				std::mutex detected_mutex;
-				std::set<unsigned int> deleted_bodies;
+			}
+			if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = NULL; }
+		}
+		for(unsigned uk=0;uk<tick_rate;uk++)
+		{
+			auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
+			
 				
-
-				twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
+				lhs->simultaneity_guardian.lock();
+				auto left_loc=lhs->get_location();
+				auto left_v=lhs->get_velocity();
+				auto left_mass=lhs->get_mass();
+				lhs->simultaneity_guardian.unlock();
 				
-				for(auto& x: detected_pairs) 
+				rhs->simultaneity_guardian.lock();
+				auto right_loc=rhs->get_location();
+				auto right_v=rhs->get_velocity();
+				auto right_mass=rhs->get_mass();
+				rhs->simultaneity_guardian.unlock();
+
+				float diff_x=left_loc.x-right_loc.x;
+				float diff_y=left_loc.y-right_loc.y;
+				
+				float odleglosc = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
+			
+				sf::Vector2f sila_graw_vec={diff_x,diff_y};
+				if(odleglosc!=0) 
+					sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
+				else
+					sila_graw_vec= {0,0};
+				lhs->simultaneity_guardian.lock();
+				lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
+				lhs->simultaneity_guardian.unlock();
+
+				rhs->simultaneity_guardian.lock();
+				rhs->set_velocity(right_v+sila_graw_vec/(float)right_mass*STEPPING_RATE);
+				rhs->simultaneity_guardian.unlock();
+				
+			};
+			
+			twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
+				obrob_grawitacje(ein->get(),zwei->get());
+			});
+
+
+			auto detect_collisions = [](std::vector<std::pair<unsigned int,unsigned int>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
+			{
+				auto* lhs_ptr = lhs->get();
+				auto* rhs_ptr = rhs->get();
+				if(Celestial_body::collision_detection(*lhs_ptr,*rhs_ptr))
 				{
-					if(deleted_bodies.find(x.first)==deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
+					std::lock_guard<std::mutex> my_lock(detected_mutex);
 					{
-						switch(ca)
+						detected.push_back({lhs_ptr->get_id(),rhs_ptr->get_id()});
+					}
+				}
+				
+			};
+
+
+			std::vector<std::pair<unsigned int,unsigned int>> detected_pairs;
+			std::mutex detected_mutex;
+			std::set<unsigned int> deleted_bodies;
+			
+
+			twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
+			
+			for(auto& x: detected_pairs) 
+			{
+				if(deleted_bodies.find(x.first)==deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
+				{
+					switch(ca)
+					{
+					case collision_approach::merge:
 						{
-						case collision_approach::merge:
-							{
-							//first jako ojciec, jest zawsze nadpisywane dzieckiem. second usuwamy samemu
+						//first, being a father, always gets overwritten by the child. second is to be deleted manually
+						auto father_iterator = iterator_of(x.first);
+						auto mother_iterator = iterator_of(x.second);
+						Celestial_body* father = father_iterator->release();
+						deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
+						deleted_bodies.insert(x.second);//this one gets deleted too
+						Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
+						father_iterator->reset(father); //father is now the child
+						
+						ciala.erase(mother_iterator); 
+						break;
+						}
+					case collision_approach::bounce:
+						{
+						Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
+						break;
+						}
+					case collision_approach::mixed:
+						{
 							auto father_iterator = iterator_of(x.first);
 							auto mother_iterator = iterator_of(x.second);
-							Celestial_body* father = father_iterator->release();
-							deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
-							deleted_bodies.insert(x.second);//this one gets deleted too
-							Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
-							father_iterator->reset(father); //father is now the child
-							
-							ciala.erase(mother_iterator); //I suppose a possible memory leak when the same body collides with more bodies
-							break;
-							}
-						case collision_approach::bounce:
+							if(mother_iterator->get()->distance_from(*father_iterator->get()) < (1-overlap_tolerance) * (father_iterator->get()->get_radius() + mother_iterator->get()->get_radius())) // distance < (1 - overlap_tolerance) * sum of radii
 							{
-							Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
-							break;
+								//first, being a father, always gets overwritten by the child. second is to be deleted manually
+								Celestial_body* father = father_iterator->release();
+								deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
+								deleted_bodies.insert(x.second);//this one gets deleted too
+								Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
+								father_iterator->reset(father); //father is now the child
+								
+								ciala.erase(mother_iterator); 
 							}
+							else
+							{
+								Celestial_body::bounce_handle(iterator_of(x.second)->get(),iterator_of(x.first)->get());
+							}
+							break;
 						}
 					}
-				}
-
-				//set velocity
-				for(auto j=ciala.begin(); j!=ciala.end(); j++)
-				{
-					auto q=j->get();
-					q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
 				}
 			}
 		}
+
+		//set velocity
+		for(auto j=ciala.begin(); j!=ciala.end(); j++)
+		{
+			auto q=j->get();
+			q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
+		}
+	}
 }
+
 
 void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
@@ -293,7 +321,7 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 	return ca;
 }
 
-Simulator::Simulator()  //kostruktor domyślny
+Simulator::Simulator()  
 :ciala(),
 twx(ciala)
 {
@@ -301,10 +329,10 @@ twx(ciala)
 	paused = false;
 	draw_traces = true;
 	ca = collision_approach::merge;
-	predicted_traces=NULL;
+	predicted_traces= nullptr;
 }
 
-Simulator::Simulator(const Simulator &sim) //kostruktor kopiujący
+Simulator::Simulator(const Simulator &sim) 
 :ciala(),
 twx(ciala)
 {
@@ -312,21 +340,19 @@ twx(ciala)
 	paused=sim.paused;
 	draw_traces=sim.draw_traces;
 	ca=sim.ca;
-	predicted_traces=NULL;
-	//ciala.clear();
-	//ciala
+	predicted_traces= nullptr;
 	
 	
 	
 	for(auto i=sim.ciala.begin(); i!=sim.ciala.end(); i++)
 	{
-		Celestial_body* bufor = NULL;
+		Celestial_body* bufor = nullptr;
 		
-		Celestial_body* wsk_stare_cialo = i->get(); //pobranie wskaźnika do Celestial_body którym opiekuje się obiekt unique_ptr znajdujący się pod iteratorem "i".
+		Celestial_body* wsk_stare_cialo = i->get(); 
 		
-		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //objekt stare ciało się kopuje które ma być w buforze 
+		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //use RTTI to clone objects with valid type
 		
-		ciala.push_back(std::unique_ptr<Celestial_body>(bufor)); //push do docelowej listy
+		ciala.push_back(std::unique_ptr<Celestial_body>(bufor));
 
 	}
 	

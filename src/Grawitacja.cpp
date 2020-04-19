@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 	Simulator sim;
 	
 	sf::Event ev;
-	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.3.0");
+	sf::RenderWindow rehn(sf::VideoMode(960,500),"Grawitacja v0.4.0");
 	win = &rehn;
 	rehn.setFramerateLimit(144);
 	rehn.setVerticalSyncEnabled(true);

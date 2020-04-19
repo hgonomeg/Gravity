@@ -13,12 +13,15 @@ class Simulator :public sf::Drawable
 	enum class collision_approach :unsigned short
 	{
 		merge = 1,
-		bounce
+		bounce,
+		mixed
 	};
 	private:
 	
+
 	static const float G; //the gravity constant
 	static const unsigned short CA_count; //amount of collision approaches
+	static const float overlap_tolerance;
 	static float STEPPING_RATE; //depends upon accuracy factor
 	static int accuracy_factor;
 	static unsigned int tick_rate;
@@ -33,6 +36,7 @@ class Simulator :public sf::Drawable
 	static void change_accuracy(bool);
 	static bool change_rate(bool);
 	static float get_accuracy();
+	static float get_overlap_tolerance();
 	static unsigned int get_rate();
 	
 	void tick();
