@@ -96,6 +96,9 @@ void UI_masterpanel::kbp(sf::Event& ev)
 				if(patris->debug) patris->push_hint_text(UI_state::hint_text("Debug mode ON",3000));
 				else patris->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));
 			}
+			else {
+				
+			}
 			break;
 		}
 		case sf::Keyboard::H:
