@@ -184,7 +184,7 @@ void Simulator::tick()
 								deleted_bodies.insert(x.second);//this one gets deleted too
 								Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
 								father_iterator->reset(father); //father is now the child
-								
+
 								ciala.erase(mother_iterator); 
 							}
 							else
@@ -196,14 +196,16 @@ void Simulator::tick()
 					}
 				}
 			}
+			
+			//set velocity
+			for(auto j=ciala.begin(); j!=ciala.end(); j++)
+			{
+				auto q=j->get();
+				q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
+			}
+
 		}
 
-		//set velocity
-		for(auto j=ciala.begin(); j!=ciala.end(); j++)
-		{
-			auto q=j->get();
-			q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
-		}
 	}
 }
 
