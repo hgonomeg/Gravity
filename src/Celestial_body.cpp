@@ -401,6 +401,8 @@ void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec
     V_m = U1c + V_mp;
 	V_o = U2c + V_op;
 
+	matka->set_velocity(V_m);
+	ojciec->set_velocity(V_o);
 
 }
 
