@@ -10,11 +10,11 @@ project(Gravity)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-option(SFML_STATIC "Is SFML built as a static library?" TRUE)
+option(SFML_STATIC "Is SFML built as a static library?" FALSE)
 
 set(SFML_STATIC_LIBRARIES ${SFML_STATIC})
 
-option(GRAVITY_STATIC "Do you want the final executable to be statically linked?" TRUE)
+option(GRAVITY_STATIC "Do you want the final executable to be statically linked?" FALSE)
 
 if(WIN32)
 	set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -mwindows")
