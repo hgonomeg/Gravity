@@ -40,3 +40,5 @@ if(GRAVITY_STATIC)
 endif()
 
 target_link_libraries(Gravity sfml-graphics Threads::Threads)
+
+install(TARGETS Gravity DESTINATION bin)
