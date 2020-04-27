@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <functional>
-#define EXTERNPLEASE
 #include "ResourceLoader.hpp"
 
 

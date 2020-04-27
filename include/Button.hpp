@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#define EXTERNPLEASE
 #include "ResourceLoader.hpp"
 
 class Button :public sf::Drawable

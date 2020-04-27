@@ -1,8 +1,7 @@
 #include <cstdio>
 #ifndef ARIMO_REGULAR_HPP
 #define ARIMO_REGULAR_HPP
-#ifndef EXTERNPLEASE
-struct arf { const char *data; std::size_t size; } arimo = {
+inline struct arf { const char *data; std::size_t size; } arimo = {
   "\x00\x01\x00\x00\x00\x15\x01\x00\x00\x04\x00\x50\x47\x44\x45\x46"
   "\x94\x5a\x9d\x94\x00\x06\x09\x3c\x00\x00\x00\x78\x47\x50\x4f\x53"
   "\xd5\xd1\x7b\x1d\x00\x06\x09\xb4\x00\x00\x32\xe8\x47\x53\x55\x42"
@@ -25692,7 +25691,4 @@ struct arf { const char *data; std::size_t size; } arimo = {
   "\x09\xd1\x00\x03\x09\xda\x09\xda\x00\x04\x00\x00",
   410988
 };
-#else
-extern struct arf { const char *data; std::size_t size; } arimo;
-#endif
 #endif
