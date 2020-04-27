@@ -93,7 +93,7 @@ void CB_selector::pop_body()
 }
 
 CB_selector::CB_selector()
-:napis("Current selection: ",*fona,15)
+:napis("Current selection: ",resources->main_font,15)
 {
 	c_pick = NULL;
 	pick_id = 0;

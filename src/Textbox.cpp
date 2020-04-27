@@ -2,7 +2,7 @@
 
 Textbox::Textbox()
 :frejm(sf::Vector2f(100,15)),
-contents("NULL",*fona,12)
+contents("NULL",resources->main_font,12)
 {
 	frejm.setFillColor(sf::Color(0,30,250));
 	frejm.setOutlineColor(sf::Color::White);

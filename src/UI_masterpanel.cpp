@@ -207,17 +207,17 @@ void UI_masterpanel::tick()
 }
 
 UI_masterpanel::UI_masterpanel()
-:b_gen(zasoby->button_CB_gen),
-b_sel(zasoby->button_CB_selector),
-b_traces(zasoby->button_toggle_traces),
-b_collision(zasoby->button_cycle_collision),
-b_deltraces(zasoby->button_deltraces),
-b_predtraces(zasoby->button_predtraces),
-b_accuracy_plus(zasoby->button_accuracy_plus),
-b_accuracy_minus(zasoby->button_accuracy_minus),
-b_speed_plus(zasoby->button_speed_plus),
-b_speed_minus(zasoby->button_speed_minus),
-b_debug(zasoby->button_debug)
+:b_gen(resources->button_CB_gen),
+b_sel(resources->button_CB_selector),
+b_traces(resources->button_toggle_traces),
+b_collision(resources->button_cycle_collision),
+b_deltraces(resources->button_deltraces),
+b_predtraces(resources->button_predtraces),
+b_accuracy_plus(resources->button_accuracy_plus),
+b_accuracy_minus(resources->button_accuracy_minus),
+b_speed_plus(resources->button_speed_plus),
+b_speed_minus(resources->button_speed_minus),
+b_debug(resources->button_debug)
 {
 	b_debug.show(false);
 	float x_offset = 5;

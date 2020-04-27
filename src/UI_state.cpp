@@ -106,7 +106,7 @@ void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	if(curr) curr->draw(tgt,st);
 	masterpanel->draw(tgt,st);
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st);};
-	tgt.draw(*status_text,st);
+	tgt.draw(status_text,st);
 	tgt.setView(pkp);
 }
 
@@ -114,7 +114,7 @@ UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
 {
 	init_time = sysclck::now();
 	data_waznosci = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
-	sf_text.setFont(*fona);
+	sf_text.setFont(resources->main_font);
 	sf_text.setString(tr);
 	sf_text.setCharacterSize(15);
 	sf_text.setFillColor(sf::Color(0,255,0,200));
@@ -145,21 +145,22 @@ int UI_state::vertoffset_of_last_ht()
 	return hint_texts.size()*20;
 }
 
-UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
+UI_state::UI_state(Simulator* sjm,std::shared_ptr<sf::RenderWindow> xt)
 {
 	rendering_finished_time = sysclck::now();
 	last_tick = sysclck::now();
-	status_text=stxt;
-	debug=false;
+	status_text.setFont(resources->main_font);
+	status_text.setCharacterSize(15);
+	status_text.setPosition(5.f,5.f);
+	debug = false;
 	curr = NULL;
 	sim = sjm;
 	switch_tool(new CB_gen);
 	last_ht_winoffset = 0;
-	status_text->setCharacterSize(15);
-	status_text->setPosition(5.f,5.f);
+	
 	fps = 0;
 	draw_vs_total_time_ratio = 1.f;
-	target = xt;
+	target = std::move(xt);
 	masterpanel = new UI_masterpanel;
 	masterpanel -> patris = this;
 }
@@ -171,7 +172,7 @@ Simulator* UI_state::getsim()
 
 sf::RenderWindow* UI_state::gettgt()
 {
-	return target;
+	return target.get();
 }
 
 const UI_tool* UI_state::getcurr()
@@ -197,6 +198,6 @@ void UI_state::set_status_text()
 {
 	std::stringstream tmp;
 	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<sim->size()<<"  Current tool: "<<curr->name();
-	status_text->setString(tmp.str());
+	status_text.setString(tmp.str());
 }
 

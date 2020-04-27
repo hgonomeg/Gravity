@@ -22,6 +22,15 @@ enum rendering_quality {  //no. sides in polygons to approximate circles
 	ultra				//64
 };
 
+struct window_translation
+{
+	bool up;
+	bool down;
+	bool left;
+	bool right;
+	window_translation();
+};
+
 class UI_state;
 
 class UI_tool :public sf::Drawable
@@ -54,7 +63,7 @@ class UI_state :public sf::Drawable
 		public:
 		int last_vertoffset;
 		sf::Text sf_text;
-		hint_text(const std::string&,unsigned int);
+		hint_text(const std::string&,unsigned int); //content and lifetime in milliseconds
 		bool przeterminowane();
 		int process_height(int);
 	};
@@ -71,14 +80,14 @@ class UI_state :public sf::Drawable
 	UI_tool* curr;
 	UI_masterpanel* masterpanel;
 	int last_ht_winoffset;
-	sf::Text* status_text;
+	sf::Text status_text;
 	Simulator* sim;
-	sf::RenderWindow* target;
+	std::shared_ptr<sf::RenderWindow> target;
 
  	public:
 	
 	~UI_state();
-	UI_state(Simulator*,sf::RenderWindow*,sf::Text*);
+	UI_state(Simulator*,std::shared_ptr<sf::RenderWindow>);
 	
 	bool debug;
 	

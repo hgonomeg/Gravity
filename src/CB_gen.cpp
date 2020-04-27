@@ -168,8 +168,8 @@ void CB_gen::add_body()
 }
 
 CB_gen::CB_gen()
-:napis("NULL",*fona,15),
- b_mode(zasoby->button_gen_mode)
+:napis("NULL",resources->main_font,15),
+ b_mode(resources->button_gen_mode)
 {
 	lbod = NULL;
 	active_state = false;
