@@ -17,11 +17,11 @@ void Textbox::clear()
 {
 	contents.setString("");
 }
-void Textbox::mbp(sf::Event& ev)
+void Textbox::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
 	
 }
-void Textbox::kbp(sf::Event& ev)
+void Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 {
 	
 }

@@ -62,15 +62,15 @@ class Celestial_body :public sf::Drawable
 	sf::FloatRect getGlobalBounds();
 	std::list<std::vector<sf::Vertex>> get_traces();
 	void delete_traces();
-	float distance_from(const Celestial_body&) const; //liczenie odległości między dwoma obiektami
+	float distance_from(const Celestial_body&) const; //calculate distance between bodies
 	
 	
-	//FUNKCJE STATYCZNE
+	//STATIC METHODS
 	
-	static bool collision_detection(const Celestial_body&,const Celestial_body&); //detekcja kolizji dwóch CB, jako argumenty przyjmuje wskaźniki do obiektów
+	static bool collision_detection(const Celestial_body&,const Celestial_body&);
 	static const std::map<unsigned int, unsigned int>& get_alloc_diagram();
-	static void collision_handle(Celestial_body*, Celestial_body*&); // kolizje perfekcyjnie nieelastyczne
-	static void bounce_handle(Celestial_body*, Celestial_body*); // kolizje idealnie sprężyste
+	static void collision_handle(Celestial_body*, Celestial_body*&); // collisions that merge bodies; perfectly inelastic
+	static void bounce_handle(Celestial_body*, Celestial_body*); // perfectly elastic collisions
 	static bool change_trace_length(bool);
 	static unsigned int get_trace_length();
 	static void pushstax();

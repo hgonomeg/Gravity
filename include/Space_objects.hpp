@@ -3,7 +3,7 @@
 class Planet :public Celestial_body
 {
 	
-	//W przyszlosci dodac mechanike teksturowania
+	//Enable texturing in the future
 
 	public:
 	
@@ -35,7 +35,7 @@ class Star :public Celestial_body
 		G =0xfff4ea,
 		K =0xffd2a1,
 		M =0xffcc6f
-	}; //tak jak w przypadku planety; zgodnie z diagramem Hertzsprung–Russella będzie można  znieniać kolor czy teksture gwiazdy
+	}; //Hertzsprung–Russella diagram star types will be available in the future
 	private:
 	stellar_classification star_type;
 	

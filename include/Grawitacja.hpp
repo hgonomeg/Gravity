@@ -30,25 +30,25 @@ struct window_translation
 	window_translation();
 };
 
-class UI_state;
+class UI_state; //the base class to process and store the whole GUI
 
-class UI_tool :public sf::Drawable
+class UI_tool :public sf::Drawable //abstract class to describe states of the UI (UI tools), contain interactive elements and respond to events
 {
 	friend class UI_state;
 	protected:
-	UI_state* patris;
-	
+	UI_state* parent;
+
 	public:
-	static const std::string nam;
+	
 	virtual const std::string& name() = 0;
-	virtual bool mbp(sf::Event&) = 0;
-	virtual void mbr(sf::Event&) = 0;
-	virtual void kbp(sf::Event&) = 0;
+	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) = 0;
+	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) = 0;
+	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) = 0;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() = 0;
 };
 
-class UI_masterpanel;
+class UI_masterpanel; //it will inherit from UI_tool
 
 class UI_state :public sf::Drawable 
 {
@@ -56,14 +56,14 @@ class UI_state :public sf::Drawable
 	public:
 	class hint_text
 	{
-		sysclck::duration data_waznosci;
+		sysclck::duration display_time;
 		sysclck::time_point init_time;
 		
 		public:
 		int last_vertoffset;
 		sf::Text sf_text;
 		hint_text(const std::string&,unsigned int); //content and lifetime in milliseconds
-		bool przeterminowane();
+		bool should_fade();
 		int process_height(int);
 	};
 	private:
@@ -76,11 +76,11 @@ class UI_state :public sf::Drawable
 	void set_status_text();
 	
 	std::list<hint_text> hint_texts;
-	UI_tool* curr;
-	UI_masterpanel* masterpanel;
+	UI_tool* current_tool; 
+	UI_masterpanel* masterpanel; //masterpanel is a UI_tool that is always displayed because it is the foundation of the UI
 	int last_ht_winoffset;
 	sf::Text status_text;
-	Simulator* sim;
+	Simulator* simulator;
 	std::shared_ptr<sf::RenderWindow> target;
 
  	public:
@@ -91,25 +91,24 @@ class UI_state :public sf::Drawable
 	bool debug;
 	
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
-	void switch_tool(UI_tool*);
-	void mbp(sf::Event&);
-	void mbr(sf::Event&);
-	void kbp(sf::Event&);
+	void switch_tool(UI_tool*); //switch the current UI_tool
+	void mouse_button_pressed(sf::Event::MouseButtonEvent&);
+	void mouse_button_released(sf::Event::MouseButtonEvent&);
+	void keyboard_button_pressed(sf::Event::KeyEvent&);
 	void push_hint_text(hint_text&&);
-	void tick();
-	void notify_rendered();
+	void tick(); //animate visual components
+	void notify_rendered(); //read time from clocks to calculate timing
 	int vertoffset_of_last_ht();
-	Simulator* getsim();
-	const UI_tool* getcurr();
-	sf::RenderWindow* gettgt();
+	Simulator* get_simulator();
+	const UI_tool* get_current_tool();
 };
 
 class CB_gen :public UI_tool //Celestial_body_gen
 {
 	Planet::planetary_classification temp_planet;
 	Star::stellar_classification temp_star; 
-	sf::Text napis;
-	Button b_mode;
+	sf::Text inscription;
+	Button b_mode; //the button that changes the type of  the celestial body
 	enum class cb_type :unsigned short
 	{
 		Planet,
@@ -119,72 +118,72 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	} currently_picked;
 	
 	int current_mass;
-	bool active_state;
-	bool wizja;
-	sf::Vector2f rel_init;
-	sf::Vector2f rel_end;
+	bool active_state; //a body is currently being created
+	sf::Vector2f rel_init_pos; //first click position (celestial body creation)
+	sf::Vector2f rel_end_pos; //last click position (celestial body creation)
 	void add_body();
-	Celestial_body* lbod;
-	bool didrem;
+	void cycle_type();
+	unsigned int last_body; //ID of thelast body that was created
+	bool was_removed; //if the most recently created body got removed
 	protected:
 	
 	public:
-	static const std::string nam;
+	static const std::string tool_name;
 	virtual const std::string& name() override;
 	CB_gen();
-	virtual bool mbp(sf::Event&) override;
-	virtual void mbr(sf::Event&) override;
-	virtual void kbp(sf::Event&) override;
+	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
+	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
+	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };
 
-class CB_selector :public UI_tool //Odpowiedzialny za wyświetlanie info o konkretnym ciele niebieskim. Zawiera możlwiość usuwania ciał
+class CB_selector :public UI_tool //Responsible for displaying information about a given celestial body. Capable of deleting celestial bodies
 {
-	Celestial_body* c_pick;
-	std::list<std::unique_ptr<Celestial_body>>::iterator c_pick_iter;
+	Celestial_body* current_pick;
+	std::list<std::unique_ptr<Celestial_body>>::iterator current_pick_iter;
 	unsigned int pick_id;
 	bool verify_body();
 	void pop_body();
-	sf::Text napis;
+	sf::Text inscription;
 	protected:
 	
 	public:
-	static const std::string nam;
+	static const std::string tool_name;
 	virtual const std::string& name() override;
 	CB_selector();
-	virtual bool mbp(sf::Event&) override;
-	virtual void mbr(sf::Event&) override;
-	virtual void kbp(sf::Event&) override;
+	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
+	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
+	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };
 
-class UI_masterpanel :public UI_tool //Narzędzie główne należące do UI_state
+class UI_masterpanel :public UI_tool //The main tool that is always shown in the interface. The main panel
 {
-	Button b_gen;
-	Button b_sel;
-	Button b_traces;
-	Button b_collision;
-	Button b_deltraces;
-	Button b_predtraces;
+	Button b_gen; //choose CB generator
+	Button b_sel; //chose CB selector
+	Button b_traces; //toggle traces
+	Button b_collision; //cycle collision detection
+	Button b_deltraces; //delete traces
+	Button b_predtraces; //predict traces
 	Button b_accuracy_plus;
 	Button b_accuracy_minus;
 	Button b_speed_plus;
 	Button b_speed_minus;
-	Button b_debug;
+	Button b_debug; //the hidden debug mode
 	rendering_quality quality;
 	void collision_cycle();
 	void quality_cycle();
 	protected:
 	
 	public:
-	static const std::string nam;
+	static const std::string tool_name;
 	virtual const std::string& name() override;
 	UI_masterpanel();
-	virtual bool mbp(sf::Event&) override;
-	virtual void mbr(sf::Event&) override;
-	virtual void kbp(sf::Event&) override;
+	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
+	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
+	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };

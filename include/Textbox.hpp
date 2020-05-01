@@ -14,8 +14,8 @@ class Textbox :public sf::Drawable
 	Textbox();
 	void setContent(const std::string&);
 	void clear();
-	void mbp(sf::Event&);
-	void kbp(sf::Event&);
+	void mouse_button_pressed(sf::Event::MouseButtonEvent&);
+	void keyboard_button_pressed(sf::Event::KeyEvent&);
 	void txe(sf::Event&);
 	std::string getContent();
 	void setFilter(const std::function<bool(char)>&);

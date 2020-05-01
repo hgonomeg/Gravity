@@ -81,7 +81,7 @@ void Simulator::tick()
 					if(u==predicted_traces->end()) break;
 					}
 			}
-			if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = NULL; }
+			if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = nullptr; }
 		}
 		for(unsigned uk=0;uk<tick_rate;uk++)
 		{
@@ -239,7 +239,12 @@ void Simulator::add_body(Celestial_body* koles)
 
 void Simulator::erase_body(unsigned int ajdi)
 {
-	for(auto i=ciala.begin(); i!=ciala.end(); i++) if(i->get()->get_id()==ajdi) {erase_body(i); return;}
+	for(auto i=ciala.begin(); i!=ciala.end(); i++) 
+		if(i->get()->get_id()==ajdi) 
+		{
+			erase_body(i); 
+			return;
+		}
 }
 
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el)

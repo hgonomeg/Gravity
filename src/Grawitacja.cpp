@@ -128,12 +128,12 @@ int main(int argc, char** argv)
 				}
 				case sf::Event::MouseButtonPressed:
 				{
-					gui.mbp(ev);
+					gui.mouse_button_pressed(ev.mouseButton);
 					break;
 				}
 				case sf::Event::MouseButtonReleased:
 				{
-					gui.mbr(ev);
+					gui.mouse_button_released(ev.mouseButton);
 					break;
 				}
 				case sf::Event::KeyPressed: //zdarzenia wcisniecia klawisza
@@ -186,11 +186,11 @@ int main(int argc, char** argv)
 							gui.push_hint_text(UI_state::hint_text("G - switch to Celestial body generator",25000));
 							gui.push_hint_text(UI_state::hint_text("O / K - increase / decrease the length of orbital paths",25000));
 							gui.push_hint_text(UI_state::hint_text("P - Pause simulation",25000));
-							gui.kbp(ev);
+							gui.keyboard_button_pressed(ev.key);
 							break;
 						}
 						default: 
-							gui.kbp(ev);
+							gui.keyboard_button_pressed(ev.key);
 					}
 					break;
 				}

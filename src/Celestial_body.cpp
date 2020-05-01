@@ -67,7 +67,7 @@ void Celestial_body::refresh()
 		{
 			for(auto iter=slad.begin();iter!=slad.end();iter++)
 			{
-				//if(iter==slad.begin()) std::cout<<(int)iter->color.r<<'\n';
+				
 				if(iter->color.a==0) purge++;
 				else
 				{
@@ -99,7 +99,7 @@ void Celestial_body::refresh()
 						if(u==slady_rodzicow->end()) break;
 						}
 				}
-				if(slady_rodzicow->size()==0) {delete slady_rodzicow; slady_rodzicow = NULL; }
+				if(slady_rodzicow->size()==0) {delete slady_rodzicow; slady_rodzicow = nullptr; }
 			}
 		}
 		rc++;
@@ -136,7 +136,7 @@ Celestial_body::Celestial_body(int imass,const sf::Color& kolorek,const sf::Vect
 	Local_ID=Global_ID; 
 	alloc_diagram.emplace(Local_ID,Local_ID);
 	Global_ID++;
-	slady_rodzicow = NULL;
+	slady_rodzicow = nullptr;
 }
 
 Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
@@ -158,7 +158,7 @@ Celestial_body::Celestial_body(const Celestial_body& rhs) // konstuktor kopujacy
 	{
 		slady_rodzicow = new std::list<std::vector<sf::Vertex>>(*rhs.slady_rodzicow);
 	}
-	else slady_rodzicow=NULL;
+	else slady_rodzicow=nullptr;
 }
 
 void Celestial_body::popstax()
@@ -273,12 +273,12 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 			planeta=dynamic_cast<Planet*>(matka);
 			gwiazda=dynamic_cast<Star*>(matka);
 			asteroida=dynamic_cast<Asteroid*>(matka);
-			if(planeta==NULL&&asteroida==NULL) //obiekt będzie gwiazdą
+			if(planeta==nullptr&&asteroida==nullptr) //obiekt będzie gwiazdą
 			{
 				dziecko=new Star(M_d,matka->get_location(),V_d);
 				dziecko->is_still=matka->is_still;
 			}
-			else if(asteroida!=NULL)
+			else if(asteroida!=nullptr)
 			{
 				dziecko=new Asteroid(matka->get_location(),V_d);
 			}
@@ -293,12 +293,12 @@ void Celestial_body::collision_handle(Celestial_body* matka, Celestial_body*& oj
 			planeta=dynamic_cast<Planet*>(ojciec);
 			gwiazda=dynamic_cast<Star*>(ojciec);
 			asteroida=dynamic_cast<Asteroid*>(ojciec);
-			if(planeta==NULL&&asteroida==NULL) // gwiazda
+			if(planeta==nullptr&&asteroida==nullptr) // gwiazda
 			{
 				dziecko=new Star(M_d,ojciec->get_location(),V_d);
 				dziecko->is_still=ojciec->is_still;
 			}
-			else if(asteroida!=NULL)
+			else if(asteroida!=nullptr)
 			{
 				dziecko=new Asteroid(ojciec->get_location(),V_d);
 			}
@@ -351,7 +351,7 @@ void Celestial_body::delete_traces()
 	slad.clear();
 	slad.shrink_to_fit();
 	if(slady_rodzicow) delete slady_rodzicow;
-	slady_rodzicow=NULL;
+	slady_rodzicow=nullptr;
 }
 
 void Celestial_body::bounce_handle(Celestial_body* matka, Celestial_body* ojciec)

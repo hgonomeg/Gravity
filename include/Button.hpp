@@ -3,15 +3,15 @@
 
 class Button :public sf::Drawable
 {
-	sf::RectangleShape frejm;
+	sf::RectangleShape frame;
 	bool shown;
-	unsigned int graycount;
+	unsigned int animation_ticks;
 	public:
 	Button(const sf::Texture&);
-	bool mbp(sf::Event&);
+	bool mouse_button_pressed(sf::Event::MouseButtonEvent&);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	void setPosition(const sf::Vector2f&);
-	void tick();
-	bool is_shown();
+	void tick(); //animate button state
+	bool is_shown() const;
 	void show(bool);
 };
