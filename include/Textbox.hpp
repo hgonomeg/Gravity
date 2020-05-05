@@ -18,7 +18,7 @@ class Textbox :public sf::Drawable
 	void setContent(const std::string&);
 	std::string getContent() const;
 	void clear();
-	void mouse_button_pressed(sf::Event::MouseButtonEvent&);
+	bool mouse_button_pressed(sf::Event::MouseButtonEvent&);
 	void keyboard_button_pressed(sf::Event::KeyEvent&);
 	void text_entered(sf::Event::TextEvent&);
 	std::string getContent();

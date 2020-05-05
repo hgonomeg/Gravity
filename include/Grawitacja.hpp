@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iomanip>
 #include "Button.hpp"
+#include "Textbox.hpp"
 
 enum rendering_quality {  //no. sides in polygons to approximate circles
 	minimalist,			//12

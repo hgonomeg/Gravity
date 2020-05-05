@@ -1,5 +1,5 @@
 #include "Grawitacja.hpp"
-#include "Textbox.hpp"
+
 
 const std::string CB_gen::tool_name = "Celestial body generator";
 
@@ -56,7 +56,7 @@ bool CB_gen::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 }
 void CB_gen::text_entered(sf::Event::TextEvent& ev)
 {
-	
+
 }
 void CB_gen::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {

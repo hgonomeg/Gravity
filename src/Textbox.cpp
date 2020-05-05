@@ -38,17 +38,22 @@ void Textbox::clear()
 {
 	contents.setString("");
 }
-void Textbox::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
+bool Textbox::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
-	if(ev.button == sf::Mouse::Left)
+	if(frame.getGlobalBounds().contains(ev.x,ev.y))
 	{
-		active_state = !active_state;
+		if(ev.button == sf::Mouse::Left)
+		{
+			active_state = !active_state;
+		}
+		if(active_state)
+			frame.setFillColor(sf::Color(0,85,230));
+		else
+			frame.setFillColor(sf::Color(0,30,250));
+		
+		return true;
 	}
-	if(active_state)
-		frame.setFillColor(sf::Color(0,85,230));
-	else
-		frame.setFillColor(sf::Color(0,30,250));
-
+	return false;
 }
 void Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 {
