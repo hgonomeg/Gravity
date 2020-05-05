@@ -8,6 +8,7 @@ class Textbox :public sf::Drawable
 {
 	sf::RectangleShape frame;
 	sf::Text contents;
+	bool backspace_pushed;
 	std::function<bool(char)> charfilter;
 	bool active_state;
 	public:
@@ -19,7 +20,7 @@ class Textbox :public sf::Drawable
 	std::string getContent() const;
 	void clear();
 	bool mouse_button_pressed(sf::Event::MouseButtonEvent&);
-	bool keyboard_button_pressed(sf::Event::KeyEvent&); //scan backspace
+	void keyboard_button_pressed(sf::Event::KeyEvent&); //scan backspace
 	void text_entered(sf::Event::TextEvent&);
 	std::string getContent();
 	void setFilter(const std::function<bool(char)>&);

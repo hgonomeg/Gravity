@@ -9,6 +9,7 @@ contents("NULL",resources->main_font,12)
 	frame.setOutlineThickness(2);
 	contents.setFillColor(sf::Color::White);
 	active_state = false;
+	backspace_pushed = false;
 	charfilter = [](char a){return true;};
 }
 
@@ -60,7 +61,7 @@ bool Textbox::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 	
 	return false;
 }
-bool Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
+void Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 {
 	switch(ev.code)
 	{
@@ -70,21 +71,25 @@ bool Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 			if(!tmp.empty()) 
 				tmp.pop_back();
 			contents.setString(tmp);
-			return true;
+			backspace_pushed = true;
 			break;
 		}
 	}
-	return false;
+	
 }
 void Textbox::text_entered(sf::Event::TextEvent& ev)
 {
-	char new_char = static_cast<char>(ev.unicode);
-	if(active_state && charfilter(new_char))
+	if(!backspace_pushed)
 	{
-		std::string tmp = contents.getString();
-		tmp.push_back(new_char);
-		contents.setString(tmp);
+		char new_char = static_cast<char>(ev.unicode);
+		if(active_state && charfilter(new_char))
+		{
+			std::string tmp = contents.getString();
+			tmp.push_back(new_char);
+			contents.setString(tmp);
+		}
 	}
+	backspace_pushed = false;
 }
 std::string Textbox::getContent() const
 {
