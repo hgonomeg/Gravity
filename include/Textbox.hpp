@@ -19,7 +19,7 @@ class Textbox :public sf::Drawable
 	std::string getContent() const;
 	void clear();
 	bool mouse_button_pressed(sf::Event::MouseButtonEvent&);
-	void keyboard_button_pressed(sf::Event::KeyEvent&);
+	bool keyboard_button_pressed(sf::Event::KeyEvent&); //scan backspace
 	void text_entered(sf::Event::TextEvent&);
 	std::string getContent();
 	void setFilter(const std::function<bool(char)>&);

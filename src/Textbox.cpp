@@ -53,11 +53,28 @@ bool Textbox::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 		
 		return true;
 	}
+	else
+	{
+		active_state = false;
+	}
+	
 	return false;
 }
-void Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
+bool Textbox::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 {
-	//
+	switch(ev.code)
+	{
+		case sf::Keyboard::BackSpace:
+		{
+			std::string tmp = contents.getString();
+			if(!tmp.empty()) 
+				tmp.pop_back();
+			contents.setString(tmp);
+			return true;
+			break;
+		}
+	}
+	return false;
 }
 void Textbox::text_entered(sf::Event::TextEvent& ev)
 {
