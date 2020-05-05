@@ -24,6 +24,10 @@ bool CB_selector::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 	}
 	return false;
 }
+void CB_selector::text_entered(sf::Event::TextEvent& ev)
+{
+	
+}
 void CB_selector::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
 	

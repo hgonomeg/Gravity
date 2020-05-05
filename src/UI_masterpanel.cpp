@@ -29,6 +29,10 @@ void UI_masterpanel::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
 	
 }
+void UI_masterpanel::text_entered(sf::Event::TextEvent& ev)
+{
+	
+}
 
 void UI_masterpanel::collision_cycle()
 {

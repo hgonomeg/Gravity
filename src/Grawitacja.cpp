@@ -136,6 +136,11 @@ int main(int argc, char** argv)
 					gui.mouse_button_released(ev.mouseButton);
 					break;
 				}
+				case sf::Event::TextEntered:
+				{
+					gui.text_entered(ev.text);
+					break;
+				}
 				case sf::Event::KeyPressed: //zdarzenia wcisniecia klawisza
 				{
 					switch(ev.key.code)

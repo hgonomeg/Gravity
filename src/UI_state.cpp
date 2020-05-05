@@ -7,12 +7,21 @@ void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 
 void UI_state::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
-	if(!masterpanel -> mouse_button_pressed(ev)) if(current_tool) current_tool->mouse_button_pressed(ev);
+	if(!masterpanel -> mouse_button_pressed(ev)) 
+		if(current_tool) current_tool->mouse_button_pressed(ev);
 }
 void UI_state::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
-	if(current_tool) current_tool->mouse_button_released(ev);
+	if(current_tool) 
+		current_tool->mouse_button_released(ev);
 }
+
+void UI_state::text_entered(sf::Event::TextEvent& ev)
+{
+	if(current_tool)
+		current_tool->text_entered(ev);
+}
+
 void UI_state::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 {
 	switch(ev.code)

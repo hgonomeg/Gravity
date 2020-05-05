@@ -54,6 +54,10 @@ bool CB_gen::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 	}
 	return true;
 }
+void CB_gen::text_entered(sf::Event::TextEvent& ev)
+{
+	
+}
 void CB_gen::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
 	if(ev.button==sf::Mouse::Button::Left)

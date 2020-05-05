@@ -44,6 +44,7 @@ class UI_tool :public sf::Drawable //abstract class to describe states of the UI
 	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) = 0;
 	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) = 0;
 	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) = 0;
+	virtual void text_entered(sf::Event::TextEvent&) = 0;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() = 0;
 };
@@ -95,6 +96,7 @@ class UI_state :public sf::Drawable
 	void mouse_button_pressed(sf::Event::MouseButtonEvent&);
 	void mouse_button_released(sf::Event::MouseButtonEvent&);
 	void keyboard_button_pressed(sf::Event::KeyEvent&);
+	void text_entered(sf::Event::TextEvent&);
 	void push_hint_text(hint_text&&);
 	void tick(); //animate visual components
 	void notify_rendered(); //read time from clocks to calculate timing
@@ -134,6 +136,7 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
 	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
 	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
+	virtual void text_entered(sf::Event::TextEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };
@@ -155,6 +158,7 @@ class CB_selector :public UI_tool //Responsible for displaying information about
 	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
 	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
 	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
+	virtual void text_entered(sf::Event::TextEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };
@@ -184,6 +188,7 @@ class UI_masterpanel :public UI_tool //The main tool that is always shown in the
 	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) override;
 	virtual void mouse_button_released(sf::Event::MouseButtonEvent&) override;
 	virtual void keyboard_button_pressed(sf::Event::KeyEvent&) override;
+	virtual void text_entered(sf::Event::TextEvent&) override;
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	virtual void tick() override;
 };
