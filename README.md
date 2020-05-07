@@ -50,40 +50,37 @@ I'd be very welcome if you could report any problems with the Cmake script that 
 * Gaining some experience with cmake-scripts
 
 ## Implementation notes
-Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
-Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedziczy z `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
-Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Okno programu będzie posiadało specjalny obiekt przechowujący i sterujący stanem interfejsu graficznego (`UI_state`). Występujące w oknie zdarzenia sterujące programem są przekierowywane do specjalnych funkcji obiektu sterującego. Pewnym klawiszom zostaną przypisane funkcje przełączajace tzw. narzędzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzedzi UI, w tym m.in. generator ciał niebieskich, selektor i usuwacz.
+The whole program is based upon the SFML library and its' object-oriented design.
+The main function manages the main window by receiving its' events and passing them further or processing them. The `Simulator` object livies within the scope of the main function. 
+Every cycle of refreshing the window calls the `tick()` method on the simulator to push the simulation forward in time.
+
+Simulator holds a list of smart pointers to `Celestial_body` which can store various types of bodies (all of their types inherit from `Celestial_body` which is an abstract class). 
+With current implementation, both collision detection and gravity computation is parallelized using our custom multithreaded algorithm called "Gonghsi" where a job-queue is implemented.
+
+User input is processed by a separate GUI object (an instance of `UI_state`). 
+GUI handles mouse and keyboard events and manages its' internal state of widgets called "tools" (eg. celestial body generator, celestial body selector).
 ## Current completion status
-* Kompletna mechanika klasy `Celestial_body`
-* Zarys klas `Planet` oraz `Star`
-* Klasa `Asteroid`
-* Stabilny mechanizm interfejsów graficznych
-	* Wyświetlanie zielonych wiadomości tekstowych
-	* Przełączanie narzędzi GUI
-	* `CB_selector` zaznacza i usuwa ciała niebieskie
-	* `CB_gen` dodaje ciała niebieskie i przełącza między różnymi ich typami
-* Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
-	* Każde ciało niebieskie jest rysowane osobno
-	* Każde cialo niebieskie ma uprzednio rysowany jego ślad orbity, którego czas zanikania da się przestawiać
-	* Rysowanie sladów ciał niebieskich da się wyłączyć
-	* Ślady ciał niebieskich da się usunąć
-* Pierwotna implementacja metody `tick` w Symulatorze
-	* Wykonywanie funkcji obliczającej siłę grawitacji dla każdej pary obiektów oraz stosowanie jej efektów na prędkościach obiektów
-	* Poruszanie każdym ciałem zgodnie z jego prędkością
-	* Przeprowadzanie detekcji i obsługi kolizji
-* Obsługa kolizji w funkcji statycznej w klasie `Celestial_body`
-	* Zachowanie momentu pędu
-	* Tworzenie nowego obiektu w zależności od mas obiektów kolidujących ze sobą (RTTI na `Celestial_body*`)
-	* Scalanie sladów zderzających się ciał w nowym obiekcie `Celestial_body` i zapisanie ich do specjalnej listy śladów odziedziczonych
-	* Spośród zderzających się obiektów: usunięcie pierwszego (w funkcji `Simulator::tick()`) i nadpisanie drugiego nowopowstałym.
-* Obsługa poprawnego skalowania okna
-* Pauzowanie symulacji
-* Obsługa gwiazd stałych
-* Zmiana widoku w oknie poprzez scrollowanie i klawisze strzałek
-* Generator tekstur przycisków
-* Zmiana tempa i jakości symulacji
-	* Manipulowanie intensywnością obliczeniową symulacji (liczba ticków symulatora / odświeżenie okna)
-	* Manipulowanie dokładnością ticków symulacji
+* `Celestial_body` is implemented
+* Both `Planet` and `Star` are drafted for further expansion
+* `Asteroid`s work
+* GUI is stable
+	* Green animated text messages appear
+	* Switching between UI tools is stable
+	* Masterpanel prints stats
+	* GUI has buttons with procedurally-generated textures
+	* `CB_selector` can select and delete celestial bodies
+	* `CB_gen` can add multiple kinds of celestial bodies
+* Window refresh cycle (with rendering)
+	* Every celestial body is drawn separately
+	* Evert celestial body leaves a white trace of its' orbit. The lifetime of the trace can be altered
+	* Orbital traces can be switched off or deleted
+* The simulation works
+	* The code that computes gravity is considered stable
+	* A parallelized algorithm allows for efficient collision detection and parallelism of gravity computation
+	* Merge collisions are stable; others are considered experimental
+	* Simulation pace can be controlled (simulation ticks / window refresh)
+	* Simulation accuracy can be altered (simulation time / tick)
+* The main window handles scaling and navigation
 ## To do
 * Proper texturing of celestial bodies
 * Celestial body track prediction
