@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 
 const std::string CB_selector::nam="Celestial body selector";
 const std::string& CB_selector::name()

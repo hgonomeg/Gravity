@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 #include "Textbox.hpp"
 
 const std::string CB_gen::nam="Celestial body generator";
@@ -214,7 +214,7 @@ void CB_gen::tick()
 	napis.setString(tmp);
 	int renlen=5;
 	b_mode.tick();
-	b_mode.setPosition({renlen,patris->gettgt()->getSize().y-25}); renlen+=20;
-	napis.setPosition(renlen,patris->gettgt()->getSize().y-25);
+	b_mode.setPosition({static_cast<float>(renlen),static_cast<float>(patris->gettgt()->getSize().y-25)}); renlen+=20;
+	napis.setPosition(static_cast<float>(renlen),static_cast<float>(patris->gettgt()->getSize().y-25));
 	
 }

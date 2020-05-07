@@ -32,17 +32,17 @@ node_stepper::node_stepper(const std::list<node>& nds, wuxing* ken)
 bool node_stepper::finished()
 {
 	bool buf = patris->quit();
-	std::unique_lock<std::mutex> locc(kon_mut);
+	std::lock_guard<std::mutex> locc(kon_mut);
 	{
-	if(buf) koniec=true;
-	return koniec;
+		if(buf) koniec=true;
+		return koniec;
 	}
 }
 
 node_stepper::~node_stepper()
 {
-	std::unique_lock<std::mutex>* locc = new std::unique_lock<std::mutex>(kon_mut);
+	kon_mut.lock();
 	koniec = true;
-	delete locc;
+	kon_mut.unlock();
 	for(auto& x: thds) if(x.joinable()) x.join();
 }

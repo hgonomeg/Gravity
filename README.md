@@ -36,6 +36,8 @@ An executable called "Gravity" will appear in the root directory of the project
 ### Note
 I'd be very welcome if you could report any problems with the Cmake script that you encounter.
 
+Unfortunately only GCC and clang are supported due to my unfamiliarity with MSVC
+
 ## Purpose of the project
 * Gaining experience in practial usage of object-oriented programming in C++, including virtual methods and inheritance.
 * Excercise in using C++'s `std::` containers.

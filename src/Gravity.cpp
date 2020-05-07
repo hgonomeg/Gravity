@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 
 using hiresclk = std::chrono::high_resolution_clock;
 
@@ -10,7 +10,8 @@ int main(int argc, char** argv)
 	sf::Event ev;
 	sf::RenderWindow rehn(sf::VideoMode(960,500),"Gravity v0.4.0");
 	win = &rehn;
-	rehn.setFramerateLimit(60);
+	rehn.setFramerateLimit(144);
+	rehn.setVerticalSyncEnabled(true);
 	rehn.setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
 	
 	sf::Vector2f whatlook(0,0);
@@ -60,7 +61,7 @@ int main(int argc, char** argv)
 	
 	
 	hiresclk::duration load_time = hiresclk::now() - init_time;
-	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/1000.d)+" milliseconds"),1000));
+	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/(double)1000)+" milliseconds"),1000));
 	
 	bool pauza=false;
 	
@@ -152,17 +153,16 @@ int main(int argc, char** argv)
 					}
 					case sf::Keyboard::K: //zmniejszenie znikacza
 					{
-						if(Celestial_body::znikacz_sladu==1)
-						{
+						if(!Celestial_body::change_trace_length(false))
 							gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",3000));
-						}
 						else
-						Celestial_body::znikacz_sladu--;
+							gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
 						break;
 					}
 					case sf::Keyboard::O: //zwiekszenie znikacza
 					{
-						Celestial_body::znikacz_sladu++;
+						Celestial_body::change_trace_length(true);
+						gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
 						break;
 					}
 					case sf::Keyboard::H: //zwiekszenie znikacza
@@ -226,8 +226,9 @@ int main(int argc, char** argv)
 		rehn.clear();
 		rehn.draw(sim);
 		rehn.draw(gui);
+		gui.notify_rendered();
 		rehn.display();
-		sim.tick(); //tutaj będzie symulacja grawitacji (ruch planet)
+		sim.tick();
 	}
 	
 	delete zasoby;
