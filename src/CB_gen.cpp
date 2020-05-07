@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 #include "Textbox.hpp"
 
 const std::string CB_gen::nam="Celestial body generator";
