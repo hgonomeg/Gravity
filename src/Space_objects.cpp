@@ -20,14 +20,14 @@ Asteroid::Asteroid(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
 :Celestial_body(1,sf::Color(128,128,128),lokacja,predkosc)
 {
 	radius = 1.5f;
-	wyglond.setOrigin(radius,radius);
-	wyglond.setRadius(radius);
+	body_sprite.setOrigin(radius,radius);
+	body_sprite.setRadius(radius);
 }
 
 Spaceship::Spaceship(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
 :Celestial_body(1,sf::Color::Red,lokacja,predkosc)
 {
-	tracecolor = sf::Color(255,255,128);
+	trace_color = sf::Color(255,255,128);
 }
 
 Spaceship::Spaceship(const Celestial_body& ee)

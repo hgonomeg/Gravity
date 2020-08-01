@@ -1,37 +1,45 @@
 #include "Gravity.hpp"
 
-const std::string CB_selector::nam="Celestial body selector";
+const std::string CB_selector::tool_name="Celestial body selector";
 const std::string& CB_selector::name()
 {
-	return nam;
+	return tool_name;
 }
 
-bool CB_selector::mbp(sf::Event& ev)
+bool CB_selector::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
-	if(ev.mouseButton.button==sf::Mouse::Button::Left)
+	if(ev.button==sf::Mouse::Button::Left)
 	{
-	c_pick_iter = patris->getsim()->at_pos(patris->gettgt()->mapPixelToCoords({ev.mouseButton.x,ev.mouseButton.y}));
-	if(c_pick_iter!=patris->getsim()->get_end())	
+		current_pick_iter = parent->get_simulator()->at_pos(main_window->mapPixelToCoords({ev.x,ev.y}));
+
+		if(current_pick_iter!=parent->get_simulator()->get_end())	
 		{
-		c_pick =  c_pick_iter->get();
-		pick_id = c_pick->get_id();
+			current_pick =  current_pick_iter->get();
+			pick_id = current_pick->get_id();
 		}
-	else c_pick = NULL;
-	return true;
+		else 
+			current_pick = nullptr;
+
+		return true;
 	}
 	return false;
 }
-void CB_selector::mbr(sf::Event& ev)
+void CB_selector::text_entered(sf::Event::TextEvent& ev)
 {
 	
 }
-void CB_selector::kbp(sf::Event& ev)
+void CB_selector::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
-	switch(ev.key.code)
+	
+}
+
+void CB_selector::keyboard_button_pressed(sf::Event::KeyEvent& ev)
+{
+	switch(ev.code)
 	{
 		case sf::Keyboard::E:
 		{
-			patris->push_hint_text(UI_state::hint_text("Editing currently not supported",500));
+			parent->push_hint_text(UI_state::hint_text("Editing currently not supported",500));
 			break;
 		}
 		case sf::Keyboard::X:
@@ -41,37 +49,40 @@ void CB_selector::kbp(sf::Event& ev)
 		}
 		case sf::Keyboard::H:
 		{
-			patris->push_hint_text(UI_state::hint_text("CELESTIAL BODY SELECTOR",25000));
-			patris->push_hint_text(UI_state::hint_text("E - edit the currently selected body",25000));
-			patris->push_hint_text(UI_state::hint_text("X - remove the currently selected body",25000));
+			parent->push_hint_text(UI_state::hint_text("CELESTIAL BODY SELECTOR",25000));
+			parent->push_hint_text(UI_state::hint_text("E - edit the currently selected body",25000));
+			parent->push_hint_text(UI_state::hint_text("X - remove the currently selected body",25000));
 			break;
 		}
 	}
 }
 void CB_selector::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	tgt.draw(napis);
+	tgt.draw(inscription);
 }
 
 bool CB_selector::verify_body()
 {
-	if(Celestial_body::get_alloc_diagram().at(pick_id)==pick_id)
+	if(Celestial_body::get_alloc_diagram().at(pick_id) == pick_id) //if the id of the pick still exists 
 	{
-		if(c_pick)
+		if(current_pick) 
 		{
 			return true;
 		}
-		else return false;
+		else 
+			return false;
 	}
-	else 
+	else //else get to the body that was produced as a result of a collision with the original body
 	{
-		pick_id=Celestial_body::get_alloc_diagram().at(pick_id);
-		c_pick_iter=patris->getsim()->iterator_of(pick_id);
-		if(c_pick_iter!=patris->getsim()->get_end())	
+		pick_id = Celestial_body::get_alloc_diagram().at(pick_id);
+		current_pick_iter = parent->get_simulator()->iterator_of(pick_id);
+
+		if(current_pick_iter != parent->get_simulator()->get_end())	
 		{
-			c_pick =  c_pick_iter->get();
+			current_pick =  current_pick_iter->get();
 		}
-		else c_pick = NULL;
+		else 
+			current_pick = nullptr;
 		
 		return verify_body();
 	}
@@ -81,36 +92,43 @@ void CB_selector::pop_body()
 {
 	if(verify_body())
 	{
-		c_pick_iter = patris->getsim()->erase_body(c_pick_iter);
-		if(c_pick_iter!=patris->getsim()->get_end())	
+		current_pick_iter = parent->get_simulator()->erase_body(current_pick_iter);
+		if(current_pick_iter!=parent->get_simulator()->get_end())	
 		{
-		c_pick =  c_pick_iter->get();
-		pick_id = c_pick->get_id();
+			current_pick =  current_pick_iter->get();
+			pick_id = current_pick->get_id();
 		}
-		else c_pick = NULL;
+		else 
+			current_pick = nullptr;
 	}
-	else patris->push_hint_text(UI_state::hint_text("Nothing selected!",500));
+	else 
+		parent->push_hint_text(UI_state::hint_text("Nothing selected!",500));
 }
 
 CB_selector::CB_selector()
-:napis("Current selection: ",*fona,15)
+:inscription("Current selection: ",resources->main_font,15)
 {
-	c_pick = NULL;
+	current_pick = nullptr;
 	pick_id = 0;
 }
 
 void CB_selector::tick()
 {
-	std::string tmp = "Current selection: ";
+	std::stringstream tmp;
+	tmp<<"Current selection: ";
 	if(verify_body())
 	{
-		tmp+="ID: "+std::to_string(c_pick->get_id())+" Type: ";
-		if(dynamic_cast<Planet*>(c_pick)!=NULL) tmp+="PLANET";
-		if(dynamic_cast<Star*>(c_pick)!=NULL) tmp+="STAR";
-		tmp+=" Mass: "+std::to_string(c_pick->get_mass());
+		tmp<<"ID: "<<current_pick->get_id()<<" Type: ";
+
+		if(dynamic_cast<Planet*>(current_pick) != nullptr) 
+			tmp<<"PLANET";
+		if(dynamic_cast<Star*>(current_pick) != nullptr) 
+			tmp<<"STAR";
+
+		tmp<<" Mass: "<<current_pick->get_mass();
 	}
-	else tmp+="NULL";
-	napis.setString(tmp);
-	napis.setPosition(5,patris->gettgt()->getSize().y-25);
+	else tmp<<"None";
+	inscription.setString(tmp.str());
+	inscription.setPosition(5,main_window->getSize().y - 25);
 }
 

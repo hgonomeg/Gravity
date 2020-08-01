@@ -1,3 +1,4 @@
+
 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
 3. Rzutujemy wektor v1 oraz wektor v2 na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).

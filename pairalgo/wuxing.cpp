@@ -29,7 +29,7 @@ wuxing::wuxing(int cpx,sf::Vector2u winsi)
 	{
 		nodes.push_back(node({  winshi.x/2.f+((float)sin(i/(float)cp*2*(float)M_PI)*winshi.x*0.45f)  ,  (winshi.y/2.f-10.f)-((float)cos(i/(float)cp*2*(float)M_PI)*winshi.y*0.45f)  }));
 	}
-	athd=NULL;
+	athd=nullptr;
 }
 
 bool wuxing::quit()
@@ -52,7 +52,7 @@ std::chrono::milliseconds wuxing::get_best_interval()
 
 void wuxing::animate()
 {
-	if(athd==NULL)
+	if(athd==nullptr)
 	{
 		auto athd_func = [this](){
 			node_stepper* ns;

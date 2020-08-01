@@ -1,3 +1,5 @@
+//implements a wrapper for our Tianche algorithm for applying a function to pairs of objects simultaneously
+//superseeded by Gongshi
 #ifndef TIANCHE_WRAPPER_HPP
 #define TIANCHE_WRAPPER_HPP
 #include <thread>
@@ -11,6 +13,7 @@
 #include <queue>
 #include <vector>
 #include <list>
+
 
 
 #if __cplusplus==201703L
@@ -111,7 +114,7 @@ template <typename T>
 			std::this_thread::yield();
 			std::this_thread::yield();
 			std::this_thread::yield();
-		}while(fut.wait_for(std::chrono::microseconds(100))!=std::future_status::ready);
+		}while(fut.wait_for(std::chrono::microseconds(10))!=std::future_status::ready);
 		fut.get();
 
 		do{

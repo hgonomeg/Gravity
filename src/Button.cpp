@@ -1,44 +1,45 @@
 #include "Button.hpp"
 
 Button::Button(const sf::Texture& tx)
-:frejm({15,15})
+:frame({15,15})
 {
 	shown = true;
-	graycount = 0;
-	frejm.setTexture(&tx,false);
-	frejm.setOutlineThickness(2);
-	frejm.setOutlineColor(sf::Color::White);
+	animation_ticks = 0;
+	frame.setTexture(&tx,false);
+	frame.setOutlineThickness(2);
+	frame.setOutlineColor(sf::Color::White);
 }
-bool Button::mbp(sf::Event& ev)
+bool Button::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
 	if(!shown) return false;
-	if(frejm.getGlobalBounds().contains({static_cast<float>(ev.mouseButton.x),static_cast<float>(ev.mouseButton.y)}))
-		{
-			graycount+=6;
-			frejm.setOutlineColor(sf::Color(125,125,125));
-			return true;
-		}
+	if(frame.getGlobalBounds().contains({static_cast<float>(ev.x),static_cast<float>(ev.y)}))
+	{
+		animation_ticks+=6;
+		frame.setOutlineColor(sf::Color(125,125,125));
+		return true;
+	}
 	return false;
 }
 void Button::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	if(shown) tgt.draw(frejm);
+	if(shown) tgt.draw(frame);
 }
 void Button::setPosition(const sf::Vector2f& vc)
 {
-	frejm.setPosition(vc);
+	frame.setPosition(vc);
 }
 
 void Button::tick()
 {
-	if(shown&&graycount>0)
-		{
-		graycount--;
-		if(graycount==0) frejm.setOutlineColor(sf::Color::White);
-		}
+	if(shown&&animation_ticks>0)
+	{
+		animation_ticks--;
+		if(animation_ticks==0) 
+			frame.setOutlineColor(sf::Color::White);
+	}
 }
 
-bool Button::is_shown()
+bool Button::is_shown() const
 {
 	return shown;
 }

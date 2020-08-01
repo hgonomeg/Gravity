@@ -4,12 +4,17 @@
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
 #include <string>
+#include <memory>
 
 #define RESOURCE_LOADER_HPP
 
-struct ResourceBase
+class Resource_Manager
 {
-	std::string except_text;
+	public:
+	
+	sf::Font main_font;
+	
+	//procedural textures
 	sf::Texture button_CB_gen;
 	sf::Texture button_CB_selector;
 	sf::Texture button_right;
@@ -24,21 +29,15 @@ struct ResourceBase
 	sf::Texture button_speed_plus;
 	sf::Texture button_speed_minus;
 	sf::Texture button_debug;
-	bool correct;
+
+	Resource_Manager() noexcept; //loads essentials like the font and procedurally generated textures and won't fail
+	void finish_loading(); //may fail if resources are missing
+	
 };
 
-ResourceBase* LoadResources();
+inline std::shared_ptr<Resource_Manager> resources;
+inline std::shared_ptr<sf::RenderWindow> main_window;
 
-#if defined(EXTERNPLEASE)
-extern ResourceBase* zasoby;
-extern sf::Font* fona;
-extern sf::RenderWindow* win;
-extern sf::Vector2u* whatsize;
-#else
-sf::Font* fona;
-ResourceBase* zasoby;
-sf::RenderWindow* win;
-sf::Vector2u* whatsize;
-#endif
+
 
 #endif

@@ -5,39 +5,48 @@ void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 	//meant to be empty
 }
 
-void UI_state::mbp(sf::Event& ev)
+void UI_state::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
-	if(!masterpanel -> mbp(ev)) if(curr) curr->mbp(ev);
+	if(!masterpanel -> mouse_button_pressed(ev)) 
+		if(current_tool) current_tool->mouse_button_pressed(ev);
 }
-void UI_state::mbr(sf::Event& ev)
+void UI_state::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
-	if(curr) curr->mbr(ev);
+	if(current_tool) 
+		current_tool->mouse_button_released(ev);
 }
-void UI_state::kbp(sf::Event& ev)
+
+void UI_state::text_entered(sf::Event::TextEvent& ev)
 {
-	switch(ev.key.code)
+	if(current_tool)
+		current_tool->text_entered(ev);
+}
+
+void UI_state::keyboard_button_pressed(sf::Event::KeyEvent& ev)
+{
+	switch(ev.code)
 	{
 		case sf::Keyboard::G:
 		{
-			if(dynamic_cast<CB_gen*>(curr)==NULL)
+			if(dynamic_cast<CB_gen*>(current_tool)==nullptr)
 			{
-			push_hint_text(UI_state::hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
-			switch_tool(new CB_gen);
+				push_hint_text(UI_state::hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));
+				switch_tool(new CB_gen);
 			}
 			break;
 		}
 		case sf::Keyboard::S:
 		{
-			if(dynamic_cast<CB_selector*>(curr)==NULL)
+			if(dynamic_cast<CB_selector*>(current_tool)==nullptr)
 			{
-			push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
+			push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current_toolent selection.",1500));
 			switch_tool(new CB_selector);
 			}
 			break;
 		}
 	}
-	masterpanel -> kbp(ev);
-	if(curr) curr->kbp(ev);
+	masterpanel -> keyboard_button_pressed(ev);
+	if(current_tool) current_tool->keyboard_button_pressed(ev);
 	
 }
 
@@ -66,7 +75,7 @@ void UI_state::tick()
 	}
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
 	{
-		 if(x->przeterminowane())
+		 if(x->should_fade())
 		 {
 			if(x->sf_text.getFillColor().a==0) x=hint_texts.erase(x);
 			else
@@ -85,7 +94,8 @@ void UI_state::tick()
 		x->sf_text.setPosition((float)(target->getSize().x/2),(float)(target->getSize().y/2+why));
 		tmp_ht_h+=separ;
 	}
-	if(curr) curr->tick();
+	if(current_tool) 
+		current_tool->tick();
 	masterpanel -> tick();
 	std::chrono::microseconds interval = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
 	fps = (int)(1/((double)interval.count()/(double)1000000));
@@ -103,18 +113,22 @@ void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	auto pkp = tgt.getView();
 	tgt.setView(sf::View({(float)tgt.getSize().x/2.f,(float)tgt.getSize().y/2.f},{(float)tgt.getSize().x,(float)tgt.getSize().y}));
-	if(curr) curr->draw(tgt,st);
+	if(current_tool) 
+		current_tool->draw(tgt,st);
 	masterpanel->draw(tgt,st);
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) {tgt.draw(x->sf_text,st);};
-	tgt.draw(*status_text,st);
+	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) 
+	{
+		tgt.draw(x->sf_text,st);
+	}
+	tgt.draw(status_text,st);
 	tgt.setView(pkp);
 }
 
 UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
 {
 	init_time = sysclck::now();
-	data_waznosci = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
-	sf_text.setFont(*fona);
+	display_time = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
+	sf_text.setFont(resources->main_font);
 	sf_text.setString(tr);
 	sf_text.setCharacterSize(15);
 	sf_text.setFillColor(sf::Color(0,255,0,200));
@@ -122,9 +136,9 @@ UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
 	sf_text.setOutlineThickness(0);
 	sf_text.setOrigin(sf_text.getLocalBounds().width/2.f,sf_text.getLocalBounds().height/2.f);
 }
-bool UI_state::hint_text::przeterminowane()
+bool UI_state::hint_text::should_fade()
 {
-	return data_waznosci<(sysclck::now()-init_time);
+	return display_time<(sysclck::now() - init_time);
 }
 
 int UI_state::hint_text::process_height(int orto)
@@ -145,58 +159,55 @@ int UI_state::vertoffset_of_last_ht()
 	return hint_texts.size()*20;
 }
 
-UI_state::UI_state(Simulator* sjm,sf::RenderWindow* xt,sf::Text* stxt)
+UI_state::UI_state(Simulator* sjm,std::shared_ptr<sf::RenderWindow> xt)
 {
 	rendering_finished_time = sysclck::now();
 	last_tick = sysclck::now();
-	status_text=stxt;
-	debug=false;
-	curr = NULL;
-	sim = sjm;
+	status_text.setFont(resources->main_font);
+	status_text.setCharacterSize(15);
+	status_text.setPosition(5.f,5.f);
+	debug = false;
+	current_tool = nullptr;
+	simulator = sjm;
 	switch_tool(new CB_gen);
 	last_ht_winoffset = 0;
-	status_text->setCharacterSize(15);
-	status_text->setPosition(5.f,5.f);
+	
 	fps = 0;
 	draw_vs_total_time_ratio = 1.f;
-	target = xt;
+	target = std::move(xt);
 	masterpanel = new UI_masterpanel;
-	masterpanel -> patris = this;
+	masterpanel -> parent = this;
 }
 
-Simulator* UI_state::getsim()
+Simulator* UI_state::get_simulator()
 {
-	return sim;
+	return simulator;
 }
 
-sf::RenderWindow* UI_state::gettgt()
-{
-	return target;
-}
 
-const UI_tool* UI_state::getcurr()
+const UI_tool* UI_state::get_current_tool()
 {
-	return curr;
+	return current_tool;
 }
 
 UI_state::~UI_state()
 {
-	delete curr;
+	delete current_tool;
 	delete masterpanel;
 }
 
 void UI_state::switch_tool(UI_tool* ut)
 {
-	if(curr) delete curr;
-	curr = ut;
-	curr->patris=this;
+	if(current_tool) delete current_tool;
+	current_tool = ut;
+	current_tool->parent=this;
 	set_status_text();
 }
 
 void UI_state::set_status_text()
 {
 	std::stringstream tmp;
-	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<sim->size()<<"  Current tool: "<<curr->name();
-	status_text->setString(tmp.str());
+	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<simulator->size()<<"  current_toolent tool: "<<current_tool->name();
+	status_text.setString(tmp.str());
 }
 
