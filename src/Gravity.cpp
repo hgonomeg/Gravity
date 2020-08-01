@@ -2,14 +2,13 @@
 
 using hiresclk = std::chrono::high_resolution_clock;
 
-
 int main(int argc, char** argv)
 {
 	hiresclk::time_point init_time = hiresclk::now();
 	Simulator sim;
 	
 	resources.reset(new Resource_Manager());
-	main_window.reset(new sf::RenderWindow(sf::VideoMode(960,500),"Grawitacja v0.4.0"));
+	main_window.reset(new sf::RenderWindow(sf::VideoMode(960,500),"Gravity v0.4.0"));
 
 	sf::Vector2f canvas_origin(0,0);
 	float scale = 1; //scale of the "universe" in the context of the real window size
@@ -71,7 +70,6 @@ int main(int argc, char** argv)
 	hiresclk::duration load_time = hiresclk::now() - init_time;
 	gui.push_hint_text(UI_state::hint_text(std::string("Done loading in "+std::to_string(((double)(std::chrono::duration_cast<std::chrono::microseconds>(load_time).count()))/(double)1000)+" milliseconds"),1000));
 	
-	
 	auto scale_window_canvas = [&](){
 		auto tmp = main_window->getView();
 		auto win_size = main_window->getSize();
@@ -110,9 +108,7 @@ int main(int argc, char** argv)
 		}
 		scale_window_canvas();
 	};
-	
 
-	
 	while(main_window->isOpen())
 	{
 		sf::Event ev;
@@ -225,7 +221,6 @@ int main(int argc, char** argv)
 						{
 							break;
 						}
-						
 					}
 					break;
 				}
@@ -241,4 +236,5 @@ int main(int argc, char** argv)
 		sim.tick();
 	}
 	
+
 }

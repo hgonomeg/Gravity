@@ -1,6 +1,7 @@
 #include "Gravity.hpp"
 
 
+
 const std::string CB_gen::tool_name = "Celestial body generator";
 
 const std::string& CB_gen::name()
@@ -207,7 +208,7 @@ void CB_gen::tick()
 		}
 		
 	}
-	tmp<<" Mass: "<<current_mass; //do zmian
+	tmp<<" Mass: "<<current_mass; //to rework
 	inscription.setString(tmp.str());
 	int offset = 5;
 	b_mode.tick();

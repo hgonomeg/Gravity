@@ -83,7 +83,6 @@ class UI_state :public sf::Drawable
 	int last_ht_winoffset;
 	sf::Text status_text;
 	Simulator* simulator;
-	std::shared_ptr<sf::RenderWindow> target;
 
  	public:
 	
@@ -183,6 +182,7 @@ class UI_masterpanel :public UI_tool //The main tool that is always shown in the
 	protected:
 	
 	public:
+  
 	static const std::string tool_name;
 	virtual const std::string& name() override;
 	UI_masterpanel();

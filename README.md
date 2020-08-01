@@ -1,86 +1,108 @@
-# Grawitacja
+# Gravity
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
 SFML, C++11.
 
-The whole description will be available in English soon and it will entirely replace the Polish text. 
-Polska wersja opisu zostanie niebawem usunięta na korzyść angielskiej. 
-## Cel projektu
-* Ćwiczenia programistyczne w zakresie praktycznego wykorzystania programowania obiektowego w języku C++, w tym metod wirtualnych, dziedziczenia.
-* Ćwiczenia korzystania z kontenerów biblioteki standardowej języka C++.
-* Upłynnienie posługiwania się inteligentnymi wskaźnikami (`std::unique_ptr<>`).
-* Ćwiczenia w zakresie tworzenia prostych interaktywnych aplikacji graficznych w bibliotece SFML.
-* Stworzenie prostej zabawki pomagającej zrozumieć działanie mechaniki orbitalnej.
-* Zdobycie doświadczenia w zakresie rysowania treści graficznych i kontroli okna w bibliotece SFML
-* Bliższe zapoznanie się z mechaniką Git oraz GitHub; ćwiczenia w kooperacji wieloosobowej.
-* Nauka optymalizowania
-* Ćwiczenia posługiwania się szablonami
-* Styczność z optymalizacją poprzez wydajne programowanie wielowątkowe
-## Zadania i możliwosci programu
-* Symulacja grawitacji w układzie wielu ciał w czasie rzeczywistym - gwiazd, planet i asteroid.
-* Dodawanie nowych ciał niebieskich w czasie działania programu posiadających prędkość, położenie i zwrot nadawane w ramach zdarzeń wciśnięcia i opuszczenia przycisku myszy.
-* Scalanie ciał niebieskich w razie kolizji.
-* Usuwanie istniejących ciał niebieskich.
-* Rozróżnianie miedzy róznymi typami spektralnymi gwiazd oraz różnymi typami planet
-* Kontrola tempa i dokładności symulacji
-* Rozrywkowy tryb polegający na kontroli statku kosmicznego
-## Opis techniczny
-Cały program głęboko bazuje na bibliotece SFML i jej filozofii obiektowej.
-Procedura główna (main) otwiera okno na którym w każdym cyklu odświeżenia okna (60FPS) rysuje obiekt Symulatora, wywołując metodę `draw` (sam obiekt dziedziczy z `sf::Drawable`). Rysowanie obiektu sprowadza się do narysowania całej jego zawartości (jest to lista obiektów (`std::list<std::unique_ptr<Celestial_body>>`) które wszystkie dziedziczą z `Celestial_body`, która to klasa również jest pochodną klasy `sf::Drawable`). Ponadto oprócz rysowania, na obiekcie symulatora wywoływana jest metoda `tick`, w ramach której prowadzona jest obsługa całej symulacji.
-Program będzie się obsługiwać za pomocą zarówno myszy jak i klawiatury. Okno programu będzie posiadało specjalny obiekt przechowujący i sterujący stanem interfejsu graficznego (`UI_state`). Występujące w oknie zdarzenia sterujące programem są przekierowywane do specjalnych funkcji obiektu sterującego. Pewnym klawiszom zostaną przypisane funkcje przełączajace tzw. narzędzie interfejsu graficznego (`UI_tool`). Planowanych jest kilka narzedzi UI, w tym m.in. generator ciał niebieskich, selektor i usuwacz.
-## Obecny stan implementacji
-* Kompletna mechanika klasy `Celestial_body`
-* Zarys klas `Planet` oraz `Star`
-* Klasa `Asteroid`
-* Stabilny mechanizm interfejsów graficznych
-	* Wyświetlanie zielonych wiadomości tekstowych
-	* Przełączanie narzędzi GUI
-	* `CB_selector` zaznacza i usuwa ciała niebieskie
-	* `CB_gen` dodaje ciała niebieskie i przełącza między różnymi ich typami
-* Mechanika pokazywania i odświeżania okna, a także tworzenia i rysowania obiektu symulatora.
-	* Każde ciało niebieskie jest rysowane osobno
-	* Każde cialo niebieskie ma uprzednio rysowany jego ślad orbity, którego czas zanikania da się przestawiać
-	* Rysowanie sladów ciał niebieskich da się wyłączyć
-	* Ślady ciał niebieskich da się usunąć
-* Pierwotna implementacja metody `tick` w Symulatorze
-	* Wykonywanie funkcji obliczającej siłę grawitacji dla każdej pary obiektów oraz stosowanie jej efektów na prędkościach obiektów
-	* Poruszanie każdym ciałem zgodnie z jego prędkością
-	* Przeprowadzanie detekcji i obsługi kolizji
-* Obsługa kolizji w funkcji statycznej w klasie `Celestial_body`
-	* Zachowanie momentu pędu
-	* Tworzenie nowego obiektu w zależności od mas obiektów kolidujących ze sobą (RTTI na `Celestial_body*`)
-	* Scalanie sladów zderzających się ciał w nowym obiekcie `Celestial_body` i zapisanie ich do specjalnej listy śladów odziedziczonych
-	* Spośród zderzających się obiektów: usunięcie pierwszego (w funkcji `Simulator::tick()`) i nadpisanie drugiego nowopowstałym.
-* Obsługa poprawnego skalowania okna
-* Pauzowanie symulacji
-* Obsługa gwiazd stałych
-* Zmiana widoku w oknie poprzez scrollowanie i klawisze strzałek
-* Generator tekstur przycisków
-* Zmiana tempa i jakości symulacji
-	* Manipulowanie intensywnością obliczeniową symulacji (liczba ticków symulatora / odświeżenie okna)
-	* Manipulowanie dokładnością ticków symulacji
-## Do zrobienia
-* Odpowiednie teksturowanie ciał niebieskich
-* Przewidywanie sladów ciał niebieskich
-* Dalszy rozwój `CB_selector`, `CB_gen` i `UI_masterpanel`
-	* Zwiększenie ilości funkcji i udogodnień podpiętych pod wciśnięcie danego klawisza
-	* Stworzenie `Textbox` do wybierania masy tworzonego ciała
-	* Okodowanie serii przycisków do wyboru typu tworzonego ciała
-	* Modyfikacja parametrów ciał niebieskich
-	* Więcej danych w trybie debug
-* Ładowanie tekstur z plików w funkcji `LoadResources()`
-* Rozplanować i dodać tryb sterowalnego statku kosmicznego 
-* Śledzenie widokiem danego ciała niebieskiego
-* Zapis i odczyt z pliku przez moduł XML
-* System szybkich zapisów i odtworzeń obecnego stanu symulatora w pamięci
-* Zmienić algorytm ewaluacji indywidualnych par ciał niebieskich na wielowątkowy TIANCHE (przykład działania w `pairalgo/tianche. cpp` i `wuxing.cpp`)
-* Optymalizacja renderowania
+## Goals and capabilities of the program
+* Realtime simulation of celestial bodies in a multi-bodied system, including stars, planets and asteroids
+* Adding new celestial bodies, ad hoc, with spatial and dynamic properties given by mouse clicks.
+* Handling collisions of celestial bodies:
+	* merging
+	* bouncing
+	* hybrid
+* Deletion of celestial bodies
+* Differentiating between different planet types and different star spectral types
+* Control of both the pace and accuracy of the simulation
+* A special mode made for entertainment purposes: controlling a spaceship
+
+![Demo](comments/demo.png)
+
+## Building instructions
+### Library dependencies
+* SFML (graphics, window and system modules)
+### Tools required
+* Cmake
+* C++17 compiler with RTTI
+### Instruction
+In order to compile the program, please ensure that the SFML library is installed in your system and that you have all the necessary tools like Cmake and a compiler.
+
+Run cmake to generate the build files for your setup (I personally recommend using Cmake GUI).
+Please note that static linking will not be available in all setups.
+
+After obtaining the build files, use your toolchain of choice to compile the program.
+(eg. run `make` if you are using Unix Makefiles or MinGW Makefiles)
+
+An executable called "Gravity" will appear in the root directory of the project
+
+### Note
+I'd be very welcome if you could report any problems with the Cmake script that you encounter.
+
+Unfortunately only GCC and clang are supported due to my unfamiliarity with MSVC
+
+## Purpose of the project
+* Gaining experience in practial usage of object-oriented programming in C++, including virtual methods and inheritance.
+* Excercise in using C++'s `std::` containers.
+* Fluency in working with smart pointers (`std::unique_ptr<>`).
+* Learning how to create simple & interactive GUI applications in SFML.
+* Creating a simple toy which helps to understand how orbital mechanics works.
+* Gaining experience in drawing graphics and managing windows in the SFML library.
+* Getting familiar with Git and GitHub; excercise cooperation.
+* Learning how to optimize
+* Excercise C++ generic programming
+* Optimization via efficient multithreaded programming
+* Gaining some experience with cmake-scripts
+
+## Implementation notes
+The whole program is based upon the SFML library and its' object-oriented design.
+The main function manages the main window by receiving its' events and passing them further or processing them. The `Simulator` object livies within the scope of the main function. 
+Every cycle of refreshing the window calls the `tick()` method on the simulator to push the simulation forward in time.
+
+Simulator holds a list of smart pointers to `Celestial_body` which can store various types of bodies (all of their types inherit from `Celestial_body` which is an abstract class). 
+With current implementation, both collision detection and gravity computation is parallelized using our custom multithreaded algorithm called "Gonghsi" where a job-queue is implemented.
+
+User input is processed by a separate GUI object (an instance of `UI_state`). 
+GUI handles mouse and keyboard events and manages its' internal state of widgets called "tools" (eg. celestial body generator, celestial body selector).
+## Current completion status
+* `Celestial_body` is implemented
+* Both `Planet` and `Star` are drafted for further expansion
+* `Asteroid`s work
+* GUI is stable
+	* Green animated text messages appear
+	* Switching between UI tools is stable
+	* Masterpanel prints stats
+	* GUI has buttons with procedurally-generated textures
+	* `CB_selector` can select and delete celestial bodies
+	* `CB_gen` can add multiple kinds of celestial bodies
+* Window refresh cycle (with rendering)
+	* Every celestial body is drawn separately
+	* Evert celestial body leaves a white trace of its' orbit. The lifetime of the trace can be altered
+	* Orbital traces can be switched off or deleted
+* The simulation works
+	* The code that computes gravity is considered stable
+	* A parallelized algorithm allows for efficient collision detection and parallelism of gravity computation
+	* Merge collisions are stable; others are considered experimental
+	* Simulation pace can be controlled (simulation ticks / window refresh)
+	* Simulation accuracy can be altered (simulation time / tick)
+* The main window handles scaling and navigation
+## To do
+* Proper texturing of celestial bodies
+* Celestial body track prediction
+* Further improve `CB_selector`, `CB_gen` and `UI_masterpanel`
+	* More key-bindings
+	* Implement a `Textbox` to enter numbers like a celestial body's mass
+	* Add dedicated buttons to choose between the types of celestial bodies
+	* Implement edition of celestial bodies
+	* Print more data in the debug mode
+* Implement loading textures in the global resources manager
+* Design and implement maneuverable spaceship mode
+* Tracing celestial bodies with the camera
+* Read/Save the simulator state via a dedicated XML/JSON module
+* Quick-saves and restores of the simulator state
+* Optimize rendering
 ## Wuxing
-W folderze `pairalgo` znajduje się silnik animacji działania algorytmów rozważających indywidualne pary o nazwie Wuxing. Został on napisany jako pomoc w projektowaniu wydajnych algorytmów dla rozważenia sił grawitacji między każdą parą ciał niebieskich.
+In the `pairalgo` folder, there is a little animation engine called Wuxing. It visualizes how individual-unique-pair iteration algorithms work. It was written to serve as a helper in designing efficient algorithms for calculating the force of gravity between every unique pair of celestial bodies.
 
-## Jak skompilować?
-There's a cmake script to compile the program although due to my poor cmake skills, GCC is the only officially supported compiler.
+It helped in developing the Tianche algorithm.
 
-Aby skompilować projekt, należy skompilować wszystkie dostępne w folderze głównym repozytorium pliki .cpp - wszystko ma zostać składową pliku wykonywalnego "Grawitacja.exe", do którego należy dolinkować bibliotekę SFML (moduł graficzny tej biblioteki)
-Wymagany standard C++11 wraz z RTTI.
-## Do rozważenia
+
+## To consider
 
