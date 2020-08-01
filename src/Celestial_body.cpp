@@ -366,6 +366,25 @@ void Celestial_body::delete_traces()
 	parents_traces = nullptr;
 }
 
+//HELPER FUNCTIONS FOR Celestial_body::bounce_handle(Celestial_body*,Celestial_body*)
+//this does scalar vector multiplication
+inline float vec_dot_product(const sf::Vector2f& first, const sf::Vector2f& second)
+{
+	return (first.x*second.x)+(first.y*second.y);
+}; 
+
+inline float squared_vec_length(const sf::Vector2f& vec)
+{
+	return vec.x*vec.x+vec.y*vec.y;
+};
+
+//vector projection: project first onto second
+sf::Vector2f vec_projection(const sf::Vector2f& first,const sf::Vector2f& second)
+{
+	return static_cast<float>(vec_dot_product(first,second)/squared_vec_length(second))*second;
+}; 
+
+//uses helper functions defined above
 void Celestial_body::bounce_handle(Celestial_body* mother, Celestial_body* father)
 {
 	 // 1. Fetch parameters of colliding objects
@@ -383,23 +402,6 @@ void Celestial_body::bounce_handle(Celestial_body* mother, Celestial_body* fathe
  
     sf::Vector2f diff_father_to_mother = mother_location-father_location;
     sf::Vector2f diff_mother_to_father = father_location-mother_location;
- 
-	//this does scalar vector multiplication
-    auto inline vec_dot_product = [](const sf::Vector2f& first, const sf::Vector2f& second) -> float 
-	{
-		return (first.x*second.x)+(first.y*second.y);
-	}; 
- 
-    auto inline squared_vec_length = [](const sf::Vector2f& vec) -> float 
-	{
-		return vec.x*vec.x+vec.y*vec.y;
-	};
-	
-	//vector projection: project first onto second
-    auto vec_projection = [&](const sf::Vector2f& first,const sf::Vector2f& second) -> sf::Vector2f 
-	{
-		return static_cast<float>(vec_dot_product(first,second)/squared_vec_length(second))*second;
-	}; 
 
 	// 3. Project mother and father velocity vectors onto the diff vectors created above 
 

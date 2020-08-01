@@ -386,9 +386,9 @@ simultaneous_computator(body_list)
 		
 		Celestial_body* old_body_ptr = i->get(); 
 		
-		bufor = old_body_ptr->clone(*old_body_ptr); //use RTTI to clone objects with valid type
+		buffer = old_body_ptr->clone(*old_body_ptr); //use RTTI to clone objects with valid type
 		
-		body_list.push_back(std::unique_ptr<Celestial_body>(bufor));
+		body_list.push_back(std::unique_ptr<Celestial_body>(buffer));
 
 	}
 	
