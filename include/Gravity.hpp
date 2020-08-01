@@ -1,5 +1,5 @@
-#ifndef GRAWITACJA_HPP
-#define GRAWITACJA_HPP
+#ifndef GRAVITY_HPP
+#define GRAVITY_HPP
 #include "Simulator.hpp"
 #include "Space_objects.hpp"
 #include "ResourceLoader.hpp"
@@ -22,13 +22,13 @@ enum rendering_quality {  //no. sides in polygons to approximate circles
 	ultra				//64
 };
 
-struct window_translation
+enum window_translation
 {
-	bool up;
-	bool down;
-	bool left;
-	bool right;
-	window_translation();
+	none,
+	up,
+	down,
+	right,
+	left
 };
 
 class UI_state; //the base class to process and store the whole GUI
@@ -62,7 +62,7 @@ class UI_state :public sf::Drawable
 		sysclck::time_point init_time;
 		
 		public:
-		int last_vertoffset;
+		int last_vertoffset; //offset important for animations
 		sf::Text sf_text;
 		hint_text(const std::string&,unsigned int); //content and lifetime in milliseconds
 		bool should_fade();
@@ -108,7 +108,7 @@ class UI_state :public sf::Drawable
 
 class CB_gen :public UI_tool //Celestial_body_gen
 {
-	Planet::planetary_classification temp_planet;
+	Planet::planetry_classification temp_planet;
 	Star::stellar_classification temp_star; 
 	sf::Text inscription;
 	Button b_mode; //the button that changes the type of  the celestial body

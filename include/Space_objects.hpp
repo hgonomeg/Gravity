@@ -7,7 +7,7 @@ class Planet :public Celestial_body
 
 	public:
 	
-	enum planetary_classification 
+	enum planetry_classification 
 	{
 		gas,
 		liquid,
@@ -15,7 +15,7 @@ class Planet :public Celestial_body
 	}; 
 	private:
 	
-	planetary_classification planet_type;
+	planetry_classification planet_type;
 	public:
 	virtual Celestial_body* clone(const Celestial_body&) override;
 	Planet(const Celestial_body&);
@@ -35,7 +35,7 @@ class Star :public Celestial_body
 		G =0xfff4ea,
 		K =0xffd2a1,
 		M =0xffcc6f
-	}; //Hertzsprung–Russella diagram star types will be available in the future
+	}; //Hertzsprung–Russell's diagram star types will be available in the future
 	private:
 	stellar_classification star_type;
 	

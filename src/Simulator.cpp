@@ -9,12 +9,21 @@ unsigned int Simulator::tick_rate = 1;
 
 void Simulator::change_accuracy(bool chg)
 {
-	if(chg) accuracy_factor++; else accuracy_factor--;
-	if(accuracy_factor==0) STEPPING_RATE=1.f;
+	//change accuracy variable accordingly
+	if(chg) 
+		accuracy_factor++; 
+	else 
+		accuracy_factor--;
+	
+	//accuracy_factor equal to zero means default values
+	if(accuracy_factor==0) 
+		STEPPING_RATE=1.f;
 	else
 	{
-		if(accuracy_factor<0) STEPPING_RATE=fabs(static_cast<float>(accuracy_factor));
-		else STEPPING_RATE=1/static_cast<float>(accuracy_factor);
+		if(accuracy_factor<0) //accuracy below zero requires increasing the stepping rate, value of which reflects the accuracy parameter 
+			STEPPING_RATE = fabs(static_cast<float>(accuracy_factor));
+		else //accuracy above zero means that we have to set the stepping rate below 1, in a hyperbolic way to reflect accuracy
+			STEPPING_RATE = 1/static_cast<float>(accuracy_factor+1);
 	}
 }
 
@@ -49,7 +58,7 @@ unsigned int Simulator::get_rate()
 void Simulator::set_circle_approx_polygon(unsigned int sides)
 {
 	Celestial_body::set_global_num_of_polygon_sides(sides);
-	for(auto& x: ciala)
+	for(auto& x: body_list)
 	{
 		x->set_num_of_polygon_sides(sides);
 	}
@@ -57,7 +66,7 @@ void Simulator::set_circle_approx_polygon(unsigned int sides)
 
 std::size_t Simulator::size() const
 {
-	return ciala.size();
+	return body_list.size();
 }
 
 void Simulator::tick()
@@ -70,20 +79,25 @@ void Simulator::tick()
 			{
 				for(auto i=u->begin();i!=u->end();i++)
 				{
-					if(i->color.a>0)
+					if(i->color.a>0) //dim predicted traces to full transparency
 					{
 						i->color.a--;
 					}
 				}
-				if(u->back().color.a==0) 
-					{
-					u=predicted_traces->erase(u); 
-					if(u==predicted_traces->end()) break;
-					}
+				if(u->back().color.a==0) //when the last node of a trace is transparent, the whole trace can be disposed of
+				{
+					u = predicted_traces->erase(u); 
+					if(u == predicted_traces->end()) 
+						break;
+				}
 			}
-			if(predicted_traces->size()==0) {delete predicted_traces; predicted_traces = nullptr; }
+			if(predicted_traces->size()==0) 
+			{
+				delete predicted_traces; 
+				predicted_traces = nullptr; 
+			}
 		}
-		for(unsigned uk=0;uk<tick_rate;uk++)
+		for(unsigned internal_cycles=0; internal_cycles<tick_rate; internal_cycles++)
 		{
 			auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
 				if(lhs == nullptr || rhs == nullptr)
@@ -121,7 +135,7 @@ void Simulator::tick()
 				
 			};
 			
-			twx.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
+			simultaneous_computator.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
 				obrob_grawitacje(ein->get(),zwei->get());
 			});
 
@@ -149,7 +163,7 @@ void Simulator::tick()
 			std::set<unsigned int> deleted_bodies;
 			
 
-			twx.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
+			simultaneous_computator.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 			
 			for(auto& x: detected_pairs) 
 			{
@@ -168,7 +182,7 @@ void Simulator::tick()
 							Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
 							father_iterator->reset(father); //father is now the child
 							
-							ciala.erase(mother_iterator); 
+							body_list.erase(mother_iterator); 
 							break;
 						}
 						case collision_approach::bounce:
@@ -187,7 +201,7 @@ void Simulator::tick()
 								Celestial_body::collision_handle(mother_iterator->get(),father); //father is being overwritten (becomes child)
 								father_iterator->reset(father); //father is now the child
 
-								ciala.erase(mother_iterator); 
+								body_list.erase(mother_iterator); 
 							}
 							else
 							{
@@ -200,7 +214,7 @@ void Simulator::tick()
 			}
 
 			//set velocity
-			for(auto j=ciala.begin(); j!=ciala.end(); j++)
+			for(auto j=body_list.begin(); j!=body_list.end(); j++)
 			{
 				auto q=j->get();
 				q->set_location(q->get_location()+(q->get_velocity())*STEPPING_RATE); 
@@ -214,7 +228,7 @@ void Simulator::tick()
 
 void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	for(auto& x: ciala)
+	for(auto& x: body_list)
 	{
 		if(!paused) 
 			x->refresh(); //refresh the state of the graphical part of the object
@@ -222,7 +236,7 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 			x->draw_trace(tgt,st);
 		
 	}
-	for(auto& x: ciala) //has to be drawn in a separate loop no to overlap with the traces
+	for(auto& x: body_list) //has to be drawn in a separate loop no to overlap with the traces
 	{
 		x->draw(tgt,st);
 	}
@@ -234,12 +248,12 @@ void Simulator::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 
 void Simulator::add_body(Celestial_body* koles)
 {
-	ciala.push_back(std::unique_ptr<Celestial_body>(koles));
+	body_list.push_back(std::unique_ptr<Celestial_body>(koles));
 }
 
 void Simulator::erase_body(unsigned int ajdi)
 {
-	for(auto i=ciala.begin(); i!=ciala.end(); i++) 
+	for(auto i=body_list.begin(); i!=body_list.end(); i++) 
 		if(i->get()->get_id()==ajdi) 
 		{
 			erase_body(i); 
@@ -249,17 +263,17 @@ void Simulator::erase_body(unsigned int ajdi)
 
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::erase_body(const std::list<std::unique_ptr<Celestial_body>>::iterator& el)
 {
-	return ciala.erase(el);
+	return body_list.erase(el);
 }
 
 std::list<std::unique_ptr<Celestial_body>>::const_iterator Simulator::get_end() const
 {
-	return ciala.cend();
+	return body_list.cend();
 }
 
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::iterator_of(unsigned int ajdi)
 {
-	for(auto i=ciala.begin();i!=ciala.end();i++)
+	for(auto i=body_list.begin();i!=body_list.end();i++)
 	{
 		if(i->get()->get_id()==ajdi) return i;
 	}
@@ -269,7 +283,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::iterator_of(unsi
 std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf::Vector2f& here)
 {
 	
-	for(auto i=ciala.begin(); i!=ciala.end(); i++) //i jest iteratorem listy
+	for(auto i=body_list.begin(); i!=body_list.end(); i++) //i jest iteratorem listy
 	{
 		auto w=i->get()->getGlobalBounds();
 
@@ -280,7 +294,7 @@ std::list<std::unique_ptr<Celestial_body>>::iterator Simulator::at_pos(const sf:
 		
 	}
 
-	return ciala.end();
+	return body_list.end();
 	
 }
 
@@ -301,7 +315,7 @@ void Simulator::toggle_traces()
 
 void Simulator::delete_traces()
 {
-	for(auto& x: ciala) x->delete_traces();
+	for(auto& x: body_list) x->delete_traces();
 }
 
 bool Simulator::are_traces_drawn() const
@@ -312,7 +326,7 @@ bool Simulator::are_traces_drawn() const
 std::list<std::vector<sf::Vertex>> Simulator::get_traces()
 {
 	std::list<std::vector<sf::Vertex>> ret;
-	for(auto& x: ciala) ret.splice(ret.begin(),x->get_traces());
+	for(auto& x: body_list) ret.splice(ret.begin(),x->get_traces());
 	return ret;
 }
 
@@ -331,8 +345,8 @@ Simulator::collision_approach Simulator::cycle_collision_approach()
 }
 
 Simulator::Simulator()  
-:ciala(),
-twx(ciala)
+:body_list(),
+simultaneous_computator(body_list)
 {
 	Celestial_body::pushstax();
 	paused = false;
@@ -342,8 +356,8 @@ twx(ciala)
 }
 
 Simulator::Simulator(const Simulator &sim) 
-:ciala(),
-twx(ciala)
+:body_list(),
+simultaneous_computator(body_list)
 {
 	Celestial_body::pushstax();
 	paused=sim.paused;
@@ -353,7 +367,7 @@ twx(ciala)
 	
 	
 	
-	for(auto i=sim.ciala.begin(); i!=sim.ciala.end(); i++)
+	for(auto i=sim.body_list.begin(); i!=sim.body_list.end(); i++)
 	{
 		Celestial_body* bufor = nullptr;
 		
@@ -361,7 +375,7 @@ twx(ciala)
 		
 		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //use RTTI to clone objects with valid type
 		
-		ciala.push_back(std::unique_ptr<Celestial_body>(bufor));
+		body_list.push_back(std::unique_ptr<Celestial_body>(bufor));
 
 	}
 	

@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 #include <sstream>
 #include <iomanip>
 

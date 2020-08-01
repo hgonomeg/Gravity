@@ -1,14 +1,7 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 
 using hiresclk = std::chrono::high_resolution_clock;
 
-window_translation::window_translation()
-{
-	up = false;
-	down = false;
-	left = false;
-	right = false;
-}
 
 int main(int argc, char** argv)
 {
@@ -20,7 +13,7 @@ int main(int argc, char** argv)
 
 	sf::Vector2f canvas_origin(0,0);
 	float scale = 1; //scale of the "universe" in the context of the real window size
-	window_translation translation_state;
+	window_translation translation_state = none;
 	const float translation_constant = 30; 
 
 	main_window->setFramerateLimit(144);
@@ -87,29 +80,34 @@ int main(int argc, char** argv)
 	};
 	
 	auto perform_translation = [&](){
-		if(translation_state.up) 
+		switch(translation_state)
 		{
-			canvas_origin.y-=translation_constant/scale;
-			scale_window_canvas();
-			
+			case up:
+			{
+				canvas_origin.y-=translation_constant/scale;
+				break;
+			}
+			case down: 
+			{
+				canvas_origin.y+=translation_constant/scale;
+				break;
+			}
+			case right:
+			{
+				canvas_origin.x+=translation_constant/scale;
+				break;
+			}
+			case left:
+			{
+				canvas_origin.x-=translation_constant/scale;
+				break;
+			}
+			default:
+			{
+				break;
+			}
 		}
-		if(translation_state.down) 
-		{
-			canvas_origin.y+=translation_constant/scale;
-			scale_window_canvas();
-			
-		}
-		if(translation_state.right) 
-		{
-			canvas_origin.x+=translation_constant/scale;
-			scale_window_canvas();
-			
-		}
-		if(translation_state.left) 
-		{
-			canvas_origin.x-=translation_constant/scale;
-			scale_window_canvas();
-		}
+		scale_window_canvas();
 	};
 	
 
@@ -152,22 +150,22 @@ int main(int argc, char** argv)
 						}
 						case sf::Keyboard::Up:
 						{
-							translation_state.up = true;
+							translation_state = up;
 							break;
 						}
 						case sf::Keyboard::Down:
 						{
-							translation_state.down = true;
+							translation_state = down;
 							break;
 						}
 						case sf::Keyboard::Right:
 						{
-							translation_state.right = true;
+							translation_state = right;
 							break;
 						}
 						case sf::Keyboard::Left:
 						{
-							translation_state.left = true;
+							translation_state = left;
 							break;
 						}
 						case sf::Keyboard::K: //zmniejszenie znikacza
@@ -215,25 +213,18 @@ int main(int argc, char** argv)
 					switch(ev.key.code)
 					{
 						case sf::Keyboard::Up:
-						{
-							translation_state.up = false;
-							break;
-						}
 						case sf::Keyboard::Down:
-						{
-							translation_state.down = false;
-							break;
-						}
 						case sf::Keyboard::Right:
-						{
-							translation_state.right = false;
-							break;
-						}
 						case sf::Keyboard::Left:
 						{
-							translation_state.left = false;
+							translation_state = none;
 							break;
 						}
+						default:
+						{
+							break;
+						}
+						
 					}
 					break;
 				}

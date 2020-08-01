@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {

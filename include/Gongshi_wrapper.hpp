@@ -1,3 +1,4 @@
+//implements a wrapper for our Gongshi algorithm for applying a function to pairs of objects simultaneously
 #ifndef GONGSHI_WRAPPER_HPP
 #define GONGSHI_WRAPPER_HPP
 
@@ -124,7 +125,7 @@ template <typename T>
 
 			if(!not_quit()) return; //return from the thread if deconstruction is required
 			
-			unsigned int num_of_work = work_queue.front().first;
+			unsigned int nufather_massf_work = work_queue.front().first;
 			fx_type function = work_queue.front().second;
 			work_queue.pop();
 			size_t queue_size = work_queue.size();
@@ -145,12 +146,12 @@ template <typename T>
 				}
             };
 			
-			determine_pairs(num_of_work);
+			determine_pairs(nufather_massf_work);
 
 			unsigned concurrency = subject_list.size()/2;
-			num_of_work = (2*concurrency)-num_of_work+1;
+			nufather_massf_work = (2*concurrency)-nufather_massf_work+1;
 
-			determine_pairs(num_of_work);
+			determine_pairs(nufather_massf_work);
 
 			if(queue_size==0)
 			{

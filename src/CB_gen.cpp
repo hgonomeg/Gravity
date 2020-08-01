@@ -1,4 +1,4 @@
-#include "Grawitacja.hpp"
+#include "Gravity.hpp"
 
 
 const std::string CB_gen::tool_name = "Celestial body generator";
@@ -174,7 +174,7 @@ CB_gen::CB_gen()
 	was_removed = false;
 	current_mass = 10;
 	currently_picked = cb_type::Planet;
-	temp_planet = Planet::planetary_classification::rock;
+	temp_planet = Planet::planetry_classification::rock;
 	temp_star = Star::stellar_classification::A; 
 }
 
