@@ -5,16 +5,16 @@ Resource_Manager::Resource_Manager() noexcept
 	main_font.loadFromMemory(arimo.data,arimo.size);
 
 	auto button_tex_gen = [this](std::string txt, const sf::Color col, bool blackorwhite) -> sf::Texture {
-		sf::RenderTexture ren;
-		sf::Text textext(txt,main_font,12);
-		ren.create(15,15); //the tile
-		textext.setOrigin({textext.getLocalBounds().width/2.f,textext.getLocalBounds().height/2.f});
-		textext.setPosition(7.5,5); //this is roughly the center of the tile
-		textext.setFillColor(blackorwhite? sf::Color::White : sf::Color::Black);
-		ren.clear(col);
-		ren.draw(textext);
-		ren.display();
-		return ren.getTexture();
+		sf::RenderTexture render_tex;
+		sf::Text sf_text(txt,main_font,12);
+		render_tex.create(15,15); //the tile
+		sf_text.setOrigin({sf_text.getLocalBounds().width/2.f,sf_text.getLocalBounds().height/2.f});
+		sf_text.setPosition(7.5,5); //this is roughly the center of the tile
+		sf_text.setFillColor(blackorwhite? sf::Color::White : sf::Color::Black);
+		render_tex.clear(col);
+		render_tex.draw(sf_text);
+		render_tex.display();
+		return render_tex.getTexture();
 	};
 	
 	button_CB_gen = button_tex_gen("G",sf::Color::Green,false);

@@ -99,10 +99,13 @@ void Simulator::tick()
 		}
 		for(unsigned internal_cycles=0; internal_cycles<tick_rate; internal_cycles++)
 		{
-			auto obrob_grawitacje=[this](Celestial_body* lhs, Celestial_body* rhs) {
+			//computes gravity force and applies its' physical effects to targets 
+			//THREAD-SAFE
+			auto compute_gravity = [this](Celestial_body* lhs, Celestial_body* rhs) {
 				if(lhs == nullptr || rhs == nullptr)
 					throw std::runtime_error("Tried to compute gravity with a null-pointer.");
 				
+				//get data in a thread-safe manner
 				lhs->simultaneity_guardian.lock();
 				auto left_loc=lhs->get_location();
 				auto left_v=lhs->get_velocity();
@@ -115,31 +118,37 @@ void Simulator::tick()
 				auto right_mass=rhs->get_mass();
 				rhs->simultaneity_guardian.unlock();
 
+				//distances in coordinates
 				float diff_x=left_loc.x-right_loc.x;
 				float diff_y=left_loc.y-right_loc.y;
 				
-				float odleglosc = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
-			
-				sf::Vector2f sila_graw_vec={diff_x,diff_y};
-				if(odleglosc!=0) 
-					sila_graw_vec*=(G*left_mass*right_mass)/(odleglosc*odleglosc*odleglosc);
+				float distance = sqrt((diff_x)*(diff_x)+(diff_y)*(diff_y));
+
+				//compute the actual gravity force vector
+				sf::Vector2f gravity_force_vec={diff_x,diff_y};
+				if(distance!=0) 
+					gravity_force_vec*=(G*left_mass*right_mass)/(distance*distance*distance); //proper force of gravity
 				else
-					sila_graw_vec= {0,0};
+					gravity_force_vec= {0,0};
+				
+				//update targets in a thread-safe manner
+				//velocities are being altered accordingly to the force of gravity and stepping rate
 				lhs->simultaneity_guardian.lock();
-				lhs->set_velocity(left_v-sila_graw_vec/(float)left_mass*STEPPING_RATE);
+				lhs->set_velocity(left_v-gravity_force_vec/(float)left_mass*STEPPING_RATE);
 				lhs->simultaneity_guardian.unlock();
 
 				rhs->simultaneity_guardian.lock();
-				rhs->set_velocity(right_v+sila_graw_vec/(float)right_mass*STEPPING_RATE);
+				rhs->set_velocity(right_v+gravity_force_vec/(float)right_mass*STEPPING_RATE);
 				rhs->simultaneity_guardian.unlock();
 				
 			};
 			
-			simultaneous_computator.async_pairwise_apply([obrob_grawitacje](const std::list<std::unique_ptr<Celestial_body>>::iterator& ein,const std::list<std::unique_ptr<Celestial_body>>::iterator& zwei) {
-				obrob_grawitacje(ein->get(),zwei->get());
+			simultaneous_computator.async_pairwise_apply([compute_gravity](const std::list<std::unique_ptr<Celestial_body>>::iterator& one,const std::list<std::unique_ptr<Celestial_body>>::iterator& two) {
+				compute_gravity(one->get(),two->get());
 			});
 
-
+			//checks for collisions between pairs of celestial bodies and stores results in a vector
+			//THREAD-SAFE
 			auto detect_collisions = [](std::vector<std::pair<unsigned int,unsigned int>>& detected, std::mutex& detected_mutex,const std::list<std::unique_ptr<Celestial_body>>::iterator lhs,const std::list<std::unique_ptr<Celestial_body>>::iterator rhs)
 			{
 				auto* lhs_ptr = lhs->get();
@@ -162,12 +171,13 @@ void Simulator::tick()
 			std::mutex detected_mutex;
 			std::set<unsigned int> deleted_bodies;
 			
-
+			//pass a bind-expression to simultaneous computator to proper handle references.
 			simultaneous_computator.async_pairwise_apply(std::bind(detect_collisions,std::ref(detected_pairs),std::ref(detected_mutex),std::placeholders::_1,std::placeholders::_2));
 			
 			for(auto& x: detected_pairs) 
 			{
-				if(deleted_bodies.find(x.first)==deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
+				//if neither of the bodies in the current pair of collided bodies were handled before
+				if(deleted_bodies.find(x.first) == deleted_bodies.end() && deleted_bodies.find(x.second)==deleted_bodies.end())
 				{
 					auto father_iterator = iterator_of(x.first);
 					auto mother_iterator = iterator_of(x.second);
@@ -175,7 +185,7 @@ void Simulator::tick()
 					{
 						case collision_approach::merge:
 						{
-							//first, being a father, always gets overwritten by the child. second is to be deleted manually
+							//the second, being a father, always gets overwritten by the child. first (mother) is to be deleted manually
 							Celestial_body* father = father_iterator->release();
 							deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
 							deleted_bodies.insert(x.second);//this one gets deleted too
@@ -192,9 +202,10 @@ void Simulator::tick()
 						}
 						case collision_approach::mixed:
 						{
-							if(mother_iterator->get()->distance_from(*father_iterator->get()) < father_iterator->get()->get_radius() + mother_iterator->get()->get_radius() - overlap_tolerance * std::min(father_iterator->get()->get_radius(),mother_iterator->get()->get_radius())) // distance < sum of radii - overlap_tolerance * smallest radius
+							// if(distance < sum of radii - overlap_tolerance * smallest radius)
+							if(mother_iterator->get()->distance_from(*father_iterator->get()) < father_iterator->get()->get_radius() + mother_iterator->get()->get_radius() - overlap_tolerance * std::min(father_iterator->get()->get_radius(),mother_iterator->get()->get_radius())) 
 							{
-								//first, being a father, always gets overwritten by the child. second is to be deleted manually
+								//the second, being a father, always gets overwritten by the child. the first (mother) is to be deleted manually
 								Celestial_body* father = father_iterator->release();
 								deleted_bodies.insert(x.first); //mark the father as a deleted body because it will be overwritten
 								deleted_bodies.insert(x.second);//this one gets deleted too
@@ -213,7 +224,7 @@ void Simulator::tick()
 				}
 			}
 
-			//set velocity
+			//set locations according to velocities and stepping rate
 			for(auto j=body_list.begin(); j!=body_list.end(); j++)
 			{
 				auto q=j->get();
@@ -332,15 +343,17 @@ std::list<std::vector<sf::Vertex>> Simulator::get_traces()
 
 void Simulator::predict_traces()
 {
-	Simulator przodnik(*this);
+	//to be implemented
+	Simulator future_teller(*this);
 }
 
 Simulator::collision_approach Simulator::cycle_collision_approach()
 {
-	unsigned short u = (unsigned short)ca;
-	u++;
-	if(u>CA_count) u=1;
-	ca = (collision_approach)u;
+	unsigned short temp_ca = (unsigned short)ca; //ca stands for collision approach strategy (enum)
+	temp_ca++;
+	if(temp_ca>CA_count) 
+		temp_ca = 1;
+	ca = (collision_approach)temp_ca;
 	return ca;
 }
 
@@ -360,20 +373,20 @@ Simulator::Simulator(const Simulator &sim)
 simultaneous_computator(body_list)
 {
 	Celestial_body::pushstax();
-	paused=sim.paused;
-	draw_traces=sim.draw_traces;
-	ca=sim.ca;
-	predicted_traces= nullptr;
+	paused = sim.paused;
+	draw_traces = sim.draw_traces;
+	ca = sim.ca;
+	predicted_traces = nullptr;
 	
 	
 	
 	for(auto i=sim.body_list.begin(); i!=sim.body_list.end(); i++)
 	{
-		Celestial_body* bufor = nullptr;
+		Celestial_body* buffer = nullptr;
 		
-		Celestial_body* wsk_stare_cialo = i->get(); 
+		Celestial_body* old_body_ptr = i->get(); 
 		
-		bufor = wsk_stare_cialo->clone(*wsk_stare_cialo); //use RTTI to clone objects with valid type
+		bufor = old_body_ptr->clone(*old_body_ptr); //use RTTI to clone objects with valid type
 		
 		body_list.push_back(std::unique_ptr<Celestial_body>(bufor));
 

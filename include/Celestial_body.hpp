@@ -75,11 +75,14 @@ class Celestial_body :public sf::Drawable
 	static bool change_trace_length(bool); //pass 'true' to increase trace length and 'false' to reduce it. Effectively changes the pace of fading of traces
 	static unsigned int get_trace_length(); //return the coefficient of pace of trace fading
 	
-	static void pushstax(); //manage the stack of states of alloc_diagram. This will let Simulator to make temporary future trace prediction
-	static void popstax(); //manage the stack of states of alloc_diagram. This will let Simulator to make temporary future trace prediction
-	
 	static void set_global_num_of_polygon_sides(unsigned int);
 	void set_num_of_polygon_sides(unsigned int);
-	
+
+	//TO BE REWORKED WHEN NEEDED
+	//consider snapshotting static Celestial_body state for better compatibility with the new ideas
+
+	static void pushstax(); //manage the stack of states of alloc_diagram. This will let Simulator to make temporary future trace prediction
+	static void popstax(); //manage the stack of states of alloc_diagram. This will let Simulator to make temporary future trace prediction
+
 };
 #endif

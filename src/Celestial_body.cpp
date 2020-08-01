@@ -236,8 +236,8 @@ const std::map<unsigned int, unsigned int>& Celestial_body::get_alloc_diagram()
 
 Celestial_body::~Celestial_body()
 {
-	if(parents_traces) delete parents_traces;
-	
+	if(parents_traces) 
+		delete parents_traces;
 }
 
 std::list<std::vector<sf::Vertex>> Celestial_body::get_traces()
@@ -368,7 +368,7 @@ void Celestial_body::delete_traces()
 
 void Celestial_body::bounce_handle(Celestial_body* mother, Celestial_body* father)
 {
-	 // 1. W momencie zderzenia wyznaczamy współrzędne środków zderzających się obiektów i numerujemy te obiekty.
+	 // 1. Fetch parameters of colliding objects
  
     int mother_mass=mother->get_mass();
 	int father_mass=father->get_mass();
@@ -376,42 +376,52 @@ void Celestial_body::bounce_handle(Celestial_body* mother, Celestial_body* fathe
 	sf::Vector2f mother_velocity=mother->get_velocity();
 	sf::Vector2f father_velocity=father->get_velocity();
 	
-	sf::Vector2f loc_m=mother->get_location();
-	sf::Vector2f loc_o=father->get_location();
+	sf::Vector2f mother_location=mother->get_location();
+	sf::Vector2f father_location=father->get_location();
 	
-    // 2. Wyznaczamy wektor r12 różnicy położeń tych ciał.
+    // 2. Compute vectors of difference of coordinates
  
-    sf::Vector2f S1S2 = loc_m-loc_o;
-    sf::Vector2f S2S1 = loc_o-loc_m;
+    sf::Vector2f diff_father_to_mother = mother_location-father_location;
+    sf::Vector2f diff_mother_to_father = father_location-mother_location;
  
-    auto vec_dot_product = [](sf::Vector2f pierwszy, sf::Vector2f drugi) -> float {return (pierwszy.x*drugi.x)+(pierwszy.y*drugi.y);}; //iloczyn skalarny
+	//this does scalar vector multiplication
+    auto inline vec_dot_product = [](const sf::Vector2f& first, const sf::Vector2f& second) -> float 
+	{
+		return (first.x*second.x)+(first.y*second.y);
+	}; 
  
-    auto powered_vec_length = [](sf::Vector2f vec) -> float {return vec.x*vec.x+vec.y*vec.y;}; //długość wektora
+    auto inline squared_vec_length = [](const sf::Vector2f& vec) -> float 
+	{
+		return vec.x*vec.x+vec.y*vec.y;
+	};
 	
-	// 3. Rzutujemy wektor mother_velocity oraz wektor father_velocity na kierunek wektora r12 (można to zrobić bez użycia równania prostej, można wykorzystać własność iloczynu skalarnego, w ten sposób otrzymamy konkretne współrzędne wektora vC1 oraz vc2 (składowych prędkości wzdłuż prostej łączącej środki kul)).
+	//vector projection: project first onto second
+    auto vec_projection = [&](const sf::Vector2f& first,const sf::Vector2f& second) -> sf::Vector2f 
+	{
+		return static_cast<float>(vec_dot_product(first,second)/squared_vec_length(second))*second;
+	}; 
 
-    auto vec_projection = [&](sf::Vector2f pierwszy, sf::Vector2f drugi) -> sf::Vector2f {return static_cast<float>(vec_dot_product(pierwszy,drugi)/powered_vec_length(drugi))*drugi;}; //pierwszy rzucamy na drugi
+	// 3. Project mother and father velocity vectors onto the diff vectors created above 
+
+    //This vector projection computes the velocity along our axis of collision
+    sf::Vector2f mother_velocity_axial = vec_projection(mother_velocity,diff_father_to_mother);
+    sf::Vector2f father_velocity_axial = vec_projection(father_velocity,diff_mother_to_father);
  
+    //4. Compute vectors reflecting velocities perpendicular to the collision axis
  
-    //rzut mother_velocity i father_velocity
-    sf::Vector2f mother_velocityc = vec_projection(mother_velocity,S1S2);
-    sf::Vector2f father_velocityc = vec_projection(father_velocity,S2S1);
+    sf::Vector2f mother_velocity_perpendic = mother_velocity-mother_velocity_axial;
+    sf::Vector2f father_velocity_perpendic = father_velocity-father_velocity_axial;
  
-    //4. Szukamy prostopadłych do tej prostej składowych wektorów mother_velocity i father_velocity, np. poprzez różnicę wektorową: vp1 = mother_velocity - vC1 ; vp2 = father_velocity-vC2.
+	//5. For elastic collisions, parts of velocities aligned along the collision axis behave like a regular central elastic collision
+	
+	//from physical formulas:
+    sf::Vector2f mother_velocity_collision = static_cast<float>((mother_mass-father_mass)/(mother_mass+father_mass))*mother_velocity_axial + static_cast<float>((2*father_mass)/(mother_mass+father_mass))*father_velocity_axial; 
+    sf::Vector2f father_velocity_collision = static_cast<float>((2*mother_mass)/(mother_mass+father_mass))*mother_velocity_axial + static_cast<float>((father_mass-mother_mass)/(mother_mass+father_mass))*father_velocity_axial;
  
-    sf::Vector2f mother_velocityp = mother_velocity-mother_velocityc;
-    sf::Vector2f father_velocityp = father_velocity-father_velocityc;
+    //6. Compute the final vectors after collision:
  
-    //5. Zderzenie sprężyste zachodzi tak, że składowe vC1 i vC2 przetransformują się wg wzorów opisujących zderzenie centralne (które znaleźliście), natomiast składowe vp1 i vp2 pozostaną bez zmian (gdyby kule miały jedynie składowe vp1 i vp2 (tzn mother_velocity = vp1 oraz father_velocity = vp2, to kule jedynie "musnęłyby się" bez zmiany prędkości)).
-    //transformacja mother_velocityc i father_velocityc na U1c i U2c
- 
-    sf::Vector2f U1c = static_cast<float>((mother_mass-father_mass)/(mother_mass+father_mass))*mother_velocityc + static_cast<float>((2*father_mass)/(mother_mass+father_mass))*father_velocityc; //z wzorów na zderzenie centralne sprężyste
-    sf::Vector2f U2c = static_cast<float>((2*mother_mass)/(mother_mass+father_mass))*mother_velocityc + static_cast<float>((father_mass-mother_mass)/(mother_mass+father_mass))*father_velocityc;
- 
-    //6. Wektor prędkości po zderzeniu jest równy u1 = vp1 + uC1  ;  u2 = vp2 + uC2 ; gdzie uC1 i uC2 to przetransformowane wektory vC1 i vC2 wg wzorów opisujących zderzenie sprężyste centralne.
- 
-    mother_velocity = U1c + mother_velocityp;
-	father_velocity = U2c + father_velocityp;
+    mother_velocity = mother_velocity_collision + mother_velocity_perpendic;
+	father_velocity = father_velocity_collision + father_velocity_perpendic;
 
 	mother->set_velocity(mother_velocity);
 	father->set_velocity(father_velocity);
@@ -424,13 +434,13 @@ sf::FloatRect Celestial_body::getGlobalBounds()
 }
 
 
-bool Celestial_body::collision_detection(const Celestial_body& CB1, const Celestial_body& CB2)
+bool Celestial_body::collision_detection(const Celestial_body& lhs, const Celestial_body& rhs)
 {
-	CB1.simultaneity_guardian.lock();
-	auto radius1 = CB1.get_radius();
-	CB1.simultaneity_guardian.unlock();
-	CB2.simultaneity_guardian.lock();
-	auto radius2 = CB2.get_radius();
-	CB2.simultaneity_guardian.unlock();
-	return (CB1.distance_from(CB2)-(radius1+radius2))<=static_cast<float>(0);
+	lhs.simultaneity_guardian.lock();
+	auto radius1 = lhs.get_radius();
+	lhs.simultaneity_guardian.unlock();
+	rhs.simultaneity_guardian.lock();
+	auto radius2 = rhs.get_radius();
+	rhs.simultaneity_guardian.unlock();
+	return (lhs.distance_from(rhs)-(radius1+radius2))<=static_cast<float>(0);
 }

@@ -16,11 +16,12 @@ int main(int argc, char** argv)
 	window_translation translation_state = none;
 	const float translation_constant = 30; 
 
+	//consider config
 	main_window->setFramerateLimit(144);
 	main_window->setVerticalSyncEnabled(true);
-	main_window->setKeyRepeatEnabled(false); //pozwala przyciskom na działanie jako "wciśniętym ciągle" a nie jako serie zdarzeń
+	main_window->setKeyRepeatEnabled(false); //continuous button behavior instead of series of events
 	
-	
+	//Display a "Loading..." screen while loading resources
 	sf::Text status_text(std::string("Loading..."),resources->main_font);
 	status_text.setPosition(main_window->getSize().x/2.f-status_text.getLocalBounds().width/2.f,main_window->getSize().y/2.f-status_text.getLocalBounds().height/2.f); //wycentrowanie napisu
 	main_window->clear(); 
@@ -53,7 +54,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 	
-	
+	//hard-coded celestial bodies displayed at the beginning by default
 	sim.add_body(new Planet(120,{270,270},{-0.6,1.6}));
 	sim.add_body(new Planet(100,{250,250},{-1.2,2.4}));
 	sim.add_body(new Star(8500,{200,200},{0.1,-0.05}));
@@ -61,7 +62,7 @@ int main(int argc, char** argv)
 	sim.add_body(new Planet(150,{4,250},{-0.4,-1.8}));
 	
 	UI_state gui(&sim,main_window);
-	gui.push_hint_text(UI_state::hint_text("Welcome to Grawitacja!",12000));
+	gui.push_hint_text(UI_state::hint_text("Welcome to Gravity!",12000));
 	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
 	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));
 	
@@ -139,7 +140,7 @@ int main(int argc, char** argv)
 					gui.text_entered(ev.text);
 					break;
 				}
-				case sf::Event::KeyPressed: //zdarzenia wcisniecia klawisza
+				case sf::Event::KeyPressed: 
 				{
 					switch(ev.key.code)
 					{
@@ -168,7 +169,7 @@ int main(int argc, char** argv)
 							translation_state = left;
 							break;
 						}
-						case sf::Keyboard::K: //zmniejszenie znikacza
+						case sf::Keyboard::K: //increase trace fading rate
 						{
 							if(!Celestial_body::change_trace_length(false))
 								gui.push_hint_text(UI_state::hint_text("Minimal trace length reached",3000));
@@ -176,7 +177,7 @@ int main(int argc, char** argv)
 								gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
 							break;
 						}
-						case sf::Keyboard::O: //zwiekszenie znikacza
+						case sf::Keyboard::O: //decrease trace fading rate
 						{
 							Celestial_body::change_trace_length(true);
 							gui.push_hint_text(UI_state::hint_text("Trace length factor: "+std::to_string(Celestial_body::get_trace_length()),1500));
@@ -202,7 +203,7 @@ int main(int argc, char** argv)
 					scale_window_canvas();
 					break;
 				}
-				case sf::Event::MouseWheelScrolled:
+				case sf::Event::MouseWheelScrolled: //zoom control
 				{
 					scale *= pow(1.05,ev.mouseWheelScroll.delta);
 					scale_window_canvas();
