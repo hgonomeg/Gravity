@@ -15,9 +15,9 @@ int main(int argc, char** argv)
 	window_translation translation_state = none;
 	const float translation_constant = 30; 
 
-	//consider config
-	main_window->setFramerateLimit(144);
-	main_window->setVerticalSyncEnabled(true);
+	//load configs
+	main_window->setFramerateLimit(resources->configuration.framerate_limit);
+	main_window->setVerticalSyncEnabled(resources->configuration.vsync);
 	main_window->setKeyRepeatEnabled(false); //continuous button behavior instead of series of events
 	
 	//Display a "Loading..." screen while loading resources

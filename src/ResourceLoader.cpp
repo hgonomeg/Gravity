@@ -32,6 +32,8 @@ Resource_Manager::Resource_Manager() noexcept
 	button_speed_plus = button_tex_gen("S+",sf::Color(48,48,142),true);
 	button_speed_minus = button_tex_gen("S-",sf::Color(48,48,142),true);
 	button_debug = button_tex_gen("^[",sf::Color(200,50,200),true);
+
+	configuration = load_configuration();
 }
 
 
@@ -39,5 +41,40 @@ void Resource_Manager::finish_loading()
 {
 	//empty
 	//will load external resources from files in the future
+}
+
+file_config Resource_Manager::load_configuration() {
+	file_config ret; //default constructor fills it with default values
+	if(std::filesystem::exists("Gravity.toml"))
+	{
+		try{
+			auto config = cpptoml::parse_file("Gravity.toml");
+			auto window_config = config->get_table("window");
+			ret.framerate_limit = window_config->get_as<int>("framerate_limit").value_or(ret.framerate_limit); //read from TOML or get the current default value
+			ret.vsync = window_config->get_as<bool>("vsync").value_or(ret.vsync); 
+		}catch(std::exception& e){
+			std::cerr<<"Error reading/parsing toml config file \"Gravity.toml\":\n"<<e.what();
+			return file_config(); //return defaults
+		}
+	}else{ //create a config file for future
+		auto window_config = cpptoml::make_table();
+		window_config->insert("framerate_limit",ret.framerate_limit);
+		window_config->insert("vsync",ret.vsync);
+		auto config = cpptoml::make_table();
+		config->insert("window",window_config);
+
+		std::ofstream config_file;
+		config_file.open("Gravity.toml",std::ios::out);
+		cpptoml::toml_writer writer(config_file);
+		config->accept(writer); //this weird API tells the writer to write the 'config' table
+		config_file.close();
+	}
+
+	return ret;
+}
+
+file_config::file_config() {
+	vsync = true;
+	framerate_limit = 144;
 }
 

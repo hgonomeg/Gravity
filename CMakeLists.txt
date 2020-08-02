@@ -39,6 +39,10 @@ if(GRAVITY_STATIC)
 	endif()
 endif()
 
+if(GCC)
+	target_link_libraries(Gravity stdc++fs)
+endif()
+
 target_link_libraries(Gravity sfml-graphics Threads::Threads)
 
 install(TARGETS Gravity DESTINATION bin)
