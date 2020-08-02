@@ -1,6 +1,6 @@
 # Gravity
 Simplistic, yet fully featured, simulator of gravity between celestial bodies, including stars, planets and asteroids.
-SFML, C++11.
+SFML, C++17.
 
 ## Goals and capabilities of the program
 * Realtime simulation of celestial bodies in a multi-bodied system, including stars, planets and asteroids
