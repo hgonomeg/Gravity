@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 	resources.reset(new Resource_Manager());
 	main_window.reset(new sf::RenderWindow(sf::VideoMode(resources->configuration.x,resources->configuration.y),"Gravity v0.4.0"));
 
-	sf::Vector2f canvas_origin(0,0);
+	sf::Vector2f canvas_origin(resources->configuration.origin_x,resources->configuration.origin_y);
 	float scale = resources->configuration.view_scale; //scale of the "universe" in the context of the real window size
 	window_translation translation_state = none;
 	const float translation_constant = resources->configuration.translation_constant; 

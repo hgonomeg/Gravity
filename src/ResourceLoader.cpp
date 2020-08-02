@@ -57,6 +57,8 @@ file_config Resource_Manager::load_configuration() {
 			ret.view_scale = window_config->get_as<double>("default_view_scale").value_or(ret.view_scale);
 			ret.x = window_config->get_as<unsigned int>("default_width").value_or(ret.x);
 			ret.y = window_config->get_as<unsigned int>("default_height").value_or(ret.y);
+			ret.origin_x = window_config->get_as<double>("origin_x").value_or(ret.origin_x);
+			ret.origin_y = window_config->get_as<double>("origin_y").value_or(ret.origin_y);
 		}catch(std::exception& e){
 			std::cerr<<"Error reading/parsing toml config file \"Gravity.toml\":\n"<<e.what();
 			return file_config(); //return defaults
@@ -70,6 +72,8 @@ file_config Resource_Manager::load_configuration() {
 		window_config->insert("default_view_scale",ret.view_scale);
 		window_config->insert("default_width",ret.x);
 		window_config->insert("default_height",ret.y);
+		window_config->insert("origin_x",ret.origin_x);
+		window_config->insert("origin_y",ret.origin_y);
 		auto config = cpptoml::make_table();
 		config->insert("window",window_config);
 
@@ -91,5 +95,7 @@ file_config::file_config() {
 	view_scale = 1;
 	x = 960;
 	y = 500;
+	origin_x = 0;
+	origin_y = 0;
 }
 
