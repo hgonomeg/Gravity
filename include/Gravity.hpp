@@ -83,12 +83,11 @@ class UI_state :public sf::Drawable
 	int last_ht_winoffset;
 	sf::Text status_text;
 	Simulator* simulator;
-	std::shared_ptr<sf::RenderWindow> target;
 
  	public:
 	
 	~UI_state();
-	UI_state(Simulator*,std::shared_ptr<sf::RenderWindow>);
+	UI_state(Simulator*);
 	
 	bool debug;
 	

@@ -60,7 +60,7 @@ int main(int argc, char** argv)
 	sim.add_body(new Planet(50,{450,5},{0.6,0.9}));
 	sim.add_body(new Planet(150,{4,250},{-0.4,-1.8}));
 	
-	UI_state gui(&sim,main_window);
+	UI_state gui(&sim);
 	gui.push_hint_text(UI_state::hint_text("Welcome to Gravity!",12000));
 	gui.push_hint_text(UI_state::hint_text("Use G (Generator) and S (Selector) to switch between UI tools.",8000));
 	gui.push_hint_text(UI_state::hint_text("For more controls press H",10000));

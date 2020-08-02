@@ -91,7 +91,7 @@ void UI_state::tick()
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
 	{
 		auto why = x->process_height(tmp_ht_h);
-		x->sf_text.setPosition((float)(target->getSize().x/2),(float)(target->getSize().y/2+why));
+		x->sf_text.setPosition((float)(main_window->getSize().x/2),(float)(main_window->getSize().y/2+why));
 		tmp_ht_h+=separ;
 	}
 	if(current_tool) 
@@ -159,7 +159,7 @@ int UI_state::vertoffset_of_last_ht()
 	return hint_texts.size()*20;
 }
 
-UI_state::UI_state(Simulator* sjm,std::shared_ptr<sf::RenderWindow> xt)
+UI_state::UI_state(Simulator* sjm)
 {
 	rendering_finished_time = sysclck::now();
 	last_tick = sysclck::now();
@@ -174,7 +174,6 @@ UI_state::UI_state(Simulator* sjm,std::shared_ptr<sf::RenderWindow> xt)
 	
 	fps = 0;
 	draw_vs_total_time_ratio = 1.f;
-	target = std::move(xt);
 	masterpanel = new UI_masterpanel;
 	masterpanel -> parent = this;
 }
