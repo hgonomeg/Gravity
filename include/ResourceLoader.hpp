@@ -15,6 +15,8 @@
 struct file_config {
 	bool vsync;
 	int framerate_limit;
+	float translation_constant, scroll_multiplier, view_scale;
+	unsigned int x, y;
 	file_config();
 };
 class Resource_Manager
