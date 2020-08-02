@@ -52,9 +52,9 @@ file_config Resource_Manager::load_configuration() {
 			auto window_config = config->get_table("window");
 			ret.framerate_limit = window_config->get_as<int>("framerate_limit").value_or(ret.framerate_limit); //read from TOML or get the current default value
 			ret.vsync = window_config->get_as<bool>("vsync").value_or(ret.vsync); 
-			ret.scroll_multiplier = window_config->get_as<float>("scroll_multiplier").value_or(ret.scroll_multiplier);
-			ret.translation_constant = window_config->get_as<float>("translation_constant").value_or(ret.translation_constant);
-			ret.view_scale = window_config->get_as<float>("default_view_scale").value_or(ret.view_scale);
+			ret.scroll_multiplier = window_config->get_as<double>("scroll_multiplier").value_or(ret.scroll_multiplier);
+			ret.translation_constant = window_config->get_as<double>("translation_constant").value_or(ret.translation_constant);
+			ret.view_scale = window_config->get_as<double>("default_view_scale").value_or(ret.view_scale);
 			ret.x = window_config->get_as<unsigned int>("default_width").value_or(ret.x);
 			ret.y = window_config->get_as<unsigned int>("default_height").value_or(ret.y);
 		}catch(std::exception& e){
