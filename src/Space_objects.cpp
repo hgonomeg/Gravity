@@ -1,7 +1,7 @@
 #include "Space_objects.hpp"
 
-Planet::Planet(int masa_planety,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
-:Celestial_body(masa_planety,sf::Color::Blue,lokacja,predkosc)
+Planet::Planet(int planet_mass,const sf::Vector2f& location,const sf::Vector2f& velocity)
+:Celestial_body(planet_mass,sf::Color::Blue,location,velocity)
 {
 
 
@@ -9,78 +9,78 @@ Planet::Planet(int masa_planety,const sf::Vector2f& lokacja,const sf::Vector2f& 
 
 }
 
-Star::Star(int masa_gwiazdy,const sf::Vector2f& lokacja,const sf::Vector2f& predkosc, bool still)
-:Celestial_body(masa_gwiazdy,sf::Color::Yellow,lokacja,predkosc)
+Star::Star(int star_mass,const sf::Vector2f& location,const sf::Vector2f& velocity, bool still)
+:Celestial_body(star_mass,sf::Color::Yellow,location,velocity)
 {
-	is_still=still;
+	is_still = still;
 
 }
 
-Asteroid::Asteroid(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
-:Celestial_body(1,sf::Color(128,128,128),lokacja,predkosc)
+Asteroid::Asteroid(const sf::Vector2f& location,const sf::Vector2f& velocity)
+:Celestial_body(1,sf::Color(128,128,128),location,velocity)
 {
 	radius = 1.5f;
 	body_sprite.setOrigin(radius,radius);
 	body_sprite.setRadius(radius);
 }
 
-Spaceship::Spaceship(const sf::Vector2f& lokacja,const sf::Vector2f& predkosc)
-:Celestial_body(1,sf::Color::Red,lokacja,predkosc)
+Spaceship::Spaceship(const sf::Vector2f& location,const sf::Vector2f& velocity)
+:Celestial_body(1,sf::Color::Red,location,velocity)
 {
 	trace_color = sf::Color(255,255,128);
 }
 
-Spaceship::Spaceship(const Celestial_body& ee)
-:Celestial_body(ee)
+Spaceship::Spaceship(const Celestial_body& source_body)
+:Celestial_body(source_body)
 {
 	
 }
 
-Star::Star(const Celestial_body& ee)
-:Celestial_body(ee)
+Star::Star(const Celestial_body& source_body)
+:Celestial_body(source_body)
 {
 	
 }
 
-Planet::Planet(const Celestial_body& ee)
-:Celestial_body(ee)
+Planet::Planet(const Celestial_body& source_body)
+:Celestial_body(source_body)
 {
 	
 }
 
-Asteroid::Asteroid(const Celestial_body& ee)
-:Celestial_body(ee)
+Asteroid::Asteroid(const Celestial_body& source_body)
+:Celestial_body(source_body)
 {
 	
 }
 
 
-Celestial_body* Planet::clone(const Celestial_body& ee)
+Celestial_body* Planet::clone(const Celestial_body& source_body)
 {
-	Planet* ret = new Planet(ee);
-	const Planet& yy = dynamic_cast<const Planet&>(ee);
-	ret->planet_type = yy.planet_type;
+	Planet* ret = new Planet(source_body);
+	const Planet& target_type_source = dynamic_cast<const Planet&>(source_body);
+	ret->planet_type = target_type_source.planet_type;
 	return ret;
 }
 
-Celestial_body* Star::clone(const Celestial_body& ee)
+Celestial_body* Star::clone(const Celestial_body& source_body)
 {
-	Star* ret = new Star(ee);
-	const Star& yy = dynamic_cast<const Star&>(ee);
-	ret->star_type = yy.star_type;
+	Star* ret = new Star(source_body);
+	const Star& target_type_source = dynamic_cast<const Star&>(source_body);
+	ret->star_type = target_type_source.star_type;
 	return ret;
 }
 
-Celestial_body* Asteroid::clone(const Celestial_body& ee)
+Celestial_body* Asteroid::clone(const Celestial_body& source_body)
 {
-	Asteroid* ret = new Asteroid(ee);
+	Asteroid* ret = new Asteroid(source_body);
 	return ret;
 }
 
-Celestial_body* Spaceship::clone(const Celestial_body& ee)
+Celestial_body* Spaceship::clone(const Celestial_body& source_body)
 {
-	Spaceship* ret = new Spaceship(ee);
-	const Spaceship& yy = dynamic_cast<const Spaceship&>(ee);
-	ret->fuel = yy.fuel;
+	Spaceship* ret = new Spaceship(source_body);
+	const Spaceship& target_type_source = dynamic_cast<const Spaceship&>(source_body);
+	ret->fuel = target_type_source.fuel;
 	return ret;
 }
