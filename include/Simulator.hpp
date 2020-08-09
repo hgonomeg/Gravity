@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 #include <list>
 #include <math.h>
 #include "Celestial_body.hpp"

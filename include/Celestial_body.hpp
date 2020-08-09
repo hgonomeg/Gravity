@@ -1,6 +1,7 @@
 #ifndef CELESTIAL_BODY_HPP
 #define CELESTIAL_BODY_HPP
 #include <SFML/Graphics.hpp>
+#include <nlohmann/json.hpp>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <vector>
