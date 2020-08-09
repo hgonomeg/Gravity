@@ -1,13 +1,8 @@
+#ifndef WUXING_HPP
+#define WUXING_HPP
 #include "../resources/Arimo-Regular.hpp"
 #include <SFML/Graphics.hpp>
-class wuxing;
-#ifdef EXTERNPLEASE
-extern sf::Font* fona;
-extern wuxing* wu;
-#else
-sf::Font* fona;
-wuxing* wu;
-#endif
+
 #include "unit_base.hpp"
 #include <chrono>
 #include <thread>
@@ -19,9 +14,9 @@ wuxing* wu;
 #define _USE_MATH_DEFINES
 #include <cmath>
 
+inline sf::Font* fona;
+inline wuxing* wu;
 
-#ifndef WUXING_HPP
-#define WUXING_HPP
 
 class linewannabe
 {

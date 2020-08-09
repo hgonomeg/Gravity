@@ -1,4 +1,5 @@
 #include "unit_base.hpp"
+#include "wuxing.hpp"
 
 void node::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {

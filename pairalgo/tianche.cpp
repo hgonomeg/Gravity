@@ -4,7 +4,7 @@
 tianche::tianche(const std::list<node>& nds, wuxing* wx)
 :node_stepper(nds,wx)
 {
-	thds.push_back(std::thread(main_action,this));
+	thds.push_back(std::thread(&tianche::main_action,this));
 }
 
 void tianche::cycle_nodes_iterator(std::list<node>::const_iterator& xe, unsigned int delta)
@@ -51,7 +51,7 @@ void tianche::main_action()
 {
 	for(unsigned int jmpnum=1;(float)jmpnum<=nodes.size()/2.f;jmpnum++)
 	{
-		thds.push_back(std::thread(jump_evaluator,this,jmpnum));
+		thds.push_back(std::thread(&tianche::jump_evaluator,this,jmpnum));
 	}
 	auto kontrolnik = thds.begin(); kontrolnik++;
 	for(;kontrolnik!=thds.end();kontrolnik++) if(kontrolnik->joinable()) kontrolnik->join();

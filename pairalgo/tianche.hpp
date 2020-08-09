@@ -1,6 +1,7 @@
 #ifndef TIANCHE_HPP
 #define TIANCHE_HPP
 #include "unit_base.hpp"
+#include "wuxing.hpp"
 
 #if __cplusplus==201703L
 #include <numeric>

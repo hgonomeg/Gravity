@@ -1,8 +1,13 @@
-class node;
 #ifndef UNIT_BASE_HPP
 #define UNIT_BASE_HPP
-#define EXTERNPLEASE
-#include "wuxing.hpp"
+#include <list>
+#include <SFML/Graphics.hpp>
+#include <vector>
+#include <chrono>
+#include <mutex>
+#include <thread>
+
+class wuxing;
 
 class node :public sf::Drawable
 {
