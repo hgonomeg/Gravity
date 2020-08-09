@@ -46,14 +46,13 @@ Unfortunately only GCC and clang are supported due to my unfamiliarity with MSVC
 * Creating a simple toy which helps to understand how orbital mechanics works.
 * Gaining experience in drawing graphics and managing windows in the SFML library.
 * Getting familiar with Git and GitHub; excercise cooperation.
-* Learning how to optimize
 * Excercise C++ generic programming
 * Optimization via efficient multithreaded programming
 * Gaining some experience with cmake-scripts
 
 ## Implementation notes
 The whole program is based upon the SFML library and its' object-oriented design.
-The main function manages the main window by receiving its' events and passing them further or processing them. The `Simulator` object livies within the scope of the main function. 
+The main function manages the main window by receiving its' events and passing them further or processing them. The `Simulator` object lives within the scope of the main function. 
 Every cycle of refreshing the window calls the `tick()` method on the simulator to push the simulation forward in time.
 
 Simulator holds a list of smart pointers to `Celestial_body` which can store various types of bodies (all of their types inherit from `Celestial_body` which is an abstract class). 
@@ -61,6 +60,7 @@ With current implementation, both collision detection and gravity computation is
 
 User input is processed by a separate GUI object (an instance of `UI_state`). 
 GUI handles mouse and keyboard events and manages its' internal state of widgets called "tools" (eg. celestial body generator, celestial body selector).
+All GUI widgets were implemented manually for the purpose of this project and their layout is hard-coded for the sake of simplicity.
 ## Current completion status
 * `Celestial_body` is implemented
 * Both `Planet` and `Star` are drafted for further expansion
@@ -72,9 +72,9 @@ GUI handles mouse and keyboard events and manages its' internal state of widgets
 	* GUI has buttons with procedurally-generated textures
 	* `CB_selector` can select and delete celestial bodies
 	* `CB_gen` can add multiple kinds of celestial bodies
-* Window refresh cycle (with rendering)
+* Window rendering
 	* Every celestial body is drawn separately
-	* Evert celestial body leaves a white trace of its' orbit. The lifetime of the trace can be altered
+	* Every celestial body leaves a white trace of its' orbit. The lifetime of the trace can be altered
 	* Orbital traces can be switched off or deleted
 * The simulation works
 	* The code that computes gravity is considered stable
@@ -88,20 +88,20 @@ GUI handles mouse and keyboard events and manages its' internal state of widgets
 * Celestial body track prediction
 * Further improve `CB_selector`, `CB_gen` and `UI_masterpanel`
 	* More key-bindings
-	* Implement a `Textbox` to enter numbers like a celestial body's mass
+	* Utilize the `Textbox` to enter numbers like a celestial body's mass
 	* Add dedicated buttons to choose between the types of celestial bodies
-	* Implement edition of celestial bodies
+	* Implement edition of celestial bodies (eg. properties like mass, velocity etc.)
 	* Print more data in the debug mode
 * Implement loading textures in the global resources manager
 * Design and implement maneuverable spaceship mode
-* Tracing celestial bodies with the camera
+* Implement tracing celestial bodies with the camera
 * Read/Save the simulator state via a dedicated XML/JSON module
 * Quick-saves and restores of the simulator state
 * Optimize rendering
 ## Wuxing
 In the `pairalgo` folder, there is a little animation engine called Wuxing. It visualizes how individual-unique-pair iteration algorithms work. It was written to serve as a helper in designing efficient algorithms for calculating the force of gravity between every unique pair of celestial bodies.
 
-It helped in developing the Tianche algorithm.
+It helped in developing the Tianche and Gongshi algorithms.
 
 
 ## To consider
