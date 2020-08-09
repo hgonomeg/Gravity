@@ -10,8 +10,9 @@
 
 class Resource_Manager
 {
-	public:
+ public:
 	
+	const int ui_font_size; //does not include buttons
 	sf::Font main_font;
 	
 	//procedural textures

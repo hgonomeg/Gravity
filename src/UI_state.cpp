@@ -1,5 +1,7 @@
 #include "Gravity.hpp"
 
+const int UI_state::hint_text_separation = 20;
+
 void UI_tool::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
 	//meant to be empty
@@ -39,14 +41,15 @@ void UI_state::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 		{
 			if(dynamic_cast<CB_selector*>(current_tool)==nullptr)
 			{
-			push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current_toolent selection.",1500));
-			switch_tool(new CB_selector);
+				push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current_toolent selection.",1500));
+				switch_tool(new CB_selector);
 			}
 			break;
 		}
 	}
 	masterpanel -> keyboard_button_pressed(ev);
-	if(current_tool) current_tool->keyboard_button_pressed(ev);
+	if(current_tool) 
+		current_tool->keyboard_button_pressed(ev);
 	
 }
 
@@ -60,43 +63,49 @@ void UI_state::notify_rendered()
 
 void UI_state::tick()
 {
-	const int separ = 20;
-	int tmp_ht_h = last_ht_winoffset;
-	int orto_ht_h = [this](){
-		int orto = (int)((-1.f)*(float)separ*(float)hint_texts.size()/2.f);
-		return orto;
-		
-	}();
-	if(last_ht_winoffset!=orto_ht_h)
-	{
-		auto sgn = [](int a)->int{return a>=0? 1 : -1;};
-		int diff = orto_ht_h - last_ht_winoffset;
-		last_ht_winoffset+=cbrt(diff);
-	}
+	//process disappearing texts
 	for(auto x=hint_texts.begin();x!=hint_texts.end();)
 	{
-		 if(x->should_fade())
-		 {
-			if(x->sf_text.getFillColor().a==0) x=hint_texts.erase(x);
-			else
+		if(!x->should_fade())
+			x++; //just skip it
+		else
+		{
+			if(x->sf_text.getFillColor().a == 0) //if completely transparent
 			{
-				auto col = x->sf_text.getFillColor();
-				col.a--;
-				x->sf_text.setFillColor(col);
-				x++;
+				//sets iterator to the element after the one getting erased
+				x = hint_texts.erase(x); 
 			}
-		 }
-		 else x++;
+			else //dim the current hint text
+			{
+				auto color = x->sf_text.getFillColor();
+				color.a--;
+				x->sf_text.setFillColor(color);
+				x++; //advance
+			}
+		}
 	}
+
+	int tmp_ht_h = last_ht_winoffset;
+	int desired_height = (-1.f)*(float)hint_text_separation*hint_texts.size()/2.f;
+	if(last_ht_winoffset != desired_height)
+	{
+		int diff = desired_height - last_ht_winoffset;
+		last_ht_winoffset += cbrt(diff);
+	}
+	
 	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
 	{
-		auto why = x->process_height(tmp_ht_h);
-		x->sf_text.setPosition((float)(main_window->getSize().x/2),(float)(main_window->getSize().y/2+why));
-		tmp_ht_h+=separ;
+		auto y_offset = x->process_vertical_postion(tmp_ht_h);
+		x->sf_text.setPosition( (main_window->getSize().x/2.f), //x: window center
+								(main_window->getSize().y/2.f+y_offset)); //y: center + offset
+		tmp_ht_h+=hint_text_separation;
 	}
+	//propagate tick
 	if(current_tool) 
 		current_tool->tick();
 	masterpanel -> tick();
+
+	//timings and clocks
 	std::chrono::microseconds interval = std::chrono::duration_cast<std::chrono::microseconds>(sysclck::now() - last_tick);
 	fps = (int)(1/((double)interval.count()/(double)1000000));
 	set_status_text();
@@ -105,75 +114,86 @@ void UI_state::tick()
 
 void UI_state::push_hint_text(hint_text&& x)
 {
-	x.last_vertoffset = vertoffset_of_last_ht()+20;
+	x.vertical_offset = vertical_offset_of_last_hint_text()+hint_text_separation;
 	hint_texts.push_back(std::forward<hint_text>(x));
 }
 
 void UI_state::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 {
-	auto pkp = tgt.getView();
-	tgt.setView(sf::View({(float)tgt.getSize().x/2.f,(float)tgt.getSize().y/2.f},{(float)tgt.getSize().x,(float)tgt.getSize().y}));
+	auto original_view = tgt.getView();
+	tgt.setView(sf::View( //set a view that will play nicely with rendering of immovable GUI components
+						{ //vector of center
+						 (float)tgt.getSize().x/2.f,
+						 (float)tgt.getSize().y/2.f
+						},
+						{ //viewport size
+					 	 (float)tgt.getSize().x,
+						 (float)tgt.getSize().y
+						}));
 	if(current_tool) 
 		current_tool->draw(tgt,st);
 	masterpanel->draw(tgt,st);
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++) 
+	for(const auto& x: hint_texts) 
 	{
-		tgt.draw(x->sf_text,st);
+		tgt.draw(x.sf_text,st);
 	}
 	tgt.draw(status_text,st);
-	tgt.setView(pkp);
+	tgt.setView(original_view);
 }
 
-UI_state::hint_text::hint_text(const std::string& tr,unsigned int mss)
+UI_state::hint_text::hint_text(const std::string& text,unsigned int lifetime_ms)
 {
 	init_time = sysclck::now();
-	display_time = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(mss));
+	display_time = std::chrono::duration_cast<sysclck::duration>(std::chrono::milliseconds(lifetime_ms));
 	sf_text.setFont(resources->main_font);
-	sf_text.setString(tr);
-	sf_text.setCharacterSize(15);
+	sf_text.setString(text);
+	sf_text.setCharacterSize(resources->ui_font_size);
 	sf_text.setFillColor(sf::Color(0,255,0,200));
 	sf_text.setStyle(sf::Text::Regular);
 	sf_text.setOutlineThickness(0);
+	//set origin to its' geometrical center
 	sf_text.setOrigin(sf_text.getLocalBounds().width/2.f,sf_text.getLocalBounds().height/2.f);
 }
 bool UI_state::hint_text::should_fade()
 {
+	//desired display time < the time for which it currently appears on the screen
 	return display_time<(sysclck::now() - init_time);
 }
 
-int UI_state::hint_text::process_height(int orto)
+int UI_state::hint_text::process_vertical_postion(int desired_offset)
 {
-	auto lv = last_vertoffset;
-	if(last_vertoffset!=orto)
+	auto original_offset = vertical_offset;
+	if(vertical_offset != desired_offset)
 	{
-		auto sgn = [](int a)->int{return a>=0? 1 : -1;};
-		int diff = orto - last_vertoffset;
-		last_vertoffset+=cbrt(diff);
+		int diff = desired_offset - vertical_offset;
+		//this makes the animations look nice
+		vertical_offset += cbrt(diff);
 	}
-	return lv;
+	return original_offset;
 }
 
-int UI_state::vertoffset_of_last_ht()
+int UI_state::vertical_offset_of_last_hint_text() const
 {
-	if(hint_texts.size()==0) return 0;
-	return hint_texts.size()*20;
+	if(hint_texts.size()==0) 
+		return 0;
+	return hint_texts.back().vertical_offset;
 }
 
-UI_state::UI_state(Simulator* sjm)
+UI_state::UI_state(Simulator* sim)
 {
 	rendering_finished_time = sysclck::now();
 	last_tick = sysclck::now();
 	status_text.setFont(resources->main_font);
-	status_text.setCharacterSize(15);
-	status_text.setPosition(5.f,5.f);
+	status_text.setCharacterSize(resources->ui_font_size);
+	status_text.setPosition(5.f,5.f); //realtive to window corner
 	debug = false;
 	current_tool = nullptr;
-	simulator = sjm;
+	simulator = sim;
 	switch_tool(new CB_gen);
 	last_ht_winoffset = 0;
 	
-	fps = 0;
-	draw_vs_total_time_ratio = 1.f;
+	fps = 0; //just to initialize
+	draw_vs_total_time_ratio = 1.f; //just to initialize
 	masterpanel = new UI_masterpanel;
 	masterpanel -> parent = this;
 }
@@ -206,7 +226,7 @@ void UI_state::switch_tool(UI_tool* ut)
 void UI_state::set_status_text()
 {
 	std::stringstream tmp;
-	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<simulator->size()<<"  current_toolent tool: "<<current_tool->name();
+	tmp<<std::setprecision(2)<<"FPS: "<<fps<<" Draw time vs total: "<<std::fixed<<draw_vs_total_time_ratio*100.f<<std::defaultfloat<<"\%  Accuracy: "<<Simulator::get_accuracy()<<"  Sim. rate: "<<Simulator::get_rate()<<"  Body count: "<<simulator->size()<<"  current tool: "<<current_tool->name();
 	status_text.setString(tmp.str());
 }
 

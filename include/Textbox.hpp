@@ -8,21 +8,23 @@ class Textbox :public sf::Drawable
 {
 	sf::RectangleShape frame;
 	sf::Text contents;
-	bool backspace_pushed;
+	bool backspace_pushed, active_state;
 	std::function<bool(char)> charfilter;
-	bool active_state;
-	public:
+
+ public:
 	Textbox();
 	Textbox(const std::function<bool(char)>);
 	Textbox(const std::string&);
 	Textbox(const std::function<bool(char)>, const std::string&);
+
 	void setContent(const std::string&);
 	std::string getContent() const;
 	void clear();
+
 	bool mouse_button_pressed(sf::Event::MouseButtonEvent&);
 	void keyboard_button_pressed(sf::Event::KeyEvent&); //scan backspace
 	void text_entered(sf::Event::TextEvent&);
-	std::string getContent();
+
 	void setFilter(const std::function<bool(char)>&);
 	virtual void draw(sf::RenderTarget&,sf::RenderStates) const override;
 	void setFillColor(const sf::Color&);

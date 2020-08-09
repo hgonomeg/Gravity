@@ -106,7 +106,7 @@ void CB_selector::pop_body()
 }
 
 CB_selector::CB_selector()
-:inscription("Current selection: ",resources->main_font,15)
+:inscription("Current selection: ",resources->main_font,resources->ui_font_size)
 {
 	current_pick = nullptr;
 	pick_id = 0;
@@ -128,7 +128,9 @@ void CB_selector::tick()
 		tmp<<" Mass: "<<current_pick->get_mass();
 	}
 	else tmp<<"None";
+	int x_offset = 5;
 	inscription.setString(tmp.str());
-	inscription.setPosition(5,main_window->getSize().y - 25);
+	inscription.setPosition(x_offset,
+							main_window->getSize().y - 25); //25 px from the bottom of the window
 }
 

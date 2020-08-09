@@ -11,19 +11,79 @@ const std::string& UI_masterpanel::name()
 
 bool UI_masterpanel::mouse_button_pressed(sf::Event::MouseButtonEvent& ev)
 {
-	bool bu=false;
-	if(b_gen.mouse_button_pressed(ev)) {bu=true; if(dynamic_cast<const CB_gen*>(parent->get_current_tool())==nullptr) {parent->switch_tool(new CB_gen); parent->push_hint_text(UI_state::hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars",1500));}}
-	if(b_sel.mouse_button_pressed(ev)) {bu=true; if(dynamic_cast<const CB_selector*>(parent->get_current_tool())==nullptr) {parent->switch_tool(new CB_selector); parent->push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));}}
-	if(b_traces.mouse_button_pressed(ev)) {bu=true; parent->get_simulator()->toggle_traces();}
-	if(b_collision.mouse_button_pressed(ev)) {bu=true; collision_cycle();}
-	if(b_deltraces.mouse_button_pressed(ev)) {bu=true; parent->get_simulator()->delete_traces(); }
-	if(b_predtraces.mouse_button_pressed(ev)) {bu=true; parent->get_simulator()->predict_traces(); parent->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));}
-	if(b_accuracy_plus.mouse_button_pressed(ev)) {bu=true; Simulator::change_accuracy(true);}
-	if(b_accuracy_minus.mouse_button_pressed(ev)) {bu=true; Simulator::change_accuracy(false);}
-	if(b_speed_plus.mouse_button_pressed(ev)) {bu=true; Simulator::change_rate(true);}
-	if(b_speed_minus.mouse_button_pressed(ev)) {bu=true; if(!Simulator::change_rate(false)) parent->push_hint_text(UI_state::hint_text("Minimal simulation rate has been reached!",3000));}
-	if(b_debug.mouse_button_pressed(ev)) {bu=true; parent->debug=!parent->debug; b_debug.show(parent->debug); if(parent->debug) parent->push_hint_text(UI_state::hint_text("Debug mode ON",3000)); else parent->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));}
-	return bu;
+	//check all buttons if they were clicked; if so do necessary actions
+	//return whether any button was clicked.
+	if(b_gen.mouse_button_pressed(ev)) 
+	{
+		if(dynamic_cast<const CB_gen*>(parent->get_current_tool())==nullptr) 
+		{
+			parent->switch_tool(new CB_gen); 
+			parent->push_hint_text(UI_state::hint_text("Celestial body generator: Click and swipe to create celestial bodies. Use M to switch between creating planets and stars", 1500));
+		}
+		return true;
+	}
+	if(b_sel.mouse_button_pressed(ev)) 
+	{
+		if(dynamic_cast<const CB_selector*>(parent->get_current_tool())==nullptr)
+		{
+			parent->switch_tool(new CB_selector); 
+			parent->push_hint_text(UI_state::hint_text("Celestial body selector: Use E (or X) to edit (or remove) your current selection.",1500));
+		}
+		return true;
+	}
+	if(b_traces.mouse_button_pressed(ev)) 
+	{
+		parent->get_simulator()->toggle_traces();
+		return true;
+	}
+	if(b_collision.mouse_button_pressed(ev)) 
+	{
+		collision_cycle();
+		return true;
+	}
+	if(b_deltraces.mouse_button_pressed(ev)) 
+	{
+		parent->get_simulator()->delete_traces(); 
+		return true;
+	}
+	if(b_predtraces.mouse_button_pressed(ev)) 
+	{
+		parent->get_simulator()->predict_traces(); 
+		parent->push_hint_text(UI_state::hint_text("Feature currently unimplemented!",3000));
+		return true;
+	}
+	if(b_accuracy_plus.mouse_button_pressed(ev)) 
+	{
+		Simulator::change_accuracy(true);
+		return true;
+	}
+	if(b_accuracy_minus.mouse_button_pressed(ev)) 
+	{
+		Simulator::change_accuracy(false);
+		return true;
+	}
+	if(b_speed_plus.mouse_button_pressed(ev)) 
+	{
+		Simulator::change_rate(true);
+		return true;
+	}
+	if(b_speed_minus.mouse_button_pressed(ev)) 
+	{
+		if(!Simulator::change_rate(false)) 
+			parent->push_hint_text(UI_state::hint_text("Minimal simulation rate has been reached!",3000));
+		return true;
+	}
+	if(b_debug.mouse_button_pressed(ev)) 
+	{
+		parent->debug = !parent->debug; 
+		b_debug.show(parent->debug); 
+		if(parent->debug) 
+			parent->push_hint_text(UI_state::hint_text("Debug mode ON",3000)); 
+		else 
+			parent->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));
+		return true;
+	}
+	return false;
 }
 void UI_masterpanel::mouse_button_released(sf::Event::MouseButtonEvent& ev)
 {
@@ -36,7 +96,7 @@ void UI_masterpanel::text_entered(sf::Event::TextEvent& ev)
 
 void UI_masterpanel::collision_cycle()
 {
-	Simulator::collision_approach pi =  parent->get_simulator()->cycle_collision_approach();
+	Simulator::collision_approach pi = parent->get_simulator()->cycle_collision_approach();
 	switch(pi)
 	{
 		case Simulator::collision_approach::merge:
@@ -156,10 +216,12 @@ void UI_masterpanel::keyboard_button_pressed(sf::Event::KeyEvent& ev)
 		{
 			if(ev.control) 
 			{
-				parent->debug=!parent->debug;
+				parent->debug = !parent->debug;
 				b_debug.show(parent->debug);
-				if(parent->debug) parent->push_hint_text(UI_state::hint_text("Debug mode ON",3000));
-				else parent->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));
+				if(parent->debug) 
+					parent->push_hint_text(UI_state::hint_text("Debug mode ON",3000));
+				else 
+					parent->push_hint_text(UI_state::hint_text("Debug mode OFF",3000));
 			}
 			else 
 				quality_cycle();
@@ -224,17 +286,35 @@ b_speed_minus(resources->button_speed_minus),
 b_debug(resources->button_debug)
 {
 	b_debug.show(false);
+
 	float x_offset = 5;
+	float y_offset = 30;
 	quality = rendering_quality::ultra;
-	b_gen.setPosition({x_offset,30}); x_offset+=20.f;
-	b_sel.setPosition({x_offset,30}); x_offset+=40.f;
-	b_traces.setPosition({x_offset,30}); x_offset+=20.f;
-	b_collision.setPosition({x_offset,30}); x_offset+=20.f;
-	b_deltraces.setPosition({x_offset,30}); x_offset+=20.f;
-	b_predtraces.setPosition({x_offset,30}); x_offset+=40.f;
-	b_accuracy_plus.setPosition({x_offset,30}); x_offset+=20.f;
-	b_accuracy_minus.setPosition({x_offset,30}); x_offset+=20.f;
-	b_speed_plus.setPosition({x_offset,30}); x_offset+=20.f;
-	b_speed_minus.setPosition({x_offset,30}); x_offset+=40.f;
-	b_debug.setPosition({x_offset,30}); x_offset+=20.f;
+
+	//UI tools buttons
+	b_gen.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_sel.setPosition({x_offset,y_offset}); 
+	//traces and collision handling buttons
+	x_offset+=40.f;
+	b_traces.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_collision.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_deltraces.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_predtraces.setPosition({x_offset,y_offset}); 
+	//accuracy and speed group
+	x_offset+=40.f;
+	b_accuracy_plus.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_accuracy_minus.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_speed_plus.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
+	b_speed_minus.setPosition({x_offset,y_offset}); 
+	//debug button
+	x_offset+=40.f;
+	b_debug.setPosition({x_offset,y_offset}); 
+	x_offset+=20.f;
 }

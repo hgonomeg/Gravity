@@ -36,10 +36,10 @@ class UI_state; //the base class to process and store the whole GUI
 class UI_tool :public sf::Drawable //abstract class to describe states of the UI (UI tools), contain interactive elements and respond to events
 {
 	friend class UI_state;
-	protected:
+ protected:
 	UI_state* parent;
 
-	public:
+ public:
 	
 	virtual const std::string& name() = 0;
 	virtual bool mouse_button_pressed(sf::Event::MouseButtonEvent&) = 0;
@@ -55,21 +55,25 @@ class UI_masterpanel; //it will inherit from UI_tool
 class UI_state :public sf::Drawable 
 {
 	using sysclck = std::chrono::high_resolution_clock;
-	public:
+ public: //public types
 	class hint_text
 	{
-		sysclck::duration display_time;
-		sysclck::time_point init_time;
+		sysclck::duration display_time; //the time duration for which the text should be displayed
+		sysclck::time_point init_time; //time when the object was created; used to measure time
 		
 		public:
-		int last_vertoffset; //offset important for animations
+		int vertical_offset; //last frame's hint text vertical offset (important for animations)
 		sf::Text sf_text;
-		hint_text(const std::string&,unsigned int); //content and lifetime in milliseconds
-		bool should_fade();
-		int process_height(int);
+		hint_text(const std::string& content,unsigned int lifetime_ms); 
+		bool should_fade(); //returns true when the hint text has expired and should fade to black
+		
+		//moves the object so that we get a nice animation of texts sliding into their positions
+		//returns initial vertical_offset
+		int process_vertical_postion(int desired_vertical_offset); 
 	};
-	private:
+ private:
 	
+	static const int hint_text_separation;
 	sysclck::time_point last_tick;
 	sysclck::time_point rendering_finished_time;
 	int fps;
@@ -84,12 +88,12 @@ class UI_state :public sf::Drawable
 	sf::Text status_text;
 	Simulator* simulator;
 
- 	public:
+ public:
 	
 	~UI_state();
 	UI_state(Simulator*);
 	
-	bool debug;
+	bool debug; //debug mode flag
 	
 	virtual void draw(sf::RenderTarget& tgt,sf::RenderStates st) const override;
 	void switch_tool(UI_tool*); //switch the current UI_tool
@@ -100,7 +104,8 @@ class UI_state :public sf::Drawable
 	void push_hint_text(hint_text&&);
 	void tick(); //animate visual components
 	void notify_rendered(); //read time from clocks to calculate timing
-	int vertoffset_of_last_ht();
+	int vertical_offset_of_last_hint_text() const; //utility: new hint texts need to appear below the last one
+	
 	Simulator* get_simulator();
 	const UI_tool* get_current_tool();
 };
@@ -110,7 +115,7 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	Planet::planetry_classification temp_planet;
 	Star::stellar_classification temp_star; 
 	sf::Text inscription;
-	Button b_mode; //the button that changes the type of  the celestial body
+	Button b_mode; //the button that changes the type of the celestial body
 	enum class cb_type :unsigned short
 	{
 		Planet,
@@ -124,12 +129,12 @@ class CB_gen :public UI_tool //Celestial_body_gen
 	sf::Vector2f rel_init_pos; //first click position (celestial body creation)
 	sf::Vector2f rel_end_pos; //last click position (celestial body creation)
 	void add_body();
-	void cycle_type();
+	void cycle_type(); //cycle between celeastial body types
 	unsigned int last_body; //ID of thelast body that was created
 	bool was_removed; //if the most recently created body got removed
-	protected:
-	
-	public:
+
+ public:
+
 	static const std::string tool_name;
 	virtual const std::string& name() override;
 	CB_gen();
@@ -149,9 +154,8 @@ class CB_selector :public UI_tool //Responsible for displaying information about
 	bool verify_body();
 	void pop_body();
 	sf::Text inscription;
-	protected:
-	
-	public:
+
+ public:
 	static const std::string tool_name;
 	virtual const std::string& name() override;
 	CB_selector();
@@ -165,6 +169,7 @@ class CB_selector :public UI_tool //Responsible for displaying information about
 
 class UI_masterpanel :public UI_tool //The main tool that is always shown in the interface. The main panel
 {
+	//todo: store buttons in a container for more convenient and less tedious management
 	Button b_gen; //choose CB generator
 	Button b_sel; //chose CB selector
 	Button b_traces; //toggle traces
@@ -177,11 +182,10 @@ class UI_masterpanel :public UI_tool //The main tool that is always shown in the
 	Button b_speed_minus;
 	Button b_debug; //the hidden debug mode
 	rendering_quality quality;
-	void collision_cycle();
-	void quality_cycle();
-	protected:
-	
-	public:
+	void collision_cycle(); //cycle between collision handling approaches
+	void quality_cycle(); //cycle between rendering qualities
+
+ public:
   
 	static const std::string tool_name;
 	virtual const std::string& name() override;

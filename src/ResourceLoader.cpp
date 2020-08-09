@@ -1,6 +1,7 @@
 #include "ResourceLoader.hpp"
 
 Resource_Manager::Resource_Manager() noexcept
+:ui_font_size(15)
 {	
 	main_font.loadFromMemory(arimo.data,arimo.size);
 

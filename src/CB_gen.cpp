@@ -135,7 +135,8 @@ void CB_gen::draw(sf::RenderTarget& tgt,sf::RenderStates st) const
 void CB_gen::add_body()
 {
 	Celestial_body* neu;
-	sf::Vector2f vel = (rel_init_pos-rel_end_pos)*0.01f;
+	float velocity_multiplier = 0.01f; //consider configuration
+	sf::Vector2f vel = (rel_init_pos-rel_end_pos)*velocity_multiplier;
 	switch(currently_picked)
 	{
 		case cb_type::Planet:
@@ -167,7 +168,7 @@ void CB_gen::add_body()
 }
 
 CB_gen::CB_gen()
-:inscription("NULL",resources->main_font,15),
+:inscription("NULL",resources->main_font,resources->ui_font_size),
  b_mode(resources->button_gen_mode)
 {
 	last_body = 0;
@@ -210,9 +211,12 @@ void CB_gen::tick()
 	}
 	tmp<<" Mass: "<<current_mass; //to rework
 	inscription.setString(tmp.str());
-	int offset = 5;
+	int x_offset = 5;
 	b_mode.tick();
-	b_mode.setPosition({static_cast<float>(offset),static_cast<float>(main_window->getSize().y - 25)}); offset += 20;
-	inscription.setPosition(static_cast<float>(offset),static_cast<float>(main_window->getSize().y - 25));
+	b_mode.setPosition({static_cast<float>(x_offset),
+					    static_cast<float>(main_window->getSize().y - 25)}); //25px from the bottom of the window
+	x_offset += 20; //separation between b_mode and inscriptions
+	inscription.setPosition(static_cast<float>(x_offset),
+							static_cast<float>(main_window->getSize().y - 25)); //25px from the bottom of the window
 	
 }
