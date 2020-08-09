@@ -5,9 +5,20 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <cpptoml.h>
+#include <fstream>
+#include <iostream>
+#include <filesystem>
 
 #define RESOURCE_LOADER_HPP
 
+struct file_config {
+	bool vsync;
+	int framerate_limit;
+	float translation_constant, scroll_multiplier, view_scale, origin_x, origin_y;
+	unsigned int x, y;
+	file_config();
+};
 class Resource_Manager
 {
  public:
@@ -31,8 +42,11 @@ class Resource_Manager
 	sf::Texture button_speed_minus;
 	sf::Texture button_debug;
 
+	file_config configuration;
+
 	Resource_Manager() noexcept; //loads essentials like the font and procedurally generated textures and won't fail
 	void finish_loading(); //may fail if resources are missing
+	file_config load_configuration(); //manages config files (loads or creates)
 	
 };
 

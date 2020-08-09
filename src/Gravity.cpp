@@ -8,16 +8,17 @@ int main(int argc, char** argv)
 	Simulator sim;
 	
 	resources.reset(new Resource_Manager());
-	main_window.reset(new sf::RenderWindow(sf::VideoMode(960,500),"Gravity v0.4.0"));
+	main_window.reset(new sf::RenderWindow(sf::VideoMode(resources->configuration.x,resources->configuration.y),"Gravity v0.4.0"));
 
-	sf::Vector2f canvas_origin(0,0);
-	float scale = 1; //scale of the "universe" in the context of the real window size
+	sf::Vector2f canvas_origin(resources->configuration.origin_x,resources->configuration.origin_y);
+	float scale = resources->configuration.view_scale; //scale of the "universe" in the context of the real window size
 	window_translation translation_state = none;
-	const float translation_constant = 30; 
+	const float translation_constant = resources->configuration.translation_constant; 
+	const float scroll_multiplier = resources->configuration.scroll_multiplier;
 
-	//consider config
-	main_window->setFramerateLimit(144);
-	main_window->setVerticalSyncEnabled(true);
+	//load configs
+	main_window->setFramerateLimit(resources->configuration.framerate_limit);
+	main_window->setVerticalSyncEnabled(resources->configuration.vsync);
 	main_window->setKeyRepeatEnabled(false); //continuous button behavior instead of series of events
 	
 	//Display a "Loading..." screen while loading resources
@@ -201,7 +202,7 @@ int main(int argc, char** argv)
 				}
 				case sf::Event::MouseWheelScrolled: //zoom control
 				{
-					scale *= pow(1.05,ev.mouseWheelScroll.delta);
+					scale *= pow(scroll_multiplier,ev.mouseWheelScroll.delta);
 					scale_window_canvas();
 					break;
 				}

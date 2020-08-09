@@ -5,6 +5,9 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
+
+find_package(cpptoml 0.4.0 REQUIRED)
+
 project(Gravity)
 
 set(CMAKE_CXX_STANDARD 17)
@@ -37,6 +40,10 @@ if(GRAVITY_STATIC)
 		set(CMAKE_EXE_LINKER_FLAGS ${CMAKE_EXE_LINKER_FLAGS} -static)
 		add_definitions(-DSFML_STATIC)
 	endif()
+endif()
+
+if(GCC)
+	target_link_libraries(Gravity stdc++fs)
 endif()
 
 target_link_libraries(Gravity sfml-graphics Threads::Threads)
