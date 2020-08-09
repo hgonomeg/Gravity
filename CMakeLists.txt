@@ -25,6 +25,8 @@ include_directories(${SFML_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_SOURCE_DIR})
 
+option(BUILD_WUXING "Should the Wuxing subproject be built?" FALSE)
+
 file(GLOB LIST_OF_CPP ${PROJECT_SOURCE_DIR}/src/*.cpp)
 
 add_executable(Gravity ${LIST_OF_CPP})
@@ -42,3 +44,10 @@ endif()
 target_link_libraries(Gravity sfml-graphics Threads::Threads)
 
 install(TARGETS Gravity DESTINATION bin)
+
+if(BUILD_WUXING)
+	file(GLOB WUXING_CPP ${PROJECT_SOURCE_DIR}/pairalgo/*.cpp)
+	include_directories(${PROJECT_SOURCE_DIR}/pairalgo)
+	add_executable(Wuxing ${WUXING_CPP})
+	target_link_libraries(Wuxing sfml-graphics Threads::Threads)
+endif()
