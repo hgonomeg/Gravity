@@ -5,6 +5,9 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 find_package(Threads REQUIRED)
 
 find_package(SFML 2.5 COMPONENTS graphics REQUIRED)
+
+find_package(cpptoml 0.4.0 REQUIRED)
+
 project(Gravity)
 
 set(CMAKE_CXX_STANDARD 17)
