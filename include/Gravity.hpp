@@ -84,7 +84,6 @@ class UI_state :public sf::Drawable
 	std::list<hint_text> hint_texts;
 	UI_tool* current_tool; 
 	UI_masterpanel* masterpanel; //masterpanel is a UI_tool that is always displayed because it is the foundation of the UI
-	int last_ht_winoffset;
 	sf::Text status_text;
 	Simulator* simulator;
 

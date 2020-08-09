@@ -85,20 +85,14 @@ void UI_state::tick()
 		}
 	}
 
-	int tmp_ht_h = last_ht_winoffset;
+	//animate hint text positions
 	int desired_height = (-1.f)*(float)hint_text_separation*hint_texts.size()/2.f;
-	if(last_ht_winoffset != desired_height)
+	for(auto &x: hint_texts)
 	{
-		int diff = desired_height - last_ht_winoffset;
-		last_ht_winoffset += cbrt(diff);
-	}
-	
-	for(auto x=hint_texts.begin();x!=hint_texts.end();x++)
-	{
-		auto y_offset = x->process_vertical_postion(tmp_ht_h);
-		x->sf_text.setPosition( (main_window->getSize().x/2.f), //x: window center
+		auto y_offset = x.process_vertical_postion(desired_height);
+		x.sf_text.setPosition( (main_window->getSize().x/2.f), //x: window center
 								(main_window->getSize().y/2.f+y_offset)); //y: center + offset
-		tmp_ht_h+=hint_text_separation;
+		desired_height += hint_text_separation;
 	}
 	//propagate tick
 	if(current_tool) 
@@ -190,7 +184,6 @@ UI_state::UI_state(Simulator* sim)
 	current_tool = nullptr;
 	simulator = sim;
 	switch_tool(new CB_gen);
-	last_ht_winoffset = 0;
 	
 	fps = 0; //just to initialize
 	draw_vs_total_time_ratio = 1.f; //just to initialize
