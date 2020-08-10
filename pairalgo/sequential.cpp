@@ -14,11 +14,12 @@ void sequential_node_stepper::main_action()
 		auto i=j; //an iterator that is always one node ahead of j
 		i++;
 		//iterate to the end
-		for(; i!=nodes.end() && !finished(); i++)
+		while(i!=nodes.end() && !finished())
 		{
 			parent->evaluate_pair(j,i);
 			//we do not want to rush all the nodes in one millisecond
 			std::this_thread::sleep_for(interval);
+			i++;
 		}
 		
 	

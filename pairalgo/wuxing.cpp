@@ -63,8 +63,8 @@ int wuxing::get_pair_count()
 
 std::chrono::milliseconds wuxing::get_best_interval()
 {
-	auto point_count_squared = point_count*point_count;
-	return std::chrono::milliseconds((long long)(750/(float)point_count_squared));
+	auto point_count_pow = point_count*sqrt(point_count);
+	return std::chrono::milliseconds((long long)(4750/(float)point_count_pow));
 }
 
 void wuxing::animate()
@@ -205,8 +205,6 @@ int main()
 					{
 						//ensure that the scale transformation does not get weird
 						render_window.setView(sf::View(sf::FloatRect(0,0,ev.size.width,ev.size.height)));
-						//update layout of nodes
-						global_wuxing->layout_nodes();
 						break;
 					}
 					case sf::Event::KeyPressed:
