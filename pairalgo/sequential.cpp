@@ -1,27 +1,29 @@
 #include "sequential.hpp"
 
-seq_ns::seq_ns(const std::list<node>& nds, wuxing* wx)
+sequential_node_stepper::sequential_node_stepper(const std::list<node>& nds, wuxing* wx)
 :node_stepper(nds,wx)
 {
-	thds.push_back(std::thread(&seq_ns::main_action,this));
+	threads.push_back(std::thread(&sequential_node_stepper::main_action,this));
 }
 
-void seq_ns::main_action()
+void sequential_node_stepper::main_action()
 {
-	for(auto j=nodes.begin(); j!=(--nodes.end())&&!finished(); j++)
+	//iterate to the node before the last one
+	for(auto j=nodes.begin(); j!=(--nodes.end()) && !finished(); j++)
+	{
+		auto i=j; //an iterator that is always one node ahead of j
+		i++;
+		//iterate to the end
+		for(; i!=nodes.end() && !finished(); i++)
 		{
-			
-			auto ekaj=j;
-			ekaj++;
-			for(auto i=ekaj; i!=nodes.end()&&!finished(); i++)
-			{
-				patris->consider_pair(j,i);
-				std::this_thread::sleep_for(interval);
-			}
-			
-		
+			parent->evaluate_pair(j,i);
+			//we do not want to rush all the nodes in one millisecond
+			std::this_thread::sleep_for(interval);
 		}
-	kon_mut.lock();
-	koniec = true;
-	kon_mut.unlock();
+		
+	
+	}
+	finish_mutex.lock();
+	m_finished = true;
+	finish_mutex.unlock();
 }

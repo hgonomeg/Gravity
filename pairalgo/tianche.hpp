@@ -24,10 +24,11 @@ int gcd(int p1, int p2)
 
 class tianche :public node_stepper
 {
-	protected:
+ protected:
+	//when iterator reaches end, it is moved back to the beginning
 	void cycle_nodes_iterator(std::list<node>::const_iterator&,unsigned int);
-	void jump_evaluator(unsigned int);
-	public:
+	void jump_evaluator(std::size_t jump_number);
+ public:
 	tianche(const std::list<node>&, wuxing*);
 	virtual void main_action() override;
 };

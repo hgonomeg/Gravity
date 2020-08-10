@@ -4,7 +4,7 @@
 tianche::tianche(const std::list<node>& nds, wuxing* wx)
 :node_stepper(nds,wx)
 {
-	thds.push_back(std::thread(&tianche::main_action,this));
+	threads.push_back(std::thread(&tianche::main_action,this));
 }
 
 void tianche::cycle_nodes_iterator(std::list<node>::const_iterator& xe, unsigned int delta)
@@ -13,49 +13,68 @@ void tianche::cycle_nodes_iterator(std::list<node>::const_iterator& xe, unsigned
 	{
 		for(unsigned int i=0;i<delta;i++)
 		{
-			if(xe==nodes.end()) xe=nodes.begin();
+			if(xe==nodes.end()) 
+				xe=nodes.begin();
 			xe++;
 		}
 	}
-	if(xe==nodes.end()) xe=nodes.begin();
+	if(xe==nodes.end()) 
+		xe=nodes.begin();
 }
 
-void tianche::jump_evaluator(unsigned int jmpnum)
+void tianche::jump_evaluator(std::size_t jumps)
 {
-	std::list<node>::const_iterator curref = nodes.begin();
-	for(unsigned int razy=0;!finished()&&razy<(unsigned int)gcd((int)nodes.size(),(int)jmpnum);razy++)
+	std::list<node>::const_iterator current = nodes.begin();
+
+	for(std::size_t passes = 0; !finished() && passes<gcd(nodes.size(),jumps); passes++)
 	{
-		std::list<node>::const_iterator traveller=curref;
-		cycle_nodes_iterator(traveller,jmpnum);
-		std::list<node>::const_iterator chaser=curref;
+		std::list<node>::const_iterator roamer = current;
+		cycle_nodes_iterator(roamer,jumps); //roamer goes ahead
+		std::list<node>::const_iterator chaser = current; //chases the roamer
 		
-		patris->consider_pair(chaser,traveller);
-		chaser = traveller;
-		cycle_nodes_iterator(traveller,jmpnum);
+		parent->evaluate_pair(chaser,roamer);
+		//advance in the chase
+		chaser = roamer;
+		cycle_nodes_iterator(roamer,jumps);
+		//we do not want to rush all the nodes in one millisecond
 		std::this_thread::sleep_for(interval);
-		if(jmpnum*2==nodes.size()) {curref++; continue; }
 		
+		//the special case of tianche
+		if(jumps*2 == nodes.size()) 
+		{
+			current++; 
+			continue; 
+		}
+		
+		//continue like this after the possibility of a special case is dealt with
 		do
 		{
-			patris->consider_pair(chaser,traveller);
-			chaser = traveller;
-			cycle_nodes_iterator(traveller,jmpnum);
+			parent->evaluate_pair(chaser,roamer);
+			chaser = roamer;
+			cycle_nodes_iterator(roamer,jumps);
 			std::this_thread::sleep_for(interval);
-			//if(jmpnum*2==nodes.size()) break;
-		}while(chaser!=curref&&!finished());
-		curref++;
+		}while(chaser != current&&!finished()); //while we haven't made a full circle
+
+		current++; //advance the current starting point for the next pass
 	}
 }
 
 void tianche::main_action()
 {
-	for(unsigned int jmpnum=1;(float)jmpnum<=nodes.size()/2.f;jmpnum++)
+	//start the tianche threads
+	for(std::size_t jumps=1; (float)jumps<=nodes.size()/2.f; jumps++)
 	{
-		thds.push_back(std::thread(&tianche::jump_evaluator,this,jmpnum));
+		threads.push_back(std::thread(&tianche::jump_evaluator,this,jumps));
 	}
-	auto kontrolnik = thds.begin(); kontrolnik++;
-	for(;kontrolnik!=thds.end();kontrolnik++) if(kontrolnik->joinable()) kontrolnik->join();
-	kon_mut.lock();
-	koniec = true;
-	kon_mut.unlock();
+
+	auto thread_watch = threads.begin(); 
+	thread_watch++; //omit the main thread
+	//this thread will sleep waiting for the job to be finished so that other threads can be joined
+	for(;thread_watch != threads.end(); thread_watch++) 
+		if(thread_watch->joinable()) 
+			thread_watch->join();
+
+	finish_mutex.lock();
+	m_finished = true;
+	finish_mutex.unlock();
 }
