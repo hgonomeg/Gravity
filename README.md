@@ -19,7 +19,7 @@ SFML, C++17.
 ## Building instructions
 ### Library dependencies
 * SFML (graphics, window and system modules)
-* [cpptoml](https://github.com/skystrife/cpptoml)
+* [cpptoml](https://github.com/skystrife/cpptoml) (header-only)
 ### Tools required
 * Cmake
 * C++17 compiler with RTTI
