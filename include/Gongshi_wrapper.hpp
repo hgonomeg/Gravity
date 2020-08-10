@@ -125,7 +125,7 @@ template <typename T>
 
 			if(!not_quit()) return; //return from the thread if deconstruction is required
 			
-			unsigned int nufather_massf_work = work_queue.front().first;
+			unsigned int work_id = work_queue.front().first;
 			fx_type function = work_queue.front().second;
 			work_queue.pop();
 			size_t queue_size = work_queue.size();
@@ -146,12 +146,12 @@ template <typename T>
 				}
             };
 			
-			determine_pairs(nufather_massf_work);
+			determine_pairs(work_id);
 
 			unsigned concurrency = subject_list.size()/2;
-			nufather_massf_work = (2*concurrency)-nufather_massf_work+1;
+			work_id = (2*concurrency)-work_id+1;
 
-			determine_pairs(nufather_massf_work);
+			determine_pairs(work_id);
 
 			if(queue_size==0)
 			{
