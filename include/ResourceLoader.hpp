@@ -1,6 +1,7 @@
 
 #ifndef RESOURCE_LOADER_HPP
 #include "resources/Arimo-Regular.hpp"
+#include "Space_objects.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
 #include <string>

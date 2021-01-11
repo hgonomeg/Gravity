@@ -32,7 +32,6 @@ class Celestial_body :public sf::Drawable
 	sf::Color trace_color;
 	int mass;
 	sf::Vector2f velocity;
-	sf::Texture texture;
 	sf::CircleShape body_sprite;
 	float radius;
 	bool is_still;

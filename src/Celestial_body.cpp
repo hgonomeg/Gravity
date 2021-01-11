@@ -169,7 +169,6 @@ Celestial_body::Celestial_body(const Celestial_body& rhs)
 	trace_trim_counter = rhs.trace_trim_counter;
 	radius = rhs.radius;
 	body_sprite = rhs.body_sprite;
-	texture = rhs.texture;
 	trace = rhs.trace;
 	is_still = rhs.is_still;
 	Local_ID=Global_ID; 

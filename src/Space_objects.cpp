@@ -1,5 +1,7 @@
 #include "Space_objects.hpp"
 
+std::optional<std::vector<sf::Texture>> Asteroid::textures = std::optional<std::vector<sf::Texture>>();
+
 Planet::Planet(int planet_mass,const sf::Vector2f& location,const sf::Vector2f& velocity)
 :Celestial_body(planet_mass,sf::Color::Blue,location,velocity)
 {
@@ -20,6 +22,8 @@ Asteroid::Asteroid(const sf::Vector2f& location,const sf::Vector2f& velocity)
 :Celestial_body(1,sf::Color(128,128,128),location,velocity)
 {
 	radius = 1.5f;
+	if(textures)
+		body_sprite.setTexture(&Asteroid::textures.value()[0]);
 	body_sprite.setOrigin(radius,radius);
 	body_sprite.setRadius(radius);
 }

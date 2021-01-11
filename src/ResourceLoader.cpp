@@ -40,8 +40,18 @@ Resource_Manager::Resource_Manager() noexcept
 
 void Resource_Manager::finish_loading()
 {
-	//empty
-	//will load external resources from files in the future
+	//loading textures
+	std::vector<sf::Texture> tex_vec;
+	sf::Texture tex;
+	try{
+		tex.loadFromFile("../resources/asteroid.png");
+		tex_vec.push_back(tex);
+		
+	}catch(std::exception& e){
+		std::cerr<<"Error reading resource file"<<e.what();
+	}
+	if(!tex_vec.empty())
+		Asteroid::textures = tex_vec;
 }
 
 file_config Resource_Manager::load_configuration() {

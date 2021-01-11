@@ -1,4 +1,11 @@
+#ifndef SPACE_OBJECTS_HPP
+
 #include "Celestial_body.hpp"
+//#include "ResourceLoader.hpp"
+#include <optional>
+#include <vector>
+
+#define SPACE_OBJECTS_HPP
 
 class Planet :public Celestial_body
 {
@@ -52,6 +59,9 @@ class Asteroid :public Celestial_body
 	Asteroid(const Celestial_body&);
 	virtual Celestial_body* clone(const Celestial_body&) override;
 	Asteroid(const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
+
+	static std::optional<std::vector<sf::Texture>> textures;
+
 };
 
 class Spaceship :public Celestial_body
@@ -62,3 +72,5 @@ class Spaceship :public Celestial_body
 	virtual Celestial_body* clone(const Celestial_body&) override;
 	Spaceship(const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 };
+
+#endif
