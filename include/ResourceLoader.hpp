@@ -10,6 +10,7 @@
 #include <fstream>
 #include <iostream>
 #include <filesystem>
+#include <map>
 
 #define RESOURCE_LOADER_HPP
 
@@ -24,7 +25,7 @@ class Resource_Manager
 {
  public:
 
-	const static std::array<unsigned short,3> num_of_external_textures; //for each space object (Planet, Star,asteroid)
+	const static std::map<std::string,unsigned short> num_of_external_textures_map; //for each space object (Planet, Star,asteroid) maps number of its textures
 	const int ui_font_size; //does not include buttons
 	sf::Font main_font;
 	

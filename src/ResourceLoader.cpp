@@ -1,6 +1,9 @@
 #include "ResourceLoader.hpp"
 
-const std::array<unsigned short,3> Resource_Manager::num_of_external_textures = {0,0,3}; // number of avaible textures for Planet, Starr, Asteroid,
+const std::map<std::string,unsigned short> Resource_Manager::num_of_external_textures_map = { //for each space object (Planet, Star,asteroid) maps number of it's textures
+	{"planet", 0}, 
+	{"star", 0},
+	{"asteroid", 3}}; 
 
 Resource_Manager::Resource_Manager() noexcept
 :ui_font_size(15)
@@ -43,12 +46,14 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto load_textures_from_file = [](unsigned short in, std::string space_object) -> std::vector<sf::Texture>{
+	auto load_textures_from_file = [&](std::string space_object) -> std::vector<sf::Texture>{
 		
-		std::vector<sf::Texture> tex_vec(Resource_Manager::num_of_external_textures[in]); //requesting vector to reserve capacity to fill all of the textures for asteroid
+		int num_of_tex = Resource_Manager::num_of_external_textures_map.at(space_object);
+		
+		std::vector<sf::Texture> tex_vec(num_of_tex); //requesting vector to reserve capacity to fill all of the textures
 		sf::Texture tex;
 
-		for(int i=0; i<Resource_Manager::num_of_external_textures[in]; ++i)
+		for(int i=0; i<num_of_tex; ++i)
 		{
 			try{
 				if(tex.loadFromFile("../resources/"+space_object+"/"+std::to_string(i+1)+".png"))
@@ -60,14 +65,14 @@ void Resource_Manager::finish_loading() const
 				std::cerr<<"Error reading resource file"<<e.what();
 			}
 		}
-		tex_vec.shrink_to_fit();
+		tex_vec.shrink_to_fit(); //in case some files are missing
 		return tex_vec;
 
 	};
-	
-	//load_planet_textures(load_textures_from_file(0,"planet")); //there aren't any planet textures avaiable for now
-	//load_star_textures(load_textures_from_file(1,"star")); //there aren't any star textures avaiable for now
-	load_asteroid_textures(load_textures_from_file(2,"asteroid"));
+
+	load_planet_textures(load_textures_from_file("planet")); //there aren't any planet textures avaiable for now
+	load_star_textures(load_textures_from_file("star")); //there aren't any star textures avaiable for now
+	load_asteroid_textures(load_textures_from_file("asteroid"));
 
 }
 
@@ -79,7 +84,6 @@ void Resource_Manager::load_star_textures(std::vector<sf::Texture> vec) const
 {
 	if(!vec.empty()) Star::textures = vec;
 }
-
 void Resource_Manager::load_asteroid_textures(std::vector<sf::Texture> vec) const
 {
 	if(!vec.empty()) Asteroid::textures = vec;
