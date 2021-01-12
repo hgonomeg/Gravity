@@ -25,7 +25,6 @@ class Resource_Manager
 {
  public:
 
-	const static std::map<std::string,unsigned short> num_of_external_textures_map; //for each space object (Planet, Star,asteroid) maps number of its textures
 	const int ui_font_size; //does not include buttons
 	sf::Font main_font;
 	
@@ -50,12 +49,6 @@ class Resource_Manager
 	Resource_Manager() noexcept; //loads essentials like the font and procedurally generated textures and won't fail
 	void finish_loading() const; //may fail if resources are missing
 	file_config load_configuration(); //manages config files (loads or creates)
-
-	private:
-
-	void load_planet_textures(std::vector<sf::Texture> vec) const;
-	void load_star_textures(std::vector<sf::Texture> vec) const;
-	void load_asteroid_textures(std::vector<sf::Texture> vec) const;
 	
 };
 

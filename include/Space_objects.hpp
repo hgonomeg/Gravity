@@ -29,7 +29,7 @@ class Planet :public Celestial_body
 	Planet(const Celestial_body&);
 	Planet(int mass=100, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 
-	static std::optional<std::vector<sf::Texture>> textures;
+	static std::vector<sf::Texture> textures;
 };
 
 class Star :public Celestial_body
@@ -54,7 +54,7 @@ class Star :public Celestial_body
 	virtual Celestial_body* clone(const Celestial_body&) override;
 	Star(int mass=5000, const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0},bool still=false);
 
-	static std::optional<std::vector<sf::Texture>> textures;
+	static std::vector<sf::Texture> textures;
 };
 
 
@@ -65,7 +65,7 @@ class Asteroid :public Celestial_body
 	virtual Celestial_body* clone(const Celestial_body&) override;
 	Asteroid(const sf::Vector2f& location={0,0},const sf::Vector2f& velocity={0,0});
 
-	static std::optional<std::vector<sf::Texture>> textures;
+	static std::vector<sf::Texture> textures;
 
 };
 

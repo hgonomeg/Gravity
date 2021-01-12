@@ -1,17 +1,17 @@
 #include "Space_objects.hpp"
 
-std::optional<std::vector<sf::Texture>> Planet::textures = std::optional<std::vector<sf::Texture>>();
-std::optional<std::vector<sf::Texture>> Star::textures = std::optional<std::vector<sf::Texture>>();
-std::optional<std::vector<sf::Texture>> Asteroid::textures = std::optional<std::vector<sf::Texture>>();
+std::vector<sf::Texture> Planet::textures = std::vector<sf::Texture>();
+std::vector<sf::Texture> Star::textures = std::vector<sf::Texture>();
+std::vector<sf::Texture> Asteroid::textures = std::vector<sf::Texture>();
 
 Planet::Planet(int planet_mass,const sf::Vector2f& location,const sf::Vector2f& velocity)
 :Celestial_body(planet_mass,sf::Color::Blue,location,velocity)
 {
 
-	if(Planet::textures)
+	if(!Planet::textures.empty())
 	{
-		unsigned short index = Celestial_body::random_number(Planet::textures.value().size()-1);
-		body_sprite.setTexture(&Planet::textures.value()[index]);
+		unsigned short index = Celestial_body::random_number(Planet::textures.size()-1);
+		body_sprite.setTexture(&Planet::textures[index]);
 	}
 
 
@@ -22,10 +22,10 @@ Star::Star(int star_mass,const sf::Vector2f& location,const sf::Vector2f& veloci
 {
 	is_still = still;
 
-	if(Star::textures)
+	if(!Star::textures.empty())
 	{
-		unsigned short index = Celestial_body::random_number(Star::textures.value().size()-1);
-		body_sprite.setTexture(&Star::textures.value()[index]);
+		unsigned short index = Celestial_body::random_number(Star::textures.size()-1);
+		body_sprite.setTexture(&Star::textures[index]);
 	}
 
 }
@@ -34,10 +34,10 @@ Asteroid::Asteroid(const sf::Vector2f& location,const sf::Vector2f& velocity)
 :Celestial_body(1,sf::Color(128,128,128),location,velocity)
 {
 	radius = 1.5f;
-	if(Asteroid::textures)
+	if(!Asteroid::textures.empty())
 	{
-		unsigned short index = Celestial_body::random_number(Asteroid::textures.value().size()-1);
-		body_sprite.setTexture(&Asteroid::textures.value()[index]);
+		unsigned short index = Celestial_body::random_number(Asteroid::textures.size()-1);
+		body_sprite.setTexture(&Asteroid::textures[index]);
 	}
 		
 	body_sprite.setOrigin(radius,radius);
