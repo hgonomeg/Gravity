@@ -47,8 +47,15 @@ class Resource_Manager
 	file_config configuration;
 
 	Resource_Manager() noexcept; //loads essentials like the font and procedurally generated textures and won't fail
-	void finish_loading(); //may fail if resources are missing
+	void finish_loading() const; //may fail if resources are missing
 	file_config load_configuration(); //manages config files (loads or creates)
+
+	private:
+
+	void load_planet_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
+	void load_star_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
+	void load_still_star_textures(unsigned short in) const;	//in will be the index for num_of_external_textures array
+	void load_asteroid_textures(unsigned short in) const;	//in will be the index for num_of_external_textures array
 	
 };
 

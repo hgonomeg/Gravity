@@ -1,5 +1,7 @@
 #include "Space_objects.hpp"
 
+std::optional<std::vector<sf::Texture>> Planet::textures = std::optional<std::vector<sf::Texture>>();
+std::optional<std::vector<sf::Texture>> Star::textures = std::optional<std::vector<sf::Texture>>();
 std::optional<std::vector<sf::Texture>> Asteroid::textures = std::optional<std::vector<sf::Texture>>();
 
 Planet::Planet(int planet_mass,const sf::Vector2f& location,const sf::Vector2f& velocity)

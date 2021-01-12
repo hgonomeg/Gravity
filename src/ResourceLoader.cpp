@@ -1,6 +1,6 @@
 #include "ResourceLoader.hpp"
 
-const std::array<unsigned short,4> Resource_Manager::num_of_external_textures = {0,0,0,2}; // number of avaible textures for Planet, Starr, StillStar, Asteroid,
+const std::array<unsigned short,4> Resource_Manager::num_of_external_textures = {0,0,0,3}; // number of avaible textures for Planet, Starr, StillStar, Asteroid,
 
 Resource_Manager::Resource_Manager() noexcept
 :ui_font_size(15)
@@ -40,14 +40,36 @@ Resource_Manager::Resource_Manager() noexcept
 }
 
 
-void Resource_Manager::finish_loading()
+void Resource_Manager::finish_loading() const
 {
-	//loading textures
-	std::vector<sf::Texture> tex_vec(Resource_Manager::num_of_external_textures[3]); //requesting vector to reserve capacity to fill all of the textures for asteroid
+	//loading external textures
+	
+	//load_planet_textures(0);
+	//load_star_textures(1);
+	//load_still_star_textures(2);
+	load_asteroid_textures(3);
+	
+}
+
+void Resource_Manager::load_planet_textures(unsigned short in) const
+{
+	//to be implemented
+}
+void Resource_Manager::load_star_textures(unsigned short in) const
+{
+	//to be implemented
+}
+void Resource_Manager::load_still_star_textures(unsigned short in) const
+{
+	//to be implemented
+}
+void Resource_Manager::load_asteroid_textures(unsigned short in) const
+{
+	std::vector<sf::Texture> tex_vec(Resource_Manager::num_of_external_textures[in]); //requesting vector to reserve capacity to fill all of the textures for asteroid
 	sf::Texture tex;
 
 
-	for(int i=0; i<Resource_Manager::num_of_external_textures[3]; ++i)
+	for(int i=0; i<Resource_Manager::num_of_external_textures[in]; ++i)
 	{
 		try{
 			if(tex.loadFromFile("../resources/asteroid/"+std::to_string(i+1)+".png"))
@@ -65,7 +87,6 @@ void Resource_Manager::finish_loading()
 		tex_vec.shrink_to_fit(); //in case some of the textures are missing
 		Asteroid::textures = tex_vec;
 	}
-		
 }
 
 file_config Resource_Manager::load_configuration() {
