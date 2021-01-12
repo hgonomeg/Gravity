@@ -56,10 +56,10 @@ void Resource_Manager::finish_loading() const
 		for(int i=0; i<num_of_textures; ++i)
 		{
 			try{
-				if(tex.loadFromFile("../resources/"+space_object+"/"+std::to_string(i+1)+".png"))
+				if(tex.loadFromFile("resources/"+space_object+"/"+std::to_string(i+1)+".png"))
 					tex_vec[i]=tex;
 				else 
-					throw "Loading file ../resources/"+space_object+"/"+std::to_string(i+1)+".png was not succesfull";
+					throw "Loading file resources/"+space_object+"/"+std::to_string(i+1)+".png was not succesfull";
 
 			}catch(std::exception& e){
 				std::cerr<<"Error reading resource file"<<e.what();
