@@ -52,9 +52,9 @@ class Resource_Manager
 
 	private:
 
-	void load_planet_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
-	void load_star_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
-	void load_asteroid_textures(unsigned short in) const;	//in will be the index for num_of_external_textures array
+	void load_planet_textures(std::vector<sf::Texture> vec) const;
+	void load_star_textures(std::vector<sf::Texture> vec) const;
+	void load_asteroid_textures(std::vector<sf::Texture> vec) const;
 	
 };
 
