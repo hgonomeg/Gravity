@@ -24,7 +24,7 @@ class Resource_Manager
 {
  public:
 
-	const static std::array<unsigned short,4> num_of_external_textures; //for each space object (Planet, Star Stillstar, asteroid)
+	const static std::array<unsigned short,3> num_of_external_textures; //for each space object (Planet, Star,asteroid)
 	const int ui_font_size; //does not include buttons
 	sf::Font main_font;
 	
@@ -54,7 +54,6 @@ class Resource_Manager
 
 	void load_planet_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
 	void load_star_textures(unsigned short in) const;		//in will be the index for num_of_external_textures array
-	void load_still_star_textures(unsigned short in) const;	//in will be the index for num_of_external_textures array
 	void load_asteroid_textures(unsigned short in) const;	//in will be the index for num_of_external_textures array
 	
 };

@@ -1,6 +1,6 @@
 #include "ResourceLoader.hpp"
 
-const std::array<unsigned short,4> Resource_Manager::num_of_external_textures = {0,0,0,3}; // number of avaible textures for Planet, Starr, StillStar, Asteroid,
+const std::array<unsigned short,3> Resource_Manager::num_of_external_textures = {0,0,3}; // number of avaible textures for Planet, Starr, Asteroid,
 
 Resource_Manager::Resource_Manager() noexcept
 :ui_font_size(15)
@@ -42,13 +42,18 @@ Resource_Manager::Resource_Manager() noexcept
 
 void Resource_Manager::finish_loading() const
 {
+
+	auto load_textures_from_file = [](unsigned short in, std::string space_object) ->void {
+		
+
+	};
+
 	//loading external textures
 	
 	//load_planet_textures(0);
 	//load_star_textures(1);
-	//load_still_star_textures(2);
-	load_asteroid_textures(3);
-	
+	load_asteroid_textures(2);
+
 }
 
 void Resource_Manager::load_planet_textures(unsigned short in) const
@@ -59,10 +64,7 @@ void Resource_Manager::load_star_textures(unsigned short in) const
 {
 	//to be implemented
 }
-void Resource_Manager::load_still_star_textures(unsigned short in) const
-{
-	//to be implemented
-}
+
 void Resource_Manager::load_asteroid_textures(unsigned short in) const
 {
 	std::vector<sf::Texture> tex_vec(Resource_Manager::num_of_external_textures[in]); //requesting vector to reserve capacity to fill all of the textures for asteroid
