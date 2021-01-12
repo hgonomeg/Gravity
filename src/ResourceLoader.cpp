@@ -48,12 +48,12 @@ void Resource_Manager::finish_loading() const
 	//loading external textures
 	auto load_textures_from_file = [&](std::string space_object) -> std::vector<sf::Texture>{
 		
-		int num_of_tex = Resource_Manager::num_of_external_textures_map.at(space_object);
+		int num_of_textures = Resource_Manager::num_of_external_textures_map.at(space_object);
 		
-		std::vector<sf::Texture> tex_vec(num_of_tex); //requesting vector to reserve capacity to fill all of the textures
+		std::vector<sf::Texture> tex_vec(num_of_textures); //requesting vector to reserve capacity to fill all of the textures
 		sf::Texture tex;
 
-		for(int i=0; i<num_of_tex; ++i)
+		for(int i=0; i<num_of_textures; ++i)
 		{
 			try{
 				if(tex.loadFromFile("../resources/"+space_object+"/"+std::to_string(i+1)+".png"))

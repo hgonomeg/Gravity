@@ -8,7 +8,11 @@ Planet::Planet(int planet_mass,const sf::Vector2f& location,const sf::Vector2f& 
 :Celestial_body(planet_mass,sf::Color::Blue,location,velocity)
 {
 
-
+	if(Planet::textures)
+	{
+		unsigned short index = Celestial_body::random_number(Planet::textures.value().size()-1);
+		body_sprite.setTexture(&Planet::textures.value()[index]);
+	}
 
 
 }
@@ -17,6 +21,12 @@ Star::Star(int star_mass,const sf::Vector2f& location,const sf::Vector2f& veloci
 :Celestial_body(star_mass,sf::Color::Yellow,location,velocity)
 {
 	is_still = still;
+
+	if(Star::textures)
+	{
+		unsigned short index = Celestial_body::random_number(Star::textures.value().size()-1);
+		body_sprite.setTexture(&Star::textures.value()[index]);
+	}
 
 }
 
