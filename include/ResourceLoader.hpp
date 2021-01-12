@@ -1,6 +1,6 @@
 
 #ifndef RESOURCE_LOADER_HPP
-#include "resources/Arimo-Regular.hpp"
+#include "resources/fonts/Arimo-Regular.hpp"
 #include "Space_objects.hpp"
 #include <SFML/Graphics.hpp>
 #include <stdexcept>
@@ -23,7 +23,8 @@ struct file_config {
 class Resource_Manager
 {
  public:
-	
+
+	const static std::array<unsigned short,4> num_of_external_textures; //for each space object (Planet, Star Stillstar, asteroid)
 	const int ui_font_size; //does not include buttons
 	sf::Font main_font;
 	

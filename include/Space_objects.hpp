@@ -4,6 +4,7 @@
 //#include "ResourceLoader.hpp"
 #include <optional>
 #include <vector>
+#include <random>
 
 #define SPACE_OBJECTS_HPP
 

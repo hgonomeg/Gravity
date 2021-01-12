@@ -1,5 +1,7 @@
 #include "ResourceLoader.hpp"
 
+const std::array<unsigned short,4> Resource_Manager::num_of_external_textures = {0,0,0,2}; // number of avaible textures for Planet, Starr, StillStar, Asteroid,
+
 Resource_Manager::Resource_Manager() noexcept
 :ui_font_size(15)
 {	
@@ -41,17 +43,29 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading()
 {
 	//loading textures
-	std::vector<sf::Texture> tex_vec;
+	std::vector<sf::Texture> tex_vec(Resource_Manager::num_of_external_textures[3]); //requesting vector to reserve capacity to fill all of the textures for asteroid
 	sf::Texture tex;
-	try{
-		tex.loadFromFile("../resources/asteroid.png");
-		tex_vec.push_back(tex);
+
+
+	for(int i=0; i<Resource_Manager::num_of_external_textures[3]; ++i)
+	{
+		try{
+			if(tex.loadFromFile("../resources/asteroid/"+std::to_string(i+1)+".png"))
+				tex_vec[i]=tex;
+			else 
+				throw "Loading file ../resources/asteroid/"+std::to_string(i+1)+".png was not succesfull";
 		
-	}catch(std::exception& e){
-		std::cerr<<"Error reading resource file"<<e.what();
+		}catch(std::exception& e){
+			std::cerr<<"Error reading resource file"<<e.what();
+		}
 	}
+	
 	if(!tex_vec.empty())
+	{
+		tex_vec.shrink_to_fit(); //in case some of the textures are missing
 		Asteroid::textures = tex_vec;
+	}
+		
 }
 
 file_config Resource_Manager::load_configuration() {

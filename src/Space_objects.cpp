@@ -22,8 +22,12 @@ Asteroid::Asteroid(const sf::Vector2f& location,const sf::Vector2f& velocity)
 :Celestial_body(1,sf::Color(128,128,128),location,velocity)
 {
 	radius = 1.5f;
-	if(textures)
-		body_sprite.setTexture(&Asteroid::textures.value()[0]);
+	if(Asteroid::textures)
+	{
+		unsigned short index = Celestial_body::random_number(Asteroid::textures.value().size()-1);
+		body_sprite.setTexture(&Asteroid::textures.value()[index]);
+	}
+		
 	body_sprite.setOrigin(radius,radius);
 	body_sprite.setRadius(radius);
 }

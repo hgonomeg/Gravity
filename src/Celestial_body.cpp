@@ -445,3 +445,10 @@ bool Celestial_body::collision_detection(const Celestial_body& lhs, const Celest
 	rhs.simultaneity_guardian.unlock();
 	return (lhs.distance_from(rhs)-(radius1+radius2))<=static_cast<float>(0);
 }
+
+unsigned short Celestial_body::random_number(unsigned short cap)
+{
+	static std::default_random_engine generator;
+	std::uniform_int_distribution<unsigned short> distribution(0,cap);
+	return distribution(generator);
+}

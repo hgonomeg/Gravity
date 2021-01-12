@@ -35,6 +35,8 @@ class Celestial_body :public sf::Drawable
 	sf::CircleShape body_sprite;
 	float radius;
 	bool is_still;
+
+	static unsigned short random_number(unsigned short cap);
 	
 	public:
 	
