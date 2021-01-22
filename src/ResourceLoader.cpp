@@ -41,7 +41,7 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto load_textures_from_file = [](std::string path) -> std::vector<sf::Texture>{
+	auto load_textures_from_directory = [](std::string path) -> std::vector<sf::Texture>{
 		
 		std::filesystem::directory_iterator dir(path);
 		std::vector<sf::Texture> tex_vec;
@@ -67,9 +67,9 @@ void Resource_Manager::finish_loading() const
 		return tex_vec;
 
 	};
-	Planet::textures = load_textures_from_file("resources/planet");
-	Star::textures = load_textures_from_file("resources/star");
-	Asteroid::textures = load_textures_from_file("resources/asteroid");
+	Planet::textures = load_textures_from_directory("resources/planet");
+	Star::textures = load_textures_from_directory("resources/star");
+	Asteroid::textures = load_textures_from_directory("resources/asteroid");
 
 }
 
