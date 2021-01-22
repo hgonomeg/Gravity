@@ -67,8 +67,8 @@ void Resource_Manager::finish_loading() const
 		return tex_vec;
 
 	};
-	Planet::textures = load_textures_from_file("resources/planet"); //there aren't any planet textures avaiable for now
-	Star::textures = load_textures_from_file("resources/star"); //there aren't any star textures avaiable for now
+	Planet::textures = load_textures_from_file("resources/planet");
+	Star::textures = load_textures_from_file("resources/star");
 	Asteroid::textures = load_textures_from_file("resources/asteroid");
 
 }
