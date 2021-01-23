@@ -41,11 +41,9 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto check_extension = [](std::filesystem::directory_entry path_to_file, std::string extension) -> bool {
+	auto check_extension = [](std::filesystem::path path_to_file, std::string extension) -> bool {
 		
-		if(path_to_file.is_directory()) return false;
-		
-		std::string path = path_to_file.path().string();
+		std::string path = path_to_file.string();
 		size_t dots_index = path.find('.');
 		path = path.substr(dots_index);
 		
@@ -53,24 +51,24 @@ void Resource_Manager::finish_loading() const
 	};
 
 
-	auto load_textures_from_directory = [check_extension](std::string path) -> std::vector<sf::Texture>{
+	auto load_textures_from_directory = [check_extension](std::string directory) -> std::vector<sf::Texture>{
 		
-		std::filesystem::directory_iterator dir(path);
+		std::filesystem::directory_iterator dir(directory);
 		std::vector<sf::Texture> tex_vec;
 		
 		for(auto& f: dir)
 		{
 			sf::Texture tex;
 			try{
-				
-				if(check_extension(f,".png"));
+				std::filesystem::path path = f.path();
+				if(check_extension(path,".png"));
 				{
-					if(tex.loadFromFile(f.path()))
+					if(tex.loadFromFile(path))
 						tex_vec.push_back(tex);
 					else
 					{
 						std::stringstream  stream;
-						stream<<"Loading file "<<f.path()<<" was not succesfull";
+						stream<<"Loading file "<<path<<" was not succesfull";
 						throw std::runtime_error(stream.str());
 					} 
 				}
