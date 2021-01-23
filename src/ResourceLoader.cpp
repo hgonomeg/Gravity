@@ -41,7 +41,19 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto load_textures_from_directory = [](std::string path) -> std::vector<sf::Texture>{
+	auto check_extension = [](std::filesystem::directory_entry path_to_file, std::string extension) -> bool {
+		
+		if(path_to_file.is_directory()) return false;
+		
+		std::string path = path_to_file.path().string();
+		size_t dots_index = path.find('.');
+		path = path.substr(dots_index);
+		
+		return path==extension;
+	};
+
+
+	auto load_textures_from_directory = [check_extension](std::string path) -> std::vector<sf::Texture>{
 		
 		std::filesystem::directory_iterator dir(path);
 		std::vector<sf::Texture> tex_vec;
@@ -50,14 +62,19 @@ void Resource_Manager::finish_loading() const
 		{
 			sf::Texture tex;
 			try{
-				if(tex.loadFromFile(f.path()))
-					tex_vec.push_back(tex);
-				else
+				
+				if(check_extension(f,".png"));
 				{
-					std::stringstream  stream;
-					stream<<"Loading file "<<f.path()<<" was not succesfull";
-					throw std::runtime_error(stream.str());
-				} 
+					if(tex.loadFromFile(f.path()))
+						tex_vec.push_back(tex);
+					else
+					{
+						std::stringstream  stream;
+						stream<<"Loading file "<<f.path()<<" was not succesfull";
+						throw std::runtime_error(stream.str());
+					} 
+				}
+					
 					
 			}catch(std::exception& e){
 				std::cerr<<"Error reading resource file"<<e.what();
