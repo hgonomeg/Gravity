@@ -41,17 +41,7 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto check_extension = [](std::filesystem::path path_to_file, std::string extension) -> bool {
-		
-		std::string path = path_to_file.string();
-		size_t dots_index = path.find('.');
-		path = path.substr(dots_index);
-		
-		return path==extension;
-	};
-
-
-	auto load_textures_from_directory = [check_extension](std::string directory, std::string extension) -> std::vector<sf::Texture>{
+	auto load_textures_from_directory = [](std::string directory, std::string extension) -> std::vector<sf::Texture>{
 		
 		std::filesystem::directory_iterator dir(directory);
 		std::vector<sf::Texture> tex_vec;
@@ -61,7 +51,7 @@ void Resource_Manager::finish_loading() const
 			sf::Texture tex;
 			try{
 				std::filesystem::path path = f.path();
-				if(check_extension(path,extension));
+				if(path.extension()==extension);
 				{
 					if(tex.loadFromFile(path))
 						tex_vec.push_back(tex);
