@@ -41,7 +41,7 @@ Resource_Manager::Resource_Manager() noexcept
 void Resource_Manager::finish_loading() const
 {
 	//loading external textures
-	auto load_textures_from_directory = [](std::string directory, std::string extension) -> std::vector<sf::Texture>{
+	auto load_textures_from_directory = [](std::string directory, std::filesystem::path extension) -> std::vector<sf::Texture>{
 		
 		std::filesystem::directory_iterator dir(directory);
 		std::vector<sf::Texture> tex_vec;
@@ -51,7 +51,7 @@ void Resource_Manager::finish_loading() const
 			sf::Texture tex;
 			try{
 				std::filesystem::path path = f.path();
-				if(path.extension()==extension);
+				if(path.extension()==extension); //if f is subdirectory of the dir, its extension is empty string
 				{
 					if(tex.loadFromFile(path))
 						tex_vec.push_back(tex);
@@ -68,12 +68,11 @@ void Resource_Manager::finish_loading() const
 				std::cerr<<"Error reading resource file"<<e.what();
 			}
 		}
-		//tex_vec.shrink_to_fit(); //in case some files are missing
 		return tex_vec;
 
 	};
 
-	std::string extension = ".png";
+	std::filesystem::path extension = ".png";
 	Planet::textures = load_textures_from_directory("resources/planet",extension);
 	Star::textures = load_textures_from_directory("resources/star",extension);
 	Asteroid::textures = load_textures_from_directory("resources/asteroid",extension);
