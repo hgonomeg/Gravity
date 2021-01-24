@@ -56,11 +56,7 @@ void Resource_Manager::finish_loading() const
 					if(tex.loadFromFile(path))
 						tex_vec.push_back(tex);
 					else
-					{
-						std::stringstream  stream;
-						stream<<"Loading file "<<path<<" was not succesfull";
-						throw std::runtime_error(stream.str());
-					} 
+						throw std::runtime_error("Loading file "+path.string()+" was not succesfull"); 
 				}
 					
 					
