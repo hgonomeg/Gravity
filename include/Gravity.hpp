@@ -1,5 +1,6 @@
 #ifndef GRAVITY_HPP
 #define GRAVITY_HPP
+#include "Cmake_defines.hpp"
 #include "Simulator.hpp"
 #include "Space_objects.hpp"
 #include "ResourceLoader.hpp"

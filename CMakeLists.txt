@@ -10,6 +10,7 @@ find_package(cpptoml 0.4.0 REQUIRED)
 
 project(Gravity)
 
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
@@ -31,6 +32,11 @@ include_directories(${PROJECT_SOURCE_DIR})
 option(BUILD_WUXING "Should the Wuxing subproject be built?" FALSE)
 
 file(GLOB LIST_OF_CPP ${PROJECT_SOURCE_DIR}/src/*.cpp)
+
+set(GRAVITY_VERSION "v.0.4.0")
+execute_process(COMMAND git describe --tags OUTPUT_VARIABLE GRAVITY_VERSION)
+configure_file(${PROJECT_SOURCE_DIR}/include/Cmake_defines.hpp.in ${PROJECT_SOURCE_DIR}/include/Cmake_defines.hpp)
+
 
 add_executable(Gravity ${LIST_OF_CPP})
 
