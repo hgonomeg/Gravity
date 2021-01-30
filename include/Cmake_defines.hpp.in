@@ -1,0 +1,6 @@
+#ifndef CMAKE_DEFINES_HPP
+#define CMAKE_DEFINES
+
+#define GRAVITY_VERSION "${GRAVITY_VERSION}"
+
+#endif
