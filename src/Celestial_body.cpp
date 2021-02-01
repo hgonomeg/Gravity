@@ -300,22 +300,16 @@ void Celestial_body::collision_handle(Celestial_body* mother, Celestial_body*& f
 		star = dynamic_cast<Star*>(master_parent);
 		asteroid = dynamic_cast<Asteroid*>(master_parent);
 
-		if(planet == nullptr && asteroid==nullptr) //master_parent must be a star
-		{
+		if(planet == nullptr && asteroid==nullptr) //child ought to be a star
 			child = new Star(child_mass,master_parent->get_location(),child_velocity);
-			child->is_still = master_parent->is_still;
-		}
-		else if(asteroid != nullptr)
-		{
+
+		else if(asteroid != nullptr) //child ought to be an asteroid
 			child = new Asteroid(master_parent->get_location(),child_velocity);
-			child->is_still = master_parent->is_still;
-		}
+
 		else //child ought to be a planet
-		{
 			child = new Planet(child_mass,master_parent->get_location(),child_velocity);
-			child->is_still = master_parent->is_still;
-		}
-		
+			
+		child->is_still = master_parent->is_still;
 		child->body_sprite = master_parent->body_sprite;
 
 	}
