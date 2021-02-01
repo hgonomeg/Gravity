@@ -316,6 +316,7 @@ void Celestial_body::collision_handle(Celestial_body* mother, Celestial_body*& f
 			child->is_still = master_parent->is_still;
 		}
 		
+		child->body_sprite = master_parent->body_sprite;
 
 	}
 
