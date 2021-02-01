@@ -259,29 +259,29 @@ void Celestial_body::collision_handle(Celestial_body* mother, Celestial_body*& f
 
 	//fetch data
 
-	auto&& mother_traces=mother->get_traces();
-	auto&& father_traces=father->get_traces();
+	auto&& mother_traces = mother->get_traces();
+	auto&& father_traces = father->get_traces();
 	
-	int mother_mass=mother->get_mass();
-	int father_mass=father->get_mass();
+	int mother_mass = mother->get_mass();
+	int father_mass = father->get_mass();
 	
-	auto mother_velocity=mother->get_velocity();
-	auto father_velocity=father->get_velocity();
+	auto mother_velocity = mother->get_velocity();
+	auto father_velocity = father->get_velocity();
 	
 	//calculations
 	
-	child_mass=mother_mass+father_mass;
+	child_mass = mother_mass+father_mass;
 
 	Celestial_body* child;
 	
 	if(child_mass==0)
 	{
-		child_velocity=(((float)mother_mass*mother_velocity)+((float)father_mass*father_velocity))/(mother_mass*2.f);
+		child_velocity = (((float)mother_mass*mother_velocity)+((float)father_mass*father_velocity))/(mother_mass*2.f);
 		child=new Asteroid(mother->get_location(),child_velocity);
 	}
 	else
 	{
-		child_velocity=(((float)mother_mass*mother_velocity)+((float)father_mass*father_velocity))/(float)child_mass;
+		child_velocity = (((float)mother_mass*mother_velocity)+((float)father_mass*father_velocity))/(float)child_mass;
 
 		Celestial_body* master_parent; //master parent is the literally heavier parent. It will decide about child's body type (RTTI dynamic_casts)
 		
@@ -313,20 +313,19 @@ void Celestial_body::collision_handle(Celestial_body* mother, Celestial_body*& f
 		else //child ought to be a planet
 		{
 			child = new Planet(child_mass,master_parent->get_location(),child_velocity);
-			child->is_still=master_parent->is_still;
+			child->is_still = master_parent->is_still;
 		}
 		
 
 	}
+
 	child->parents_traces = new std::list<std::vector<sf::Vertex>>();
+
 	for(auto i=father_traces.begin();i!=father_traces.end();i++)
-	{
 		child->parents_traces->push_back(*i);
-	}
+
 	for(auto i=mother_traces.begin();i!=mother_traces.end();i++)
-	{
 		child->parents_traces->push_back(*i);
-	}
 	
 	alloc_diagram[father->get_id()] = child->get_id();
 	alloc_diagram[mother->get_id()] = child->get_id();
