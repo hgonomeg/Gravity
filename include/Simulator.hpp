@@ -2,7 +2,7 @@
 #include <list>
 #include <math.h>
 #include "Celestial_body.hpp"
-#include "Tianche_wrapper.hpp"
+//#include "Tianche_wrapper.hpp"
 #include "Gongshi_wrapper.hpp"
 #include <memory>
 #include <set>

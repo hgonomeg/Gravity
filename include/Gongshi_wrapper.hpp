@@ -8,6 +8,7 @@
 #include <functional>
 #include <queue>
 #include <vector>
+#include <future>
 #include <list>
 
 template <typename T>
