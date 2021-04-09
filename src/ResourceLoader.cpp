@@ -53,7 +53,7 @@ void Resource_Manager::finish_loading() const
 				std::filesystem::path path = f.path();
 				if(path.extension()==extension); //if f is subdirectory of the dir, its extension is empty string
 				{
-					if(tex.loadFromFile(path))
+					if(tex.loadFromFile(path.string()))
 						tex_vec.push_back(tex);
 					else
 						throw std::runtime_error("Loading file "+path.string()+" was not succesfull"); 
