@@ -1,6 +1,6 @@
 #ifndef WUXING_HPP
 #define WUXING_HPP
-#include "../resources/Arimo-Regular.hpp"
+#include "../fonts/resources/Arimo-Regular.hpp"
 #include <SFML/Graphics.hpp>
 
 #include "unit_base.hpp"
