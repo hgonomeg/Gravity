@@ -7,7 +7,7 @@
 #include <numeric>
 using std::gcd;
 #else
-int gcd(int p1, int p2)
+inline int gcd(int p1, int p2)
 	{
 	p1=abs(p1);
 	p2=abs(p2);
